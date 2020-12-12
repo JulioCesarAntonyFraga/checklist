@@ -114,6 +114,10 @@ class ChecklistItem9(Screen):  #####ITEM 1 NOVA LV#####
 class CustomItem(TwoLineAvatarIconListItem):
     icon = StringProperty('')
 
+
+class ExpansionpanelContent(BoxLayout):
+    pass
+
 #######INTEGRANDO TELAS NO GERENCIADOR DE SCREEN########
 sm = ScreenManager()
 sm.add_widget(WelcomeScreen(name='welcomescreen'))
@@ -136,6 +140,7 @@ sm.add_widget(ChecklistItem8(name='checklistItem8'))
 sm.add_widget(ChecklistItem9(name='checklistItem9'))
 
 
+
 ############MAQUINARIO APP########################
 class PawareApp(MDApp):
     panel_is_open = False
@@ -146,6 +151,8 @@ class PawareApp(MDApp):
     except:
         pass
 
+    
+    teste = 'teste'
 
     def panel_open(self, *args):
         self.panel_is_open = True
@@ -499,71 +506,6 @@ class PawareApp(MDApp):
 
     #########FUNCAO RECARREGAR OS DELETALHES DO PEFIL APOS MUDANÇA##############
 
-    ###############CARREGANDO OS VALORES DA CHECKLIST##############
-    try:
-        myclient = pymongo.MongoClient(
-            "mongodb+srv://julio:senha@cluster0.pn3vb.mongodb.net/kivyapp?retryWrites=true&w=majority")
-        db = myclient["kivyapp"]
-        col_lv = db["lvs"]
-
-        for item in col_lv.find({}, {"_id": 0}):
-            list_name = item["nome_lv"]
-            descricao_lv = item["descricao_lv"]
-            criado_por = item["nome_usuario"]
-            email_usuario = item["email_usuario"]
-            criado_em = item["Data_emissao"]
-            porcentagem_c = item["porcentagem_c"]
-            quantidade_nc = item["quantidade_nc"]
-            quantidade_na = item["quantidade_na"]
-            status = item["lv_status"]
-
-            item1_resultaldo = item['item1_resultado']
-            acao = item['item1_acao']
-            reponsavel_relizar = item['item1_responsavel']
-            prazo = item['item1_prazo']
-
-            item2_resultaldo = item['item2_resultado']
-            item2_acao = item['item2_acao']
-            item2_responsavel = item['item2_responsavel']
-            item2_prazo = item['item2_prazo']
-
-            item3_resultaldo = item['item3_resultado']
-            item3_acao = item['item3_acao']
-            item3_responsavel = item['item3_responsavel']
-            item3_prazo = item['item3_prazo']
-
-            item4_resultaldo = item['item4_resultado']
-            item4_acao = item['item4_acao']
-            item4_responsavel = item['item4_responsavel']
-            item4_prazo = item['item4_prazo']
-
-            item5_resultaldo = item['item5_resultado']
-            item5_acao = item['item5_acao']
-            item5_responsavel = item['item5_responsavel']
-            item5_prazo = item['item5_prazo']
-
-            item6_resultaldo = item['item6_resultado']
-            item6_acao = item['item6_acao']
-            item6_responsavel = item['item6_responsavel']
-            item6_prazo = item['item6_prazo']
-
-            item7_resultaldo = item['item7_resultado']
-            item7_acao = item['item7_acao']
-            item7_responsavel = item['item7_responsavel']
-            item7_prazo = item['item7_prazo']
-
-            item8_resultaldo = item['item8_resultado']
-            item8_acao = item['item8_acao']
-            item8_responsavel = item['item8_responsavel']
-            item8_prazo = item['item8_prazo']
-
-            item9_resultaldo = item['item9_resultado']
-            item9_acao = item['item9_acao']
-            item9_responsavel = item['item9_responsavel']
-            item9_prazo = item['item9_prazo']
-    except:
-        pass
-
     #########PREENCHIMENTOD DO NOME NA TELA DE LOGIN OBRIGATORIO FUNCAO############
     def check_username(self):
         self.username_text = self.strng.get_screen('usernamescreen').ids.username_text_fied.text
@@ -707,15 +649,82 @@ class PawareApp(MDApp):
                           text=item['nome_lv'],
                           secondary_text=item['descricao_lv'],
                           tertiary_text=item['Data_emissao'],
-                          on_press=partial(self.checklist_screen, id = str(item['_id']), nome_lv = item['nome_lv'], descricao_lv = item['descricao_lv'], data_emissao = item['Data_emissao'], porcentagem_c = item['porcentagem_c'], quantidade_nc = item['quantidade_nc'], quantidade_na = item['quantidade_na'], lv_status = item['lv_status'], item1_nome = item['item1_nome'], item1_resultado = item['item1_resultado'], item1_acao = item['item1_acao'], item1_prazo = item['item1_prazo'], item1_responsavel = item['item1_responsavel'], item2_nome = item['item2_nome'], item2_resultado = item['item2_resultado'], item2_acao = item['item2_acao'], item2_prazo = item['item2_prazo'], item2_responsavel = item['item2_responsavel'], item3_nome = item['item3_nome'], item3_resultado = item['item4_nome'], item3_acao = item['item3_acao'], item3_prazo = item['item3_prazo'], item3_responsavel = item['item3_responsavel'], item4_nome = item['item3_responsavel'], item4_resultado = item['item4_resultado'], item4_acao = item['item4_acao'], item4_prazo = item['item4_prazo'], item4_responsavel = item['item4_responsavel'], item5_nome = item['item5_nome'], item5_resultado = item['item5_resultado'], item5_acao = item['item5_acao'], item5_prazo = item['item5_prazo'], item5_responsavel = item['item5_responsavel'], item6_nome = item['item6_nome'], item6_resultado = item['item6_resultado'], item6_acao = item['item6_acao'], item6_prazo = item['item6_prazo'], item6_responsavel = item['item6_responsavel'], item7_nome = item['item7_nome'], item7_resultado = item['item7_resultado'], item7_acao = item['item7_acao'], item7_prazo = item['item7_prazo'], item7_responsavel = item['item7_responsavel'], item8_nome = item['item8_nome'], item8_resultado = item['item8_resultado'], item8_acao = item['item8_acao'], item8_prazo = item['item8_prazo'], item8_responsavel = item['item8_responsavel'], item9_nome = item['item9_nome'], item9_resultado = item['item9_resultado'], item9_acao = item['item9_acao'], item9_prazo = item['item9_prazo'], item9_responsavel = item['item9_responsavel'])
+                          on_press=partial(self.checklist_screen, id = str(item['_id']), nome_lv = item['nome_lv'], descricao_lv = item['descricao_lv'], data_emissao = item['Data_emissao'], porcentagem_c = item['porcentagem_c'], quantidade_nc = item['quantidade_nc'], quantidade_na = item['quantidade_na'], lv_status = item['lv_status'], item1_nome = item['item1_nome'], item1_resultado = item['item1_resultado'], item1_acao = item['item1_acao'], item1_prazo = item['item1_prazo'], item1_responsavel = item['item1_responsavel'], item2_nome = item['item2_nome'], item2_resultado = item['item2_resultado'], item2_acao = item['item2_acao'], item2_prazo = item['item2_prazo'], item2_responsavel = item['item2_responsavel'], item3_nome = item['item3_nome'], item3_resultado = item['item4_resultado'], item3_acao = item['item3_acao'], item3_prazo = item['item3_prazo'], item3_responsavel = item['item3_responsavel'], item4_nome = item['item3_responsavel'], item4_resultado = item['item4_resultado'], item4_acao = item['item4_acao'], item4_prazo = item['item4_prazo'], item4_responsavel = item['item4_responsavel'], item5_nome = item['item5_nome'], item5_resultado = item['item5_resultado'], item5_acao = item['item5_acao'], item5_prazo = item['item5_prazo'], item5_responsavel = item['item5_responsavel'], item6_nome = item['item6_nome'], item6_resultado = item['item6_resultado'], item6_acao = item['item6_acao'], item6_prazo = item['item6_prazo'], item6_responsavel = item['item6_responsavel'], item7_nome = item['item7_nome'], item7_resultado = item['item7_resultado'], item7_acao = item['item7_acao'], item7_prazo = item['item7_prazo'], item7_responsavel = item['item7_responsavel'], item8_nome = item['item8_nome'], item8_resultado = item['item8_resultado'], item8_acao = item['item8_acao'], item8_prazo = item['item8_prazo'], item8_responsavel = item['item8_responsavel'], item9_nome = item['item9_nome'], item9_resultado = item['item9_resultado'], item9_acao = item['item9_acao'], item9_prazo = item['item9_prazo'], item9_responsavel = item['item9_responsavel'])
             )
 
             self.strng.get_screen('screen1').ids.checklist.add_widget(self.checklist_table)
 
-            
     def checklist_screen(self, event, id, nome_lv, descricao_lv, data_emissao, porcentagem_c, quantidade_nc, quantidade_na, lv_status, item1_nome, item1_resultado, item1_acao, item1_prazo, item1_responsavel, item2_nome, item2_resultado, item2_acao, item2_prazo, item2_responsavel, item3_nome, item3_resultado, item3_acao, item3_prazo, item3_responsavel, item4_nome, item4_resultado, item4_acao, item4_prazo, item4_responsavel, item5_nome, item5_resultado, item5_acao, item5_prazo, item5_responsavel, item6_nome, item6_resultado, item6_acao, item6_prazo, item6_responsavel, item7_nome, item7_resultado, item7_acao, item7_prazo, item7_responsavel, item8_nome, item8_resultado, item8_acao, item8_prazo, item8_responsavel, item9_nome, item9_resultado, item9_acao, item9_prazo, item9_responsavel):
 
-        print(id, nome_lv, descricao_lv, data_emissao, porcentagem_c, quantidade_nc, quantidade_na, lv_status, item1_nome, item1_resultado, item1_acao, item1_prazo, item1_responsavel, item2_nome, item2_resultado, item2_acao, item2_prazo, item2_responsavel, item3_nome, item3_resultado, item3_acao, item3_prazo, item3_responsavel, item4_nome, item4_resultado, item4_acao, item4_prazo, item4_responsavel, item5_nome, item5_resultado, item5_acao, item5_prazo, item5_responsavel, item6_nome, item6_resultado, item6_acao, item6_prazo, item6_responsavel, item7_nome, item7_resultado, item7_acao, item7_prazo, item7_responsavel, item8_nome, item8_resultado, item8_acao, item8_prazo, item8_responsavel, item9_nome, item9_resultado, item9_acao, item9_prazo, item9_responsavel)
+        self.strng.get_screen('screen3').manager.current = 'screen3'
+        self.strng.get_screen('screen3').ids.screen3_toolbar.title = nome_lv
+
+        
+        items = {
+            "item1_nome": item1_nome,
+            "item1_resultado": item1_resultado,
+            "item1_acao": item1_acao,
+            "item1_prazo": item1_prazo,
+            "item1_responsavel": item1_responsavel,
+
+            "item2_nome": item2_nome,
+            "item2_resultado": item2_resultado,
+            "item2_acao": item2_acao,
+            "item2_prazo": item2_prazo,
+            "item2_responsavel": item2_responsavel,
+
+            "item3_nome": item3_nome,
+            "item3_resultado": item3_resultado,
+            "item3_acao": item3_acao,
+            "item3_prazo": item3_prazo,
+            "item3_responsavel": item3_responsavel,
+
+            "item4_nome": item4_nome,
+            "item4_resultado": item4_resultado,
+            "item4_acao": item4_acao,
+            "item4_prazo": item4_prazo,
+            "item4_responsavel": item4_responsavel,
+
+            "item5_nome": item5_nome,
+            "item5_resultado": item5_resultado,
+            "item5_acao": item5_acao,
+            "item5_prazo": item5_prazo,
+            "item5_responsavel": item5_responsavel,
+
+            "item6_nome": item6_nome,
+            "item6_resultado": item6_resultado,
+            "item6_acao": item6_acao,
+            "item6_prazo": item6_prazo,
+            "item6_responsavel": item6_responsavel,
+
+            "item7_nome": item7_nome,
+            "item7_resultado": item7_resultado,
+            "item7_acao": item7_acao,
+            "item7_prazo": item7_prazo,
+            "item7_responsavel": item7_responsavel,
+
+            "item8_nome": item8_nome,
+            "item8_resultado": item8_resultado,
+            "item8_acao": item8_acao,
+            "item8_prazo": item8_prazo,
+            "item8_responsavel": item8_responsavel,
+
+            "item9_nome": item9_nome,
+            "item9_resultado": item9_resultado,
+            "item9_acao": item9_acao,
+            "item9_prazo": item9_prazo,
+            "item9_responsavel": item9_responsavel,
+
+        }
+
+        for i in range(1,10):
+
+            self.list_item = ThreeLineIconListItem(
+                text=items[f'item{i}_nome'],
+                secondary_text=items[f'item{i}_resultado']
+            )
+
+            self.strng.get_screen('screen3').ids.box.add_widget(self.list_item)
 
 
         
