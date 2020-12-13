@@ -4,7 +4,7 @@ from kivy.lang import Builder
 from kivymd.app import MDApp
 from kivy.uix.screenmanager import Screen, ScreenManager
 from kivymd.uix.dialog import MDDialog
-from kivymd.uix.button import MDFlatButton, MDRaisedButton, MDFloatingActionButton, MDRectangleFlatIconButton
+from kivymd.uix.button import MDFlatButton, MDRaisedButton, MDFloatingActionButton, MDRectangleFlatIconButton, MDFloatingActionButton
 from kivy.storage.jsonstore import JsonStore
 from kivymd.uix.picker import MDDatePicker
 from datetime import date
@@ -19,7 +19,7 @@ from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.expansionpanel import MDExpansionPanel, MDExpansionPanelThreeLine, MDExpansionPanelOneLine
 from kivymd import images_path
 from kivy.uix.widget import Widget
-from kivymd.uix.list import OneLineListItem, MDList, TwoLineListItem, ThreeLineListItem, ThreeLineIconListItem, MDIconButton
+from kivymd.uix.list import OneLineListItem, MDList, TwoLineListItem, ThreeLineListItem, ThreeLineIconListItem, MDIconButton, ImageLeftWidget
 from kivymd.uix.list import OneLineIconListItem, IconLeftWidget
 from kivy.uix.scrollview import ScrollView
 from kivy.clock import Clock
@@ -392,6 +392,7 @@ class PawareApp(MDApp):
 
         col_lv.insert_one(lv)
         self.load_checklist()
+        self.strng.get_screen('screen1').manager.current = 'screen1'
 
     ##################CONFIRMAÇAO DE SAIDA APP################
     dialog = None
@@ -480,6 +481,7 @@ class PawareApp(MDApp):
             )
 
             self.load_checklist()
+            self.strng.get_screen('screen1').manager.current = 'screen1'
 
         except Exception as erro:
             print(erro)
@@ -659,6 +661,8 @@ class PawareApp(MDApp):
                           on_press=partial(self.checklist_screen, id = str(item['_id']), nome_lv = item['nome_lv'], descricao_lv = item['descricao_lv'], data_emissao = item['Data_emissao'], porcentagem_c = item['porcentagem_c'], quantidade_nc = item['quantidade_nc'], quantidade_na = item['quantidade_na'], lv_status = item['lv_status'], item1_nome = item['item1_nome'], item1_resultado = item['item1_resultado'], item1_acao = item['item1_acao'], item1_prazo = item['item1_prazo'], item1_responsavel = item['item1_responsavel'], item2_nome = item['item2_nome'], item2_resultado = item['item2_resultado'], item2_acao = item['item2_acao'], item2_prazo = item['item2_prazo'], item2_responsavel = item['item2_responsavel'], item3_nome = item['item3_nome'], item3_resultado = item['item4_resultado'], item3_acao = item['item3_acao'], item3_prazo = item['item3_prazo'], item3_responsavel = item['item3_responsavel'], item4_nome = item['item3_nome'], item4_resultado = item['item4_resultado'], item4_acao = item['item4_acao'], item4_prazo = item['item4_prazo'], item4_responsavel = item['item4_responsavel'], item5_nome = item['item5_nome'], item5_resultado = item['item5_resultado'], item5_acao = item['item5_acao'], item5_prazo = item['item5_prazo'], item5_responsavel = item['item5_responsavel'], item6_nome = item['item6_nome'], item6_resultado = item['item6_resultado'], item6_acao = item['item6_acao'], item6_prazo = item['item6_prazo'], item6_responsavel = item['item6_responsavel'], item7_nome = item['item7_nome'], item7_resultado = item['item7_resultado'], item7_acao = item['item7_acao'], item7_prazo = item['item7_prazo'], item7_responsavel = item['item7_responsavel'], item8_nome = item['item8_nome'], item8_resultado = item['item8_resultado'], item8_acao = item['item8_acao'], item8_prazo = item['item8_prazo'], item8_responsavel = item['item8_responsavel'], item9_nome = item['item9_nome'], item9_resultado = item['item9_resultado'], item9_acao = item['item9_acao'], item9_prazo = item['item9_prazo'], item9_responsavel = item['item9_responsavel'])
             )
 
+            self.checklist_table
+
             self.strng.get_screen('screen1').ids.checklist.add_widget(self.checklist_table)
 
     def checklist_screen(self, event, id, nome_lv, descricao_lv, data_emissao, porcentagem_c, quantidade_nc, quantidade_na, lv_status, item1_nome, item1_resultado, item1_acao, item1_prazo, item1_responsavel, item2_nome, item2_resultado, item2_acao, item2_prazo, item2_responsavel, item3_nome, item3_resultado, item3_acao, item3_prazo, item3_responsavel, item4_nome, item4_resultado, item4_acao, item4_prazo, item4_responsavel, item5_nome, item5_resultado, item5_acao, item5_prazo, item5_responsavel, item6_nome, item6_resultado, item6_acao, item6_prazo, item6_responsavel, item7_nome, item7_resultado, item7_acao, item7_prazo, item7_responsavel, item8_nome, item8_resultado, item8_acao, item8_prazo, item8_responsavel, item9_nome, item9_resultado, item9_acao, item9_prazo, item9_responsavel):
@@ -668,7 +672,7 @@ class PawareApp(MDApp):
 
         self.strng.get_screen('screen3').ids.my_checklist.clear_widgets()
         
-        self.btn = MDFlatButton(text='Deletar Checklist', on_press=lambda x: self.remove_checklist(id))
+        self.btn = MDFloatingActionButton(icon='trash-can-outline', pos_hint={"center_x": .9, "center_y": 0.1}, on_press=lambda x: self.remove_checklist(id))
         self.strng.get_screen('screen3').add_widget(self.btn)
 
 
