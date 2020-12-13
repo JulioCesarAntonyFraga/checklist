@@ -213,6 +213,8 @@ class PawareApp(MDApp):
                 self.strng.get_screen('profile').ids.profile_name_input.text = nome
                 self.strng.get_screen('profile').ids.profile_email_input.text = email
 
+                self.load_checklist()
+
             except Exception as erro:
                 print(erro)
 
@@ -389,6 +391,7 @@ class PawareApp(MDApp):
             }
 
         col_lv.insert_one(lv)
+        self.load_checklist()
 
     ##################CONFIRMAÇAO DE SAIDA APP################
     dialog = None
@@ -475,6 +478,9 @@ class PawareApp(MDApp):
                     "_id": ObjectId(id)
                 }
             )
+
+            self.load_checklist()
+
         except Exception as erro:
             print(erro)
 
@@ -639,6 +645,7 @@ class PawareApp(MDApp):
             self.strng.get_screen('profile').ids.save_profile_button.disabled = True
 
     def load_checklist(self):
+        self.strng.get_screen('screen1').ids.checklist.clear_widgets()
         myclient = pymongo.MongoClient("mongodb+srv://julio:senha@cluster0.pn3vb.mongodb.net/kivyapp?retryWrites=true&w=majority")
         db = myclient["kivyapp"]
         col_lv = db["lvs"]
