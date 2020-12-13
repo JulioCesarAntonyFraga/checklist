@@ -4,7 +4,7 @@ from kivy.lang import Builder
 from kivymd.app import MDApp
 from kivy.uix.screenmanager import Screen, ScreenManager
 from kivymd.uix.dialog import MDDialog
-from kivymd.uix.button import MDFlatButton, MDRaisedButton, MDFloatingActionButton
+from kivymd.uix.button import MDFlatButton, MDRaisedButton, MDFloatingActionButton, MDRectangleFlatIconButton
 from kivy.storage.jsonstore import JsonStore
 from kivymd.uix.picker import MDDatePicker
 from datetime import date
@@ -463,7 +463,7 @@ class PawareApp(MDApp):
         self.change_screen_to_checklists()
 
     #################REMOVE WIDGET CHECKLIST##################
-    def remove_checklist(self):
+    def remove_checklist(self, id):
         try:
             myclient = pymongo.MongoClient(
                 "mongodb+srv://julio:senha@cluster0.pn3vb.mongodb.net/kivyapp?retryWrites=true&w=majority")
@@ -472,7 +472,7 @@ class PawareApp(MDApp):
 
             col_lv = col_lv.delete_one(
                 {
-                    "_id": ObjectId("id do bagulho")
+                    "_id": ObjectId(id)
                 }
             )
         except Exception as erro:
@@ -661,6 +661,10 @@ class PawareApp(MDApp):
 
         self.strng.get_screen('screen3').ids.my_checklist.clear_widgets()
         
+        self.btn = MDFlatButton(text='Deletar Checklist', on_press=lambda x: self.remove_checklist(id))
+        self.strng.get_screen('screen3').add_widget(self.btn)
+
+
         items = {
             "item1_nome": item1_nome,
             "item1_resultado": item1_resultado,
