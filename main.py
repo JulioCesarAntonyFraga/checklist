@@ -231,6 +231,19 @@ class PawareApp(MDApp):
     def build(self):
         self.strng = Builder.load_file('conteudos.kv')
         return self.strng
+        name = self.strng.get_screen('profile').ids.profile_name_input.text
+        email = self.strng.get_screen('profile').ids.profile_email_input.text
+        
+
+    def chek_profile_inputs(self):
+        name = self.strng.get_screen('profile').ids.profile_name_input.text
+        email = self.strng.get_screen('profile').ids.profile_email_input.text
+
+        if name != [] and email != []:
+            self.strng.get_screen('profile').ids.save_profile_button.disabled = False
+
+    def disable_save_button(self):
+        self.strng.get_screen('profile').ids.save_profile_button.disabled = True
 
     #############FUNCAO AO INICIAR O APP ELE VAI CARREGAR ISSO ANTES DE MOSTRAR TELA#################
     def on_start(self):
@@ -638,13 +651,11 @@ class PawareApp(MDApp):
 
             self.strng.get_screen('profile').ids.profile_name_input.disabled = False
 
-            self.strng.get_screen('profile').ids.save_profile_button.disabled = False
         else:
             self.strng.get_screen('profile').ids.profile_email_input.disabled = True
 
             self.strng.get_screen('profile').ids.profile_name_input.disabled = True
 
-            self.strng.get_screen('profile').ids.save_profile_button.disabled = True
 
     def load_checklist(self):
         self.strng.get_screen('screen1').ids.checklist.clear_widgets()

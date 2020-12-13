@@ -406,6 +406,15 @@ ScreenManager:
 
         Widget:
 
+    MDFillRoundFlatIconButton:
+        id:check
+        text: 'CONFIRMAR'
+        icon: 'alert-circle-outline'
+        pos_hint: {'center_x':0.5,'center_y':0.25}
+        size: sp(140), sp(40)
+        on_press: 
+            app.chek_profile_inputs()
+
     MDTextField:
         id: profile_email_input
         text: app.email_perfil_toolbar
@@ -415,6 +424,7 @@ ScreenManager:
         icon_right: 'account'
         icon_right_color: app.theme_cls.primary_color
         disabled: 'true'
+        on_focus: app.disable_save_button()
 
     MDTextField:
         id: profile_name_input
@@ -425,6 +435,7 @@ ScreenManager:
         icon_right: 'account'
         icon_right_color: app.theme_cls.primary_color
         disabled: 'true'
+        on_focus: app.disable_save_button()
 
 
     MDFloatingActionButton:
@@ -432,7 +443,7 @@ ScreenManager:
         disabled: 'true'
         icon: 'check'
         md_bg_color:app.theme_cls.primary_color
-        pos_hint: {'center_x':0.50,'center_y':0.26}
+        pos_hint: {'center_x':0.90,'center_y':0.26}
         user_font_size : '15sp'
         on_press:
             app.enable_profile_inputs()
