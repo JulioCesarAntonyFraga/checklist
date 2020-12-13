@@ -225,8 +225,9 @@ class PawareApp(MDApp):
         email = self.strng.get_screen('profile').ids.profile_email_input.text
         self.store.put('UserInfo', name=name, email=email)
         self.set_refresh()
+        self.strng.get_screen('profile').ids.save_profile_button.disabled = True
 
-        #######################CARREGAMENTO E CONTRUCAO AO INICIAR O APP##############
+    #######################CARREGAMENTO E CONTRUCAO AO INICIAR O APP##############
 
     def build(self):
         self.strng = Builder.load_file('conteudos.kv')
@@ -239,11 +240,12 @@ class PawareApp(MDApp):
         name = self.strng.get_screen('profile').ids.profile_name_input.text
         email = self.strng.get_screen('profile').ids.profile_email_input.text
 
-        if name != [] and email != []:
+        if name != '' and email != '':
+            print(email, name)
             self.strng.get_screen('profile').ids.save_profile_button.disabled = False
 
-    def disable_save_button(self):
-        self.strng.get_screen('profile').ids.save_profile_button.disabled = True
+        else:
+            self.strng.get_screen('profile').ids.save_profile_button.disabled = True
 
     #############FUNCAO AO INICIAR O APP ELE VAI CARREGAR ISSO ANTES DE MOSTRAR TELA#################
     def on_start(self):
