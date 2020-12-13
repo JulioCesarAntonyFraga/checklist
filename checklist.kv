@@ -2,7 +2,10 @@
 #:import Snackbar kivymd.uix.snackbar.Snackbar
 #:import Clock kivy.clock.Clock
 #:import partial functools.partial
+
 ScreenManager:
+    LoginScreen:
+    RegisterScreen:
     WelcomeScreen:
     UsernameScreen:
     DOB:
@@ -23,151 +26,255 @@ ScreenManager:
     Profile:
 
 
+<CheckBoxLabel@ButtonBehavior+MDLabel>:
+    text: ""
 
-<Content>:
+
+<LoginScreen>:
+    name: "login"
+
+    BoxLayout:
+        orientation: "vertical"
+
+        MDTextField:
+            id: email_input
+            hint_text: "Email"
+            helper_text_mode: "on_error"
+
+        MDTextField:
+            id: password_input
+            hint_text: "Senha"
+            helper_text_mode: "on_error"
+
+        BoxLayout:
+
+            MDCheckbox:
+                id: remember_input
+                size_hint: None, None
+                size: "48dp", "48dp"
+                pos_hint: {"center_x": .5, "center_y": .5}
+                active: False
+
+            CheckBoxLabel:
+                text: "Lembrar-me"
+                on_press: root.ids.remember_input.active = not root.ids.remember_input.active
+
+        MDRaisedButton:
+            text: "Entrar"
+            on_press: root.login()
+
+        MDRaisedButton:
+            text: "Cadastre-se"
+            on_press: root.manager.current = "register"
+
+
+<RegisterScreen>:
+    name: "register"
+
+    BoxLayout:
+        orientation: "vertical"
+
+        MDTextField:
+            id: fisrt_name_input
+            hint_text: "Nome"
+
+        MDTextField:
+            id: last_name_input
+            hint_text: "Sobrenome"
+
+        MDTextField:
+            id: email_input
+            hint_text: "Email"
+
+        MDTextField:
+            id: password1_input
+            hint_text: "Senha"
+
+        MDTextField:
+            id: password2_input
+            hint_text: "Repita a senha"
+
+        MDRaisedButton:
+            text: "Cadastrar"
+            on_press: root.register()
+
+        MDRaisedButton:
+            text: "Entrar"
+            on_press: root.manager.current = "login"
+
+
+<ExpansionpanelContent@BoxLayout>:
+    size_hint: 1, None
+    height: self.minimum_height
+    orientation: "vertical"
+
+    adaptive_height: True
+
+    ThreeLineIconListItem:
+        id: panel_item_name
+
+        text: "test"
+        secondary_text: "Mobile"
+        tertiary_text: "teste"
+
+        IconLeftWidget:
+            icon: "alert"
+
+
+<Content@BoxLayout>:
     orientation: "vertical"
     padding: dp(10)
     spacing: dp(10)
     size_hint_y: None
     height: self.minimum_height
 
-    MDList:
-        id: list
+    OneLineAvatarIconListItem:
+        IconLeftWidget:
+            icon: "check"
+
+        IconLeftWidget:
+            icon: "file-pdf"
+
+        IconLeftWidget:
+            icon: "share-variant"
+
+        IconRightWidget:
+            icon: "delete"
+            on_press:
+                app.delete_item(self)
 
 
-    
+<WelcomeScreen@Screen>:
+    name : "welcomescreen"
 
-<WelcomeScreen>:
-    name : 'welcomescreen'
-    
     BoxLayout:
-        orientation: 'vertical'
+        orientation: "vertical"
         MDToolbar:
-            title: 'Paware Softwares'
+            title: "Paware Softwares"
             right_action_items: [["exit-run", lambda x: app.show_alert_dialog()]]
             elevation:4
 
         Widget:
 
     MDFloatingActionButton:
-        icon:'arrow-right'
+        icon:"arrow-right"
         md_bg_color:app.theme_cls.primary_color
-        user_font_size : '15sp'
-        pos_hint: {'center_x':0.5,'center_y':0.47}
+        user_font_size : "15sp"
+        pos_hint: {"center_x":0.5,"center_y":0.47}
         on_press:
-            root.manager.current = 'usernamescreen'
-            root.manager.transition.direction = 'left'
+            root.manager.current = "usernamescreen"
+            root.manager.transition.direction = "left"
     MDProgressBar:
         value:30
-        pos_hint:{'center_y' : 0.02}
+        pos_hint:{"center_y" : 0.02}
 
-<UsernameScreen>:
-    name:'usernamescreen'
+<UsernameScreen@Screen>:
+    name:"usernamescreen"
 
     BoxLayout:
-        orientation: 'vertical'
+        orientation: "vertical"
         MDToolbar:
-            title: 'Paware Softwares '
+            title: "Paware Softwares "
             right_action_items: [["exit-run", lambda x: app.show_alert_dialog()]]
             elevation:5
 
         Widget:
 
     MDFloatingActionButton:
-        icon: 'arrow-left'
+        icon: "arrow-left"
         md_bg_color:app.theme_cls.primary_color
-        pos_hint: {'center_x':0.15,'center_y':0.1}
-        user_font_size : '13sp'
+        pos_hint: {"center_x":0.15,"center_y":0.1}
+        user_font_size : "13sp"
         on_press:
-            root.manager.current = 'welcomescreen'
-            root.manager.transition.direction = 'right'
+            root.manager.current = "welcomescreen"
+            root.manager.transition.direction = "right"
     MDFloatingActionButton:
         id:disabled_button
         disabled: True
-        icon: 'arrow-right'
+        icon: "arrow-right"
         md_bg_color:app.theme_cls.primary_color
-        pos_hint: {'center_x':0.85,'center_y':0.1}
-        user_font_size : '13sp'
+        pos_hint: {"center_x":0.85,"center_y":0.1}
+        user_font_size : "13sp"
         on_press:
-            root.manager.current = 'dob'
-            root.manager.transition.direction = 'left'
+            root.manager.current = "dob"
+            root.manager.transition.direction = "left"
     MDProgressBar:
         value:60
-        pos_hint: {'center_y':0.02}
+        pos_hint: {"center_y":0.02}
     MDTextField:
         id:username_text_fied
-        pos_hint: {'center_x':0.5,'center_y':0.6}
+        pos_hint: {"center_x":0.5,"center_y":0.6}
         size_hint: (0.7,0.1)
-        hint_text : 'Seu nome'
-        helper_text: 'Obrigatório'
-        helper_text_mode: 'on_error'
-        icon_right: 'account'
+        hint_text : "Seu nome"
+        helper_text: "Obrigatório"
+        helper_text_mode: "on_error"
+        icon_right: "account"
         icon_right_color: app.theme_cls.primary_color
         required : True
     MDFloatingActionButton:
-        icon:'account-plus'
+        icon:"account-plus"
         md_bg_color:app.theme_cls.primary_color
-        pos_hint: {'center_x':0.5,'center_y':0.35}
-        user_font_size: '15sp'
+        pos_hint: {"center_x":0.5,"center_y":0.35}
+        user_font_size: "15sp"
         on_press: app.check_username()
-<DOB>:
-    name:'dob'
+<DOB@Screen>:
+    name:"dob"
 
     BoxLayout:
-        orientation: 'vertical'
+        orientation: "vertical"
         MDToolbar:
-            title: 'Paware Softwares'
+            title: "Paware Softwares"
             right_action_items: [["exit-run", lambda x: app.show_alert_dialog()]]
             elevation:5
 
         Widget:
 
     MDFloatingActionButton:
-        icon: 'arrow-left'
+        icon: "arrow-left"
         md_bg_color:app.theme_cls.primary_color
-        pos_hint: {'center_x':0.15,'center_y':0.1}
-        user_font_size : '13sp'
+        pos_hint: {"center_x":0.15,"center_y":0.1}
+        user_font_size : "13sp"
         on_press:
-            root.manager.current = 'usernamescreen'
-            root.manager.transition.direction = 'right'
+            root.manager.current = "usernamescreen"
+            root.manager.transition.direction = "right"
     MDFloatingActionButton:
         id:disabled_button2
         disabled: True
-        icon: 'arrow-right'
+        icon: "arrow-right"
         md_bg_color:app.theme_cls.primary_color
-        pos_hint: {'center_x':0.85,'center_y':0.1}
-        user_font_size : '13sp'
+        pos_hint: {"center_x":0.85,"center_y":0.1}
+        user_font_size : "13sp"
         on_press:
-            root.manager.current = 'screen1'
-            root.manager.transition.direction = 'left'
+            root.manager.current = "screen1"
+            root.manager.transition.direction = "left"
     MDProgressBar:
         value:60
-        pos_hint: {'center_y':0.02}
+        pos_hint: {"center_y":0.02}
     MDTextField:
         id:email_text_fied
-        pos_hint: {'center_x':0.5,'center_y':0.6}
+        pos_hint: {"center_x":0.5,"center_y":0.6}
         size_hint: (0.7,0.1)
-        hint_text : 'Seu Email'
-        helper_text: 'Obrigatório'
-        helper_text_mode: 'on_error'
-        icon_right: 'account'
+        hint_text : "Seu Email"
+        helper_text: "Obrigatório"
+        helper_text_mode: "on_error"
+        icon_right: "account"
         icon_right_color: app.theme_cls.primary_color
         required : True
     MDFloatingActionButton:
-        icon:'account-plus'
+        icon:"account-plus"
         md_bg_color:app.theme_cls.primary_color
-        pos_hint: {'center_x':0.5,'center_y':0.35}
-        user_font_size: '15sp'
+        pos_hint: {"center_x":0.5,"center_y":0.35}
+        user_font_size: "15sp"
         on_press: app.get_email()
     
-<Screen1>:
-    name:'screen1'
+<Screen1@Screen>:
+    name:"screen1"
 
     BoxLayout:
-        orientation: 'vertical'
+        orientation: "vertical"
         MDToolbar:
-            title: 'CheckLists'
-            left_action_items: [["menu", lambda x: nav_drawer.set_state()]]
+            title: "CheckLists"
+            left_action_items: [["menu", lambda x: nav_drawer.toggle_nav_drawer()]]
             right_action_items: [["plus", lambda x: app.start_checklist()]]
             size_hint_y: 0.11
             elevation:5
@@ -176,7 +283,7 @@ ScreenManager:
 
     ScrollView:
         size_hint: (0.97, 0.89)
-        pos_hint: {'center_x': .51, 'y': 0.01}
+        pos_hint: {"center_x": .51, "y": 0.01}
         MDList:
             id: checklist
             
@@ -186,9 +293,10 @@ ScreenManager:
 
     MDNavigationDrawer:
         id: nav_drawer
+        
 
         ContentNavigationDrawer:
-            orientation: 'vertical'
+            orientation: "vertical"
             padding: "8dp"
             spacing: "8dp"
 
@@ -211,7 +319,6 @@ ScreenManager:
                 font_style: "Caption"
                 height: self.texture_size[1]
 
-           
 
             DrawerList:
                 id: md_list
@@ -219,82 +326,62 @@ ScreenManager:
                 MDList:
                     OneLineIconListItem:
                         text: "CheckLists"
-                        on_press: 
-                            nav_drawer.set_state('close')
-                            root.manager.current = 'screen1'
+                        on_release: root.manager.current = "screen1"
                     
                         IconLeftWidget:
                             icon: "inbox"
-                            on_press: 
-                                nav_drawer.set_state('close')
-                                root.manager.current = 'screen1'
+                            on_release: root.manager.current = "screen1"
                     
                             
                     OneLineIconListItem:
                         text: "Minhas CheckList"
-                        on_press: 
-                            nav_drawer.set_state('close')
-                            root.manager.current = 'screen2'
+                        on_release: root.manager.current = "screen2"
+                        
                     
                         IconLeftWidget:
                             icon: "inbox"
-                            on_press: 
-                                nav_drawer.set_state('close')
-                                root.manager.current = 'screen2'
+                            on_release: root.manager.current = "screen2"
 
                         
                     OneLineIconListItem:
                         text: "Nova CheckList"
-                        on_press: 
-                            nav_drawer.set_state('close')
-                            root.manager.current = 'screen5'
+                        on_release: root.manager.current = "screen5"
                         
                     
                         IconLeftWidget:
                             icon: "inbox-arrow-up"
-                            on_press: 
-                                nav_drawer.set_state('close')
-                                root.manager.current = 'screen5'
+                            on_release: root.manager.current = "screen5"
                             
                     
                     OneLineIconListItem:
                         text: "Meu Perfil"
-                        on_press: 
-                            nav_drawer.set_state('close')
-                            root.manager.current = 'profile'
+                        on_release: root.manager.current = "profile"
                     
                         IconLeftWidget:
                             icon: "account"
-                            on_press: 
-                                nav_drawer.set_state('close')
-                                root.manager.current = 'profile'
+                            on_release: root.manager.current = "profile"
 
                     OneLineIconListItem:
                         text: "Sair"
-                        on_press: 
-                            nav_drawer.set_state('close')
-                            app.show_alert_dialog()
+                        on_release: app.show_alert_dialog()
                     
                         IconLeftWidget:
                             icon: "exit-to-app"
-                            on_press: 
-                                nav_drawer.set_state('close')
-                                app.show_alert_dialog()
+                            on_release: app.show_alert_dialog()
                             
     
     
 
 
-<Screen3>:
-    name : 'screen3'
+<Screen3@Screen>:
+    name:"screen3"
 
     BoxLayout:
-        orientation: 'vertical'
+        orientation: "vertical"
         MDToolbar:
             id: screen3_toolbar
-            title: 'CheckList' 
-            left_action_items: [["menu", lambda x: nav_drawer.set_state()]]
-            right_action_items: [["file-document-edit-outline", lambda x: app.printa2()],["check", lambda x: app.printa3()]]
+            left_action_items: [["menu", lambda x: nav_drawer.toggle_nav_drawer()]]
+            right_action_items: [["trash-can-outline", lambda x: app.start_checklist()]]
             size_hint_y: 0.11
             elevation:5
 
@@ -302,16 +389,17 @@ ScreenManager:
 
     ScrollView:
         size_hint: (0.97, 0.89)
-        pos_hint: {'center_x': .51, 'y': 0.001}
-
+        pos_hint: {"center_x": .51, "y": 0.01}
         MDList:
-            id: my_checklist
+            id: box
+            
 
     MDNavigationDrawer:
         id: nav_drawer
+        
 
         ContentNavigationDrawer:
-            orientation: 'vertical'
+            orientation: "vertical"
             padding: "8dp"
             spacing: "8dp"
 
@@ -334,7 +422,6 @@ ScreenManager:
                 font_style: "Caption"
                 height: self.texture_size[1]
 
-           
 
             DrawerList:
                 id: md_list
@@ -342,80 +429,63 @@ ScreenManager:
                 MDList:
                     OneLineIconListItem:
                         text: "CheckLists"
-                        on_press: 
-                            nav_drawer.set_state('close')
-                            root.manager.current = 'screen1'
+                        on_release: root.manager.current = "screen1"
                     
                         IconLeftWidget:
                             icon: "inbox"
-                            on_press: 
-                                nav_drawer.set_state('close')
-                                root.manager.current = 'screen1'
+                            on_release: root.manager.current = "screen1"
                     
                             
                     OneLineIconListItem:
                         text: "Minhas CheckList"
-                        on_press: 
-                            nav_drawer.set_state('close')
-                            root.manager.current = 'screen2'
+                        on_release: root.manager.current = "screen2"
+                        
                     
                         IconLeftWidget:
                             icon: "inbox"
-                            on_press: 
-                                nav_drawer.set_state('close')
-                                root.manager.current = 'screen2'
+                            on_release: root.manager.current = "screen2"
 
                         
                     OneLineIconListItem:
                         text: "Nova CheckList"
-                        on_press: 
-                            nav_drawer.set_state('close')
-                            root.manager.current = 'screen5'
+                        on_release: root.manager.current = "screen5"
                         
                     
                         IconLeftWidget:
                             icon: "inbox-arrow-up"
-                            on_press: 
-                                nav_drawer.set_state('close')
-                                root.manager.current = 'screen5'
+                            on_release: root.manager.current = "screen5"
                             
                     
                     OneLineIconListItem:
                         text: "Meu Perfil"
-                        on_press: 
-                            nav_drawer.set_state('close')
-                            root.manager.current = 'profile'
+                        on_release: root.manager.current = "profile"
                     
                         IconLeftWidget:
                             icon: "account"
-                            on_press: 
-                                nav_drawer.set_state('close')
-                                root.manager.current = 'profile'
+                            on_release: root.manager.current = "profile"
 
                     OneLineIconListItem:
                         text: "Sair"
-                        on_press: 
-                            nav_drawer.set_state('close')
-                            app.show_alert_dialog()
+                        on_release: app.show_alert_dialog()
                     
                         IconLeftWidget:
                             icon: "exit-to-app"
-                            on_press: 
-                                nav_drawer.set_state('close')
-                                app.show_alert_dialog()
+                            on_release: app.show_alert_dialog()
+
+
         
 
     
                             
 
-<Screen2>:
-    name:'screen2'
+<Screen2@Screen>:
+    name:"screen2"
 
     BoxLayout:
-        orientation: 'vertical'
+        orientation: "vertical"
         MDToolbar:
-            title: 'Minhas CheckList'
-            left_action_items: [["menu",  lambda x: nav_drawer2.set_state()]]
+            title: "Minhas CheckList"
+            left_action_items: [["menu",  lambda x: nav_drawer2.toggle_nav_drawer()]]
             right_action_items: [["plus", lambda x: app.start_checklist()]]
             size_hint_y: 0.11
             elevation:5
@@ -432,7 +502,7 @@ ScreenManager:
         id: nav_drawer2
 
         ContentNavigationDrawer:
-            orientation: 'vertical'
+            orientation: "vertical"
             padding: "8dp"
             spacing: "8dp"
 
@@ -463,122 +533,90 @@ ScreenManager:
                 MDList:
                     OneLineIconListItem:
                         text: "CheckLists"
-                        on_press: 
-                            nav_drawer2.set_state('close')
-                            root.manager.current = 'screen1'
+                        on_release: root.manager.current = "screen1"
                     
                         IconLeftWidget:
                             icon: "inbox"
-                            on_press: 
-                                nav_drawer2.set_state('close')
-                                root.manager.current = 'screen1'
+                            on_release: root.manager.current = "screen1"
                     
                             
                     OneLineIconListItem:
                         text: "Minhas CheckList"
-                        on_press: 
-                            nav_drawer2.set_state('close')
-                            root.manager.current = 'screen2'
+                        on_release: root.manager.current = "screen2"
                     
                         IconLeftWidget:
                             icon: "inbox"
-                            on_press: 
-                                nav_drawer2.set_state('close')
-                                root.manager.current = 'screen2'
+                            on_release: root.manager.current = "screen2"
 
                         
                     OneLineIconListItem:
                         text: "Nova CheckList"
-                        on_press: 
-                            nav_drawer2.set_state('close')
-                            root.manager.current = 'screen5'
+                        on_release: root.manager.current = "screen5"
                         
                     
                         IconLeftWidget:
                             icon: "inbox-arrow-up"
-                            on_press: 
-                                nav_drawer2.set_state('close')
-                                root.manager.current = 'screen5'
+                            on_release: root.manager.current = "screen5"
                             
                     
                     OneLineIconListItem:
                         text: "Meu Perfil"
-                        on_press: 
-                            nav_drawer2.set_state('close')
-                            root.manager.current = 'profile'
+                        on_release: root.manager.current = "profile"
                     
                         IconLeftWidget:
                             icon: "account"
-                            on_press: 
-                                nav_drawer2.set_state('close')
-                                root.manager.current = 'profile'
+                            on_release: root.manager.current = "profile"
 
                     OneLineIconListItem:
                         text: "Sair"
-                        on_press: 
-                            nav_drawer2.set_state('close')
-                            app.show_alert_dialog()
+                        on_release: app.show_alert_dialog()
                     
                         IconLeftWidget:
                             icon: "exit-to-app"
-                            on_press: 
-                                nav_drawer2.set_state('close')
-                                app.show_alert_dialog()
-   
-    
+                            on_release: app.show_alert_dialog()
 
 
-
-<Profile>:
-    name : 'profile'
+<Profile@Screen>:
+    name : "profile"
 
     BoxLayout:
-        orientation: 'vertical'
+        orientation: "vertical"
         MDToolbar:
-            title: 'Inicar Verificação'
-            left_action_items: [["menu",  lambda x: nav_drawer4.set_state()]]
+            title: "Inicar Verificação"
+            left_action_items: [["menu",  lambda x: nav_drawer4.toggle_nav_drawer()]]
             right_action_items: [["account-edit", lambda x: app.enable_profile_inputs()]]
             elevation:5
 
         Widget:
 
-    MDFillRoundFlatIconButton:
-        id:check
-        text: 'CONFIRMAR'
-        icon: 'alert-circle-outline'
-        pos_hint: {'center_x':0.5,'center_y':0.25}
-        size: sp(140), sp(40)
-        on_press: 
-            app.chek_profile_inputs()
-
     MDTextField:
         id: profile_email_input
         text: app.email_perfil_toolbar
-        pos_hint: {'center_x':0.5,'center_y':0.4}
+        pos_hint: {"center_x":0.5,"center_y":0.4}
         size_hint: (0.7,0.1)
-        hint_text : 'Email'
-        icon_right: 'account'
+        hint_text : "Email"
+        icon_right: "account"
         icon_right_color: app.theme_cls.primary_color
-        disabled: 'true'
+        disabled: "true"
 
     MDTextField:
         id: profile_name_input
         text: app.name_perfil_toolbar
-        pos_hint: {'center_x':0.5,'center_y':0.5}
+        pos_hint: {"center_x":0.5,"center_y":0.5}
         size_hint: (0.7,0.1)
-        hint_text : 'Nome'
-        icon_right: 'account'
+        hint_text : "Nome"
+        icon_right: "account"
         icon_right_color: app.theme_cls.primary_color
-        disabled: 'true'
+        disabled: "true"
 
 
     MDFloatingActionButton:
         id:save_profile_button
-        disabled: 'true'
-        icon: 'check'
+        disabled: "true"
+        icon: "check"
         md_bg_color:app.theme_cls.primary_color
-        pos_hint: {'center_x':0.90,'center_y':0.26}
-        user_font_size : '15sp'
+        pos_hint: {"center_x":0.50,"center_y":0.26}
+        user_font_size : "15sp"
         on_press:
             app.enable_profile_inputs()
             app.update_profile()
@@ -589,7 +627,7 @@ ScreenManager:
         id: nav_drawer4
 
         ContentNavigationDrawer:
-            orientation: 'vertical'
+            orientation: "vertical"
             padding: "8dp"
             spacing: "8dp"
 
@@ -612,7 +650,6 @@ ScreenManager:
                 font_style: "Caption"
                 height: self.texture_size[1]
 
-           
 
             DrawerList:
                 id: md_list
@@ -620,98 +657,75 @@ ScreenManager:
                 MDList:
                     OneLineIconListItem:
                         text: "CheckLists"
-                        on_press: 
-                            nav_drawer4.set_state('close')
-                            root.manager.current = 'screen1'
+                        on_press:
+                            root.manager.current = "screen1"
+
                     
                         IconLeftWidget:
                             icon: "inbox"
-                            on_press: 
-                                nav_drawer4.set_state('close')
-                                root.manager.current = 'screen1'
+                            on_release: root.manager.current = "screen1"
                     
                             
                     OneLineIconListItem:
                         text: "Minhas CheckList"
-                        on_press: 
-                            nav_drawer4.set_state('close')
-                            root.manager.current = 'screen2'
+                        on_release: root.manager.current = "screen2"
                     
                         IconLeftWidget:
                             icon: "inbox"
-                            on_press: 
-                                nav_drawer4.set_state('close')
-                                root.manager.current = 'screen2'
+                            on_release: root.manager.current = "screen2"
 
                         
                     OneLineIconListItem:
                         text: "Nova CheckList"
-                        on_press: 
-                            nav_drawer4.set_state('close')
-                            root.manager.current = 'screen5'
+                        on_release: root.manager.current = "screen5"
                         
                     
                         IconLeftWidget:
                             icon: "inbox-arrow-up"
-                            on_press: 
-                                nav_drawer4.set_state('close')
-                                root.manager.current = 'screen5'
+                            on_release: root.manager.current = "screen5"
                             
                     
                     OneLineIconListItem:
                         text: "Meu Perfil"
-                        on_press: 
-                            nav_drawer4.set_state('close')
-                            root.manager.current = 'profile'
+                        on_release: root.manager.current = "profile"
                     
                         IconLeftWidget:
                             icon: "account"
-                            on_press: 
-                                nav_drawer4.set_state('close')
-                                root.manager.current = 'profile'
+                            on_release: root.manager.current = "profile"
 
                     OneLineIconListItem:
                         text: "Sair"
-                        on_press: 
-                            nav_drawer4.set_state('close')
-                            app.show_alert_dialog()
+                        on_release: app.show_alert_dialog()
                     
                         IconLeftWidget:
                             icon: "exit-to-app"
-                            on_press: 
-                                nav_drawer4.set_state('close')
-                                app.show_alert_dialog()
+                            on_release: app.show_alert_dialog()
 
 
-
-
-
-
-
-
-<Screen5>:
-    name : 'screen5'
+<Screen5@Screen>:
+    name : "screen5"
 
     BoxLayout:
-        orientation: 'vertical'
+        orientation: "vertical"
         MDToolbar:
-            title: 'Inicar Verificação'
-            left_action_items: [["menu",  lambda x: nav_drawer4.set_state()]]
+            title: "Inicar Verificação"
+            left_action_items: [["menu",  lambda x: nav_drawer4.toggle_nav_drawer()]]
             elevation:5
 
         Widget:
 
     Image:
-        source: 'ilustration1.png'
+        source: "ilustration1.png"
         size: self.texture_size
-        pos_hint: {'center_x':0.5,'center_y':0.5}
+        pos_hint: {"center_x":0.5,"center_y":0.5}
 
 
     MDNavigationDrawer:
+        type: "standard"
         id: nav_drawer4
 
         ContentNavigationDrawer:
-            orientation: 'vertical'
+            orientation: "vertical"
             padding: "8dp"
             spacing: "8dp"
 
@@ -734,93 +748,66 @@ ScreenManager:
                 font_style: "Caption"
                 height: self.texture_size[1]
 
-           
 
             DrawerList:
                 id: md_list
-                
+
                 MDList:
                     OneLineIconListItem:
                         text: "CheckLists"
-                        on_press: 
-                            nav_drawer4.set_state('close')
-                            root.manager.current = 'screen1'
-                    
+                        on_release: root.manager.current = "screen1"
+
                         IconLeftWidget:
                             icon: "inbox"
-                            on_press: 
-                                nav_drawer4.set_state('close')
-                                root.manager.current = 'screen1'
-                    
-                            
+                            on_release: root.manager.current = "screen1"
+
                     OneLineIconListItem:
                         text: "Minhas CheckList"
-                        on_press: 
-                            nav_drawer4.set_state('close')
-                            root.manager.current = 'screen2'
-                    
+                        on_release: root.manager.current = "screen2"
+
                         IconLeftWidget:
                             icon: "inbox"
-                            on_press: 
-                                nav_drawer4.set_state('close')
-                                root.manager.current = 'screen2'
+                            on_release: root.manager.current = "screen2"
 
-                        
                     OneLineIconListItem:
                         text: "Nova CheckList"
-                        on_press: 
-                            nav_drawer4.set_state('close')
-                            root.manager.current = 'screen5'
-                        
-                    
+                        on_release: root.manager.current = "screen5"
+
                         IconLeftWidget:
                             icon: "inbox-arrow-up"
-                            on_press: 
-                                nav_drawer4.set_state('close')
-                                root.manager.current = 'screen5'
-                            
-                    
+                            on_release: root.manager.current = "screen5"
+
                     OneLineIconListItem:
                         text: "Meu Perfil"
-                        on_press: 
-                            nav_drawer4.set_state('close')
-                            root.manager.current = 'profile'
-                    
+                        on_release: root.manager.current = "profile"
+
                         IconLeftWidget:
                             icon: "account"
-                            on_press: 
-                                nav_drawer4.set_state('close')
-                                root.manager.current = 'profile'
+                            on_release: root.manager.current = "profile"
 
                     OneLineIconListItem:
                         text: "Sair"
-                        on_press: 
-                            nav_drawer4.set_state('close')
-                            app.show_alert_dialog()
-                    
+                        on_release: app.show_alert_dialog()
+
                         IconLeftWidget:
                             icon: "exit-to-app"
-                            on_press: 
-                                nav_drawer4.set_state('close')
-                                app.show_alert_dialog()
+                            on_release: app.show_alert_dialog()
 
     MDFloatingActionButton:
-        icon:'arrow-right'
+        icon:"arrow-right"
         md_bg_color:app.theme_cls.primary_color
-        user_font_size : '13sp'
-        pos_hint: {'center_x':0.85,'center_y':0.47}
+        user_font_size : "13sp"
+        pos_hint: {"center_x":0.85,"center_y":0.47}
         on_press:
-            root.manager.current = 'checklistName'
-            root.manager.transition.direction = 'left'
-
-
-<ChecklistName>:
-    name:'checklistName'
+            root.manager.current = "checklistName"
+            root.manager.transition.direction = "left"
+<ChecklistName@Screen>:
+    name:"checklistName"
 
     BoxLayout:
-        orientation: 'vertical'
+        orientation: "vertical"
         MDToolbar:
-            title: 'Iniciar Verificação'
+            title: "Iniciar Verificação"
             right_action_items: [["exit-run", lambda x: app.show_alert_checklist_exit_operation()]]
             elevation:5
 
@@ -828,122 +815,122 @@ ScreenManager:
 
     MDFillRoundFlatIconButton:
         id:check1
-        text: 'CONFIRMAR'
-        icon: 'alert-circle-outline'
-        pos_hint: {'center_x':0.5,'center_y':0.4}
+        text: "CONFIRMAR"
+        icon: "alert-circle-outline"
+        pos_hint: {"center_x":0.5,"center_y":0.4}
         size: sp(140), sp(40)
         on_press: app.check_lv_name_and_description()
 
     MDFloatingActionButton:
-        icon: 'arrow-left'
+        icon: "arrow-left"
         md_bg_color:app.theme_cls.primary_color
-        pos_hint: {'center_x':0.15,'center_y':0.1}
-        user_font_size : '13sp'
+        pos_hint: {"center_x":0.15,"center_y":0.1}
+        user_font_size : "13sp"
         on_press:
-            root.manager.current = 'screen5'
-            root.manager.transition.direction = 'right'
+            root.manager.current = "screen5"
+            root.manager.transition.direction = "right"
     MDFloatingActionButton:
         id:lv_name_button
         disabled: True
-        icon: 'arrow-right'
+        icon: "arrow-right"
         md_bg_color:app.theme_cls.primary_color
-        pos_hint: {'center_x':0.85,'center_y':0.1}
-        user_font_size : '13sp'
+        pos_hint: {"center_x":0.85,"center_y":0.1}
+        user_font_size : "13sp"
         on_press:
-            root.manager.current = 'checklistItem1'
-            root.manager.transition.direction = 'left'
+            root.manager.current = "checklistItem1"
+            root.manager.transition.direction = "left"
     MDProgressBar:
         value:10.10
-        pos_hint: {'center_y':0.02}
+        pos_hint: {"center_y":0.02}
 
 
 
     MDTextField:
         id:name_text_field_lv
-        pos_hint: {'center_x':0.5,'center_y':0.70}
+        pos_hint: {"center_x":0.5,"center_y":0.70}
         size_hint: (0.7,0.1)
-        hint_text : 'Nome da LV'
-        helper_text: 'Obrigatório'
-        helper_text_mode: 'on_error'
-        icon_right: 'book'
+        hint_text : "Nome da LV"
+        helper_text: "Obrigatório"
+        helper_text_mode: "on_error"
+        icon_right: "book"
         icon_right_color: app.theme_cls.primary_color
         required : True
 
     MDTextField:
         id: descricao_text_field_lv
-        pos_hint: {'center_x':0.5,'center_y':0.60}
+        pos_hint: {"center_x":0.5,"center_y":0.60}
         size_hint: (0.7,0.1)
-        hint_text : 'Descrição'
-        helper_text: 'Obrigatório'
-        helper_text_mode: 'on_error'
-        icon_right: 'book'
+        hint_text : "Descrição"
+        helper_text: "Obrigatório"
+        helper_text_mode: "on_error"
+        icon_right: "book"
         icon_right_color: app.theme_cls.primary_color
         required : True
 
 
 #Item 1
-<ChecklistItem1>:
-    name:'checklistItem1'
+<ChecklistItem1@Screen>:
+    name:"checklistItem1"
 
     BoxLayout:
-        orientation: 'vertical'
+        orientation: "vertical"
         MDToolbar:
-            title: 'Item 01'
+            title: "Item 01"
             right_action_items: [["exit-run", lambda x: app.show_alert_checklist_exit_operation()]]
             elevation:5
 
         Widget:
 
     MDFloatingActionButton:
-        icon: 'arrow-left'
+        icon: "arrow-left"
         md_bg_color:app.theme_cls.primary_color
-        pos_hint: {'center_x':0.15,'center_y':0.1}
-        user_font_size : '13sp'
+        pos_hint: {"center_x":0.15,"center_y":0.1}
+        user_font_size : "13sp"
         on_press:
-            root.manager.current = 'checklistName'
-            root.manager.transition.direction = 'right'
+            root.manager.current = "checklistName"
+            root.manager.transition.direction = "right"
     MDFloatingActionButton:
         id:next_button
         disabled: True
-        icon: 'arrow-right'
+        icon: "arrow-right"
         md_bg_color:app.theme_cls.primary_color
-        pos_hint: {'center_x':0.85,'center_y':0.1}
-        user_font_size : '13sp'
+        pos_hint: {"center_x":0.85,"center_y":0.1}
+        user_font_size : "13sp"
         on_press:
-            root.manager.current = 'checklistItem2'
-            root.manager.transition.direction = 'left'
+            root.manager.current = "checklistItem2"
+            root.manager.transition.direction = "left"
             app.check_lv_items()
     MDProgressBar:
         value:11.11
-        pos_hint: {'center_y':0.02}
+        pos_hint: {"center_y":0.02}
 
     MDLabel:
         halign: "center"
-        pos_hint: {'center_y':0.81}
-        text: 'Os locais adjacentes das caixas estão limpos e organizados?'
-        font_style: 'Button'
-        font_size: '15sp'
+        pos_hint: {"center_y":0.81}
+        text: "Os locais adjacentes das caixas estão limpos e organizados?"
+        font_style: "Button"
+        font_size: "15sp"
 
 
     MDLabel:
         halign: "center"
-        pos_hint: {'center_x': 0.27, 'center_y':0.66}
-        text: 'C'
+        pos_hint: {"center_x": 0.27, "center_y":0.66}
+        text: "C"
         
     MDLabel:
         halign: "center"
-        pos_hint: {'center_x': 0.53, 'center_y':0.66}
-        text: 'NC'
+        pos_hint: {"center_x": 0.53, "center_y":0.66}
+        text: "NC"
 
     MDLabel:
         halign: "center"
-        pos_hint: {'center_x': 0.79, 'center_y':0.66}
-        text: 'NA'
+        pos_hint: {"center_x": 0.79, "center_y":0.66}
+        text: "NA"
 
 
     FloatLayout:
 
-        orientation: 'vertical'
+        orientation: "vertical"
 
         MDCheckbox:
             on_press:
@@ -951,11 +938,11 @@ ScreenManager:
                 app.enable_items_inputs()
                 app.disable_nextButton()
             id: radio_item_c
-            group: 'group'
+            group: "group"
             size_hint: None, None
             size: dp(90), dp(90)
             active: False
-            pos_hint: {'center_x': 0.18, 'center_y': 0.66}
+            pos_hint: {"center_x": 0.18, "center_y": 0.66}
 
         MDCheckbox:
             on_press:
@@ -963,10 +950,10 @@ ScreenManager:
                 app.disable_nextButton()
             active: False
             id: radio_item_nc
-            group: 'group'
+            group: "group"
             size_hint: None, None
             size: dp(90), dp(90)
-            pos_hint: {'center_x': 0.43, 'center_y': 0.66}
+            pos_hint: {"center_x": 0.43, "center_y": 0.66}
 
         MDCheckbox:
             on_press:
@@ -975,66 +962,66 @@ ScreenManager:
                 app.disable_nextButton()
             active: False
             id: radio_item_na
-            group: 'group'
+            group: "group"
             size_hint: None, None
             size: dp(90), dp(90)
-            pos_hint: {'center_x': 0.69, 'center_y': 0.66}
+            pos_hint: {"center_x": 0.69, "center_y": 0.66}
 
 
     MDTextField:
         id: acao_item
         disabled: True
-        pos_hint: {'center_x':0.5,'center_y':0.55}
+        pos_hint: {"center_x":0.5,"center_y":0.55}
         size_hint: (0.7,0.1)
-        hint_text : 'Ação'
-        helper_text: 'Obrigatório para uma não conformidade'
-        helper_text_mode: 'on_error'
-        icon_right: 'alert'
+        hint_text : "Ação"
+        helper_text: "Obrigatório para uma não conformidade"
+        helper_text_mode: "on_error"
+        icon_right: "alert"
         icon_right_color: app.theme_cls.primary_color
         required : True
 
     MDTextField:
         disabled: True
         id: responsavel_item
-        pos_hint: {'center_x':0.5,'center_y':0.45}
+        pos_hint: {"center_x":0.5,"center_y":0.45}
         size_hint: (0.7,0.1)
-        hint_text : 'Responsável'
-        helper_text: 'Obrigatório para uma não conformidade'
-        helper_text_mode: 'on_error'
-        icon_right: 'alert'
+        hint_text : "Responsável"
+        helper_text: "Obrigatório para uma não conformidade"
+        helper_text_mode: "on_error"
+        icon_right: "alert"
         icon_right_color: app.theme_cls.primary_color
         required : True
 
     MDTextField:
         disabled: True
         id: prazo_item
-        pos_hint: {'center_x':0.5,'center_y':0.35}
+        pos_hint: {"center_x":0.5,"center_y":0.35}
         size_hint: (0.7,0.1)
-        hint_text : 'Prazo'
-        icon_right: 'calendar'
-        helper_text: 'Obrigatório para uma não conformidade'
-        helper_text_mode: 'on_error'
+        hint_text : "Prazo"
+        icon_right: "calendar"
+        helper_text: "Obrigatório para uma não conformidade"
+        helper_text_mode: "on_error"
         icon_right_color: app.theme_cls.primary_color
         required : True
 
     MDFillRoundFlatIconButton:
         id:check
-        text: 'CONFIRMAR'
-        icon: 'alert-circle-outline'
-        pos_hint: {'center_x':0.5,'center_y':0.25}
+        text: "CONFIRMAR"
+        icon: "alert-circle-outline"
+        pos_hint: {"center_x":0.5,"center_y":0.25}
         size: sp(140), sp(40)
         on_press: 
             app.check_lv_items()
 
 
 #Item 2
-<ChecklistItem2>:
-    name:'checklistItem2'
+<ChecklistItem2@Screen>:
+    name:"checklistItem2"
 
     BoxLayout:
-        orientation: 'vertical'
+        orientation: "vertical"
         MDToolbar:
-            title: 'Item 02'
+            title: "Item 02"
             right_action_items: [["exit-run", lambda x: app.show_alert_checklist_exit_operation()]]
             elevation:5
 
@@ -1042,55 +1029,55 @@ ScreenManager:
 
 
     MDFloatingActionButton:
-        icon: 'arrow-left'
+        icon: "arrow-left"
         md_bg_color:app.theme_cls.primary_color
-        pos_hint: {'center_x':0.15,'center_y':0.1}
-        user_font_size : '13sp'
+        pos_hint: {"center_x":0.15,"center_y":0.1}
+        user_font_size : "13sp"
         on_press:
-            root.manager.current = 'checklistItem1'
-            root.manager.transition.direction = 'right'
+            root.manager.current = "checklistItem1"
+            root.manager.transition.direction = "right"
     MDFloatingActionButton:
         id:next_button
         disabled: True
-        icon: 'arrow-right'
+        icon: "arrow-right"
         md_bg_color:app.theme_cls.primary_color
-        pos_hint: {'center_x':0.85,'center_y':0.1}
-        user_font_size : '13sp'
+        pos_hint: {"center_x":0.85,"center_y":0.1}
+        user_font_size : "13sp"
         on_press:
-            root.manager.current = 'checklistItem3'
-            root.manager.transition.direction = 'left'
+            root.manager.current = "checklistItem3"
+            root.manager.transition.direction = "left"
 
     MDProgressBar:
         value:20.20
-        pos_hint: {'center_y':0.02}
+        pos_hint: {"center_y":0.02}
 
     MDLabel:
         halign: "center"
-        pos_hint: {'center_y':0.81}
-        text: 'As caixas estão com acúmulo excessivo de gordura?'
-        font_style: 'Button'
-        font_size: '15sp'
+        pos_hint: {"center_y":0.81}
+        text: "As caixas estão com acúmulo excessivo de gordura?"
+        font_style: "Button"
+        font_size: "15sp"
 
 
     MDLabel:
         halign: "center"
-        pos_hint: {'center_x': 0.27, 'center_y':0.66}
-        text: 'C'
+        pos_hint: {"center_x": 0.27, "center_y":0.66}
+        text: "C"
         
     MDLabel:
         halign: "center"
-        pos_hint: {'center_x': 0.53, 'center_y':0.66}
-        text: 'NC'
+        pos_hint: {"center_x": 0.53, "center_y":0.66}
+        text: "NC"
 
     MDLabel:
         halign: "center"
-        pos_hint: {'center_x': 0.79, 'center_y':0.66}
-        text: 'NA'
+        pos_hint: {"center_x": 0.79, "center_y":0.66}
+        text: "NA"
 
 
     FloatLayout:
 
-        orientation: 'vertical'
+        orientation: "vertical"
 
         MDCheckbox:
             on_press:
@@ -1098,11 +1085,11 @@ ScreenManager:
                 app.enable_items_inputs()
                 app.disable_nextButton()
             id: radio_item_c
-            group: 'group2'
+            group: "group2"
             size_hint: None, None
             size: dp(90), dp(90)
             active: False
-            pos_hint: {'center_x': 0.18, 'center_y': 0.66}
+            pos_hint: {"center_x": 0.18, "center_y": 0.66}
 
         MDCheckbox:
             on_press:
@@ -1110,10 +1097,10 @@ ScreenManager:
                 app.disable_nextButton()
             active: False
             id: radio_item_nc
-            group: 'group2'
+            group: "group2"
             size_hint: None, None
             size: dp(90), dp(90)
-            pos_hint: {'center_x': 0.43, 'center_y': 0.66}
+            pos_hint: {"center_x": 0.43, "center_y": 0.66}
 
         MDCheckbox:
             on_press:
@@ -1122,120 +1109,120 @@ ScreenManager:
                 app.disable_nextButton()
             active: False
             id: radio_item_na
-            group: 'group2'
+            group: "group2"
             size_hint: None, None
             size: dp(90), dp(90)
-            pos_hint: {'center_x': 0.69, 'center_y': 0.66}
+            pos_hint: {"center_x": 0.69, "center_y": 0.66}
 
 
     MDTextField:
         id: acao_item
         disabled: True
-        pos_hint: {'center_x':0.5,'center_y':0.55}
+        pos_hint: {"center_x":0.5,"center_y":0.55}
         size_hint: (0.7,0.1)
-        hint_text : 'Ação'
-        helper_text: 'Obrigatório para uma não conformidade'
-        helper_text_mode: 'on_error'
-        icon_right: 'alert'
+        hint_text : "Ação"
+        helper_text: "Obrigatório para uma não conformidade"
+        helper_text_mode: "on_error"
+        icon_right: "alert"
         icon_right_color: app.theme_cls.primary_color
         required : True
 
     MDTextField:
         disabled: True
         id: responsavel_item
-        pos_hint: {'center_x':0.5,'center_y':0.45}
+        pos_hint: {"center_x":0.5,"center_y":0.45}
         size_hint: (0.7,0.1)
-        hint_text : 'Responsável'
-        helper_text: 'Obrigatório para uma não conformidade'
-        helper_text_mode: 'on_error'
-        icon_right: 'alert'
+        hint_text : "Responsável"
+        helper_text: "Obrigatório para uma não conformidade"
+        helper_text_mode: "on_error"
+        icon_right: "alert"
         icon_right_color: app.theme_cls.primary_color
         required : True
 
     MDTextField:
         disabled: True
         id: prazo_item
-        pos_hint: {'center_x':0.5,'center_y':0.35}
+        pos_hint: {"center_x":0.5,"center_y":0.35}
         size_hint: (0.7,0.1)
-        hint_text : 'Prazo'
-        icon_right: 'calendar'
-        helper_text: 'Obrigatório para uma não conformidade'
-        helper_text_mode: 'on_error'
+        hint_text : "Prazo"
+        icon_right: "calendar"
+        helper_text: "Obrigatório para uma não conformidade"
+        helper_text_mode: "on_error"
         icon_right_color: app.theme_cls.primary_color
         required : True
 
     MDFillRoundFlatIconButton:
         id:check
-        text: 'CONFIRMAR'
-        icon: 'alert-circle-outline'
-        pos_hint: {'center_x':0.5,'center_y':0.25}
+        text: "CONFIRMAR"
+        icon: "alert-circle-outline"
+        pos_hint: {"center_x":0.5,"center_y":0.25}
         size: sp(140), sp(40)
         on_press: app.check_lv_items()
             
 
 #Item 3
-<ChecklistItem3>:
-    name:'checklistItem3'
+<ChecklistItem3@Screen>:
+    name:"checklistItem3"
 
     BoxLayout:
-        orientation: 'vertical'
+        orientation: "vertical"
         MDToolbar:
-            title: 'Item 03'
+            title: "Item 03"
             right_action_items: [["exit-run", lambda x: app.show_alert_checklist_exit_operation()]]
             elevation:5
 
         Widget:
 
     MDFloatingActionButton:
-        icon: 'arrow-left'
+        icon: "arrow-left"
         md_bg_color:app.theme_cls.primary_color
-        pos_hint: {'center_x':0.15,'center_y':0.1}
-        user_font_size : '13sp'
+        pos_hint: {"center_x":0.15,"center_y":0.1}
+        user_font_size : "13sp"
         on_press:
-            root.manager.current = 'checklistItem2'
-            root.manager.transition.direction = 'right'
+            root.manager.current = "checklistItem2"
+            root.manager.transition.direction = "right"
     MDFloatingActionButton:
         id:next_button
         disabled: True
-        icon: 'arrow-right'
+        icon: "arrow-right"
         md_bg_color:app.theme_cls.primary_color
-        pos_hint: {'center_x':0.85,'center_y':0.1}
-        user_font_size : '13sp'
+        pos_hint: {"center_x":0.85,"center_y":0.1}
+        user_font_size : "13sp"
         on_press:
-            root.manager.current = 'checklistItem4'
-            root.manager.transition.direction = 'left'
+            root.manager.current = "checklistItem4"
+            root.manager.transition.direction = "left"
 
     MDProgressBar:
         value:30.30
-        pos_hint: {'center_y':0.02}
+        pos_hint: {"center_y":0.02}
 
     MDLabel:
         halign: "center"
-        pos_hint: {'center_y':0.81}
-        text: 'As caixas de gordura estão obstruídas?'
-        font_style: 'Button'
-        font_size: '15sp'
+        pos_hint: {"center_y":0.81}
+        text: "As caixas de gordura estão obstruídas?"
+        font_style: "Button"
+        font_size: "15sp"
 
 
     MDLabel:
         halign: "center"
-        pos_hint: {'center_x': 0.27, 'center_y':0.66}
-        text: 'C'
+        pos_hint: {"center_x": 0.27, "center_y":0.66}
+        text: "C"
         
     MDLabel:
         halign: "center"
-        pos_hint: {'center_x': 0.53, 'center_y':0.66}
-        text: 'NC'
+        pos_hint: {"center_x": 0.53, "center_y":0.66}
+        text: "NC"
 
     MDLabel:
         halign: "center"
-        pos_hint: {'center_x': 0.79, 'center_y':0.66}
-        text: 'NA'
+        pos_hint: {"center_x": 0.79, "center_y":0.66}
+        text: "NA"
 
 
     FloatLayout:
 
-        orientation: 'vertical'
+        orientation: "vertical"
 
         MDCheckbox:
             on_press:
@@ -1243,11 +1230,11 @@ ScreenManager:
                 app.enable_items_inputs()
                 app.disable_nextButton()
             id: radio_item_c
-            group: 'group3'
+            group: "group3"
             size_hint: None, None
             size: dp(90), dp(90)
             active: False
-            pos_hint: {'center_x': 0.18, 'center_y': 0.66}
+            pos_hint: {"center_x": 0.18, "center_y": 0.66}
 
         MDCheckbox:
             on_press:
@@ -1255,10 +1242,10 @@ ScreenManager:
                 app.disable_nextButton()
             active: False
             id: radio_item_nc
-            group: 'group3'
+            group: "group3"
             size_hint: None, None
             size: dp(90), dp(90)
-            pos_hint: {'center_x': 0.43, 'center_y': 0.66}
+            pos_hint: {"center_x": 0.43, "center_y": 0.66}
 
         MDCheckbox:
             on_press:
@@ -1267,65 +1254,65 @@ ScreenManager:
                 app.disable_nextButton()
             active: False
             id: radio_item_na
-            group: 'group3'
+            group: "group3"
             size_hint: None, None
             size: dp(90), dp(90)
-            pos_hint: {'center_x': 0.69, 'center_y': 0.66}
+            pos_hint: {"center_x": 0.69, "center_y": 0.66}
 
 
     MDTextField:
         id: acao_item
         disabled: True
-        pos_hint: {'center_x':0.5,'center_y':0.55}
+        pos_hint: {"center_x":0.5,"center_y":0.55}
         size_hint: (0.7,0.1)
-        hint_text : 'Ação'
-        helper_text: 'Obrigatório para uma não conformidade'
-        helper_text_mode: 'on_error'
-        icon_right: 'alert'
+        hint_text : "Ação"
+        helper_text: "Obrigatório para uma não conformidade"
+        helper_text_mode: "on_error"
+        icon_right: "alert"
         icon_right_color: app.theme_cls.primary_color
         required : True
 
     MDTextField:
         disabled: True
         id: responsavel_item
-        pos_hint: {'center_x':0.5,'center_y':0.45}
+        pos_hint: {"center_x":0.5,"center_y":0.45}
         size_hint: (0.7,0.1)
-        hint_text : 'Responsável'
-        helper_text: 'Obrigatório para uma não conformidade'
-        helper_text_mode: 'on_error'
-        icon_right: 'alert'
+        hint_text : "Responsável"
+        helper_text: "Obrigatório para uma não conformidade"
+        helper_text_mode: "on_error"
+        icon_right: "alert"
         icon_right_color: app.theme_cls.primary_color
         required : True
 
     MDTextField:
         disabled: True
         id: prazo_item
-        pos_hint: {'center_x':0.5,'center_y':0.35}
+        pos_hint: {"center_x":0.5,"center_y":0.35}
         size_hint: (0.7,0.1)
-        hint_text : 'Prazo'
-        icon_right: 'calendar'
-        helper_text: 'Obrigatório para uma não conformidade'
-        helper_text_mode: 'on_error'
+        hint_text : "Prazo"
+        icon_right: "calendar"
+        helper_text: "Obrigatório para uma não conformidade"
+        helper_text_mode: "on_error"
         icon_right_color: app.theme_cls.primary_color
         required : True
 
     MDFillRoundFlatIconButton:
         id:check
-        text: 'CONFIRMAR'
-        icon: 'alert-circle-outline'
-        pos_hint: {'center_x':0.5,'center_y':0.25}
+        text: "CONFIRMAR"
+        icon: "alert-circle-outline"
+        pos_hint: {"center_x":0.5,"center_y":0.25}
         size: sp(140), sp(40)
         on_press: app.check_lv_items()
 
 
 #Item 4
-<ChecklistItem4>:
-    name:'checklistItem4'
+<ChecklistItem4@Screen>:
+    name:"checklistItem4"
 
     BoxLayout:
-        orientation: 'vertical'
+        orientation: "vertical"
         MDToolbar:
-            title: 'Item 04'
+            title: "Item 04"
             right_action_items: [["exit-run", lambda x: app.show_alert_checklist_exit_operation()]]
             elevation:5
 
@@ -1333,55 +1320,55 @@ ScreenManager:
 
 
     MDFloatingActionButton:
-        icon: 'arrow-left'
+        icon: "arrow-left"
         md_bg_color:app.theme_cls.primary_color
-        pos_hint: {'center_x':0.15,'center_y':0.1}
-        user_font_size : '13sp'
+        pos_hint: {"center_x":0.15,"center_y":0.1}
+        user_font_size : "13sp"
         on_press:
-            root.manager.current = 'checklistItem3'
-            root.manager.transition.direction = 'right'
+            root.manager.current = "checklistItem3"
+            root.manager.transition.direction = "right"
     MDFloatingActionButton:
         id:next_button
         disabled: True
-        icon: 'arrow-right'
+        icon: "arrow-right"
         md_bg_color:app.theme_cls.primary_color
-        pos_hint: {'center_x':0.85,'center_y':0.1}
-        user_font_size : '13sp'
+        pos_hint: {"center_x":0.85,"center_y":0.1}
+        user_font_size : "13sp"
         on_press:
-            root.manager.current = 'checklistItem5'
-            root.manager.transition.direction = 'left'
+            root.manager.current = "checklistItem5"
+            root.manager.transition.direction = "left"
 
     MDProgressBar:
         value:40.40
-        pos_hint: {'center_y':0.02}
+        pos_hint: {"center_y":0.02}
 
     MDLabel:
         halign: "center"
-        pos_hint: {'center_y':0.81}
-        text: 'Há evidências de transbordo?'
-        font_style: 'Button'
-        font_size: '15sp'
+        pos_hint: {"center_y":0.81}
+        text: "Há evidências de transbordo?"
+        font_style: "Button"
+        font_size: "15sp"
 
 
     MDLabel:
         halign: "center"
-        pos_hint: {'center_x': 0.27, 'center_y':0.66}
-        text: 'C'
+        pos_hint: {"center_x": 0.27, "center_y":0.66}
+        text: "C"
         
     MDLabel:
         halign: "center"
-        pos_hint: {'center_x': 0.53, 'center_y':0.66}
-        text: 'NC'
+        pos_hint: {"center_x": 0.53, "center_y":0.66}
+        text: "NC"
 
     MDLabel:
         halign: "center"
-        pos_hint: {'center_x': 0.79, 'center_y':0.66}
-        text: 'NA'
+        pos_hint: {"center_x": 0.79, "center_y":0.66}
+        text: "NA"
 
 
     FloatLayout:
 
-        orientation: 'vertical'
+        orientation: "vertical"
 
         MDCheckbox:
             on_press:
@@ -1389,11 +1376,11 @@ ScreenManager:
                 app.enable_items_inputs()
                 app.disable_nextButton()
             id: radio_item_c
-            group: 'group4'
+            group: "group4"
             size_hint: None, None
             size: dp(90), dp(90)
             active: False
-            pos_hint: {'center_x': 0.18, 'center_y': 0.66}
+            pos_hint: {"center_x": 0.18, "center_y": 0.66}
 
         MDCheckbox:
             on_press:
@@ -1401,10 +1388,10 @@ ScreenManager:
                 app.disable_nextButton()
             active: False
             id: radio_item_nc
-            group: 'group4'
+            group: "group4"
             size_hint: None, None
             size: dp(90), dp(90)
-            pos_hint: {'center_x': 0.43, 'center_y': 0.66}
+            pos_hint: {"center_x": 0.43, "center_y": 0.66}
 
         MDCheckbox:
             on_press:
@@ -1413,66 +1400,66 @@ ScreenManager:
                 app.disable_nextButton()
             active: False
             id: radio_item_na
-            group: 'group4'
+            group: "group4"
             size_hint: None, None
             size: dp(90), dp(90)
-            pos_hint: {'center_x': 0.69, 'center_y': 0.66}
+            pos_hint: {"center_x": 0.69, "center_y": 0.66}
 
 
     MDTextField:
         id: acao_item
         disabled: True
-        pos_hint: {'center_x':0.5,'center_y':0.55}
+        pos_hint: {"center_x":0.5,"center_y":0.55}
         size_hint: (0.7,0.1)
-        hint_text : 'Ação'
-        helper_text: 'Obrigatório para uma não conformidade'
-        helper_text_mode: 'on_error'
-        icon_right: 'alert'
+        hint_text : "Ação"
+        helper_text: "Obrigatório para uma não conformidade"
+        helper_text_mode: "on_error"
+        icon_right: "alert"
         icon_right_color: app.theme_cls.primary_color
         required : True
 
     MDTextField:
         disabled: True
         id: responsavel_item
-        pos_hint: {'center_x':0.5,'center_y':0.45}
+        pos_hint: {"center_x":0.5,"center_y":0.45}
         size_hint: (0.7,0.1)
-        hint_text : 'Responsável'
-        helper_text: 'Obrigatório para uma não conformidade'
-        helper_text_mode: 'on_error'
-        icon_right: 'alert'
+        hint_text : "Responsável"
+        helper_text: "Obrigatório para uma não conformidade"
+        helper_text_mode: "on_error"
+        icon_right: "alert"
         icon_right_color: app.theme_cls.primary_color
         required : True
 
     MDTextField:
         disabled: True
         id: prazo_item
-        pos_hint: {'center_x':0.5,'center_y':0.35}
+        pos_hint: {"center_x":0.5,"center_y":0.35}
         size_hint: (0.7,0.1)
-        hint_text : 'Prazo'
-        icon_right: 'calendar'
-        helper_text: 'Obrigatório para uma não conformidade'
-        helper_text_mode: 'on_error'
+        hint_text : "Prazo"
+        icon_right: "calendar"
+        helper_text: "Obrigatório para uma não conformidade"
+        helper_text_mode: "on_error"
         icon_right_color: app.theme_cls.primary_color
         required : True
 
     MDFillRoundFlatIconButton:
         id:check
-        text: 'CONFIRMAR'
-        icon: 'alert-circle-outline'
-        pos_hint: {'center_x':0.5,'center_y':0.25}
+        text: "CONFIRMAR"
+        icon: "alert-circle-outline"
+        pos_hint: {"center_x":0.5,"center_y":0.25}
         size: sp(140), sp(40)
         on_press: app.check_lv_items()
 
 
 
 #Item 5
-<ChecklistItem5>:
-    name:'checklistItem5'
+<ChecklistItem5@Screen>:
+    name:"checklistItem5"
 
     BoxLayout:
-        orientation: 'vertical'
+        orientation: "vertical"
         MDToolbar:
-            title: 'Item 05'
+            title: "Item 05"
             right_action_items: [["exit-run", lambda x: app.show_alert_checklist_exit_operation()]]
             elevation:5
 
@@ -1480,55 +1467,55 @@ ScreenManager:
 
 
     MDFloatingActionButton:
-        icon: 'arrow-left'
+        icon: "arrow-left"
         md_bg_color:app.theme_cls.primary_color
-        pos_hint: {'center_x':0.15,'center_y':0.1}
-        user_font_size : '13sp'
+        pos_hint: {"center_x":0.15,"center_y":0.1}
+        user_font_size : "13sp"
         on_press:
-            root.manager.current = 'checklistItem4'
-            root.manager.transition.direction = 'right'
+            root.manager.current = "checklistItem4"
+            root.manager.transition.direction = "right"
     MDFloatingActionButton:
         id:next_button
         disabled: True
-        icon: 'arrow-right'
+        icon: "arrow-right"
         md_bg_color:app.theme_cls.primary_color
-        pos_hint: {'center_x':0.85,'center_y':0.1}
-        user_font_size : '13sp'
+        pos_hint: {"center_x":0.85,"center_y":0.1}
+        user_font_size : "13sp"
         on_press:
-            root.manager.current = 'checklistItem6'
-            root.manager.transition.direction = 'left'
+            root.manager.current = "checklistItem6"
+            root.manager.transition.direction = "left"
 
     MDProgressBar:
         value:50.50
-        pos_hint: {'center_y':0.02}
+        pos_hint: {"center_y":0.02}
 
     MDLabel:
         halign: "center"
-        pos_hint: {'center_y':0.81}
-        text: 'Há evidência de odores?'
-        font_style: 'Button'
-        font_size: '15sp'
+        pos_hint: {"center_y":0.81}
+        text: "Há evidência de odores?"
+        font_style: "Button"
+        font_size: "15sp"
 
 
     MDLabel:
         halign: "center"
-        pos_hint: {'center_x': 0.27, 'center_y':0.66}
-        text: 'C'
+        pos_hint: {"center_x": 0.27, "center_y":0.66}
+        text: "C"
         
     MDLabel:
         halign: "center"
-        pos_hint: {'center_x': 0.53, 'center_y':0.66}
-        text: 'NC'
+        pos_hint: {"center_x": 0.53, "center_y":0.66}
+        text: "NC"
 
     MDLabel:
         halign: "center"
-        pos_hint: {'center_x': 0.79, 'center_y':0.66}
-        text: 'NA'
+        pos_hint: {"center_x": 0.79, "center_y":0.66}
+        text: "NA"
 
 
     FloatLayout:
 
-        orientation: 'vertical'
+        orientation: "vertical"
 
         MDCheckbox:
             on_press:
@@ -1536,11 +1523,11 @@ ScreenManager:
                 app.enable_items_inputs()
                 app.disable_nextButton()
             id: radio_item_c
-            group: 'group5'
+            group: "group5"
             size_hint: None, None
             size: dp(90), dp(90)
             active: False
-            pos_hint: {'center_x': 0.18, 'center_y': 0.66}
+            pos_hint: {"center_x": 0.18, "center_y": 0.66}
 
         MDCheckbox:
             on_press:
@@ -1548,10 +1535,10 @@ ScreenManager:
                 app.disable_nextButton()
             active: False
             id: radio_item_nc
-            group: 'group5'
+            group: "group5"
             size_hint: None, None
             size: dp(90), dp(90)
-            pos_hint: {'center_x': 0.43, 'center_y': 0.66}
+            pos_hint: {"center_x": 0.43, "center_y": 0.66}
 
         MDCheckbox:
             on_press:
@@ -1560,65 +1547,65 @@ ScreenManager:
                 app.disable_nextButton()
             active: False
             id: radio_item_na
-            group: 'group5'
+            group: "group5"
             size_hint: None, None
             size: dp(90), dp(90)
-            pos_hint: {'center_x': 0.69, 'center_y': 0.66}
+            pos_hint: {"center_x": 0.69, "center_y": 0.66}
 
 
     MDTextField:
         id: acao_item
         disabled: True
-        pos_hint: {'center_x':0.5,'center_y':0.55}
+        pos_hint: {"center_x":0.5,"center_y":0.55}
         size_hint: (0.7,0.1)
-        hint_text : 'Ação'
-        helper_text: 'Obrigatório para uma não conformidade'
-        helper_text_mode: 'on_error'
-        icon_right: 'alert'
+        hint_text : "Ação"
+        helper_text: "Obrigatório para uma não conformidade"
+        helper_text_mode: "on_error"
+        icon_right: "alert"
         icon_right_color: app.theme_cls.primary_color
         required : True
 
     MDTextField:
         disabled: True
         id: responsavel_item
-        pos_hint: {'center_x':0.5,'center_y':0.45}
+        pos_hint: {"center_x":0.5,"center_y":0.45}
         size_hint: (0.7,0.1)
-        hint_text : 'Responsável'
-        helper_text: 'Obrigatório para uma não conformidade'
-        helper_text_mode: 'on_error'
-        icon_right: 'alert'
+        hint_text : "Responsável"
+        helper_text: "Obrigatório para uma não conformidade"
+        helper_text_mode: "on_error"
+        icon_right: "alert"
         icon_right_color: app.theme_cls.primary_color
         required : True
 
     MDTextField:
         disabled: True
         id: prazo_item
-        pos_hint: {'center_x':0.5,'center_y':0.35}
+        pos_hint: {"center_x":0.5,"center_y":0.35}
         size_hint: (0.7,0.1)
-        hint_text : 'Prazo'
-        icon_right: 'calendar'
-        helper_text: 'Obrigatório para uma não conformidade'
-        helper_text_mode: 'on_error'
+        hint_text : "Prazo"
+        icon_right: "calendar"
+        helper_text: "Obrigatório para uma não conformidade"
+        helper_text_mode: "on_error"
         icon_right_color: app.theme_cls.primary_color
         required : True
 
     MDFillRoundFlatIconButton:
         id:check
-        text: 'CONFIRMAR'
-        icon: 'alert-circle-outline'
-        pos_hint: {'center_x':0.5,'center_y':0.25}
+        text: "CONFIRMAR"
+        icon: "alert-circle-outline"
+        pos_hint: {"center_x":0.5,"center_y":0.25}
         size: sp(140), sp(40)
         on_press: app.check_lv_items()
 
 
 #Item 6
-<ChecklistItem6>:
-    name:'checklistItem6'
+<ChecklistItem6@Screen>:
+    name:"checklistItem6"
 
     BoxLayout:
-        orientation: 'vertical'
+        orientation: "vertical"
         MDToolbar:
-            title: 'Item 06'
+            title: "Item 06"
             right_action_items: [["exit-run", lambda x: app.show_alert_checklist_exit_operation()]]
             elevation:5
 
@@ -1626,56 +1613,56 @@ ScreenManager:
 
 
     MDFloatingActionButton:
-        icon: 'arrow-left'
+        icon: "arrow-left"
         md_bg_color:app.theme_cls.primary_color
-        pos_hint: {'center_x':0.15,'center_y':0.1}
-        user_font_size : '13sp'
+        pos_hint: {"center_x":0.15,"center_y":0.1}
+        user_font_size : "13sp"
         on_press:
-            root.manager.current = 'checklistItem5'
-            root.manager.transition.direction = 'right'
+            root.manager.current = "checklistItem5"
+            root.manager.transition.direction = "right"
 
     MDFloatingActionButton:
         id:next_button
         disabled: True
-        icon: 'arrow-right'
+        icon: "arrow-right"
         md_bg_color:app.theme_cls.primary_color
-        pos_hint: {'center_x':0.85,'center_y':0.1}
-        user_font_size : '13sp'
+        pos_hint: {"center_x":0.85,"center_y":0.1}
+        user_font_size : "13sp"
         on_press:
-            root.manager.current = 'checklistItem7'
-            root.manager.transition.direction = 'left'
+            root.manager.current = "checklistItem7"
+            root.manager.transition.direction = "left"
 
     MDProgressBar:
         value:60.60
-        pos_hint: {'center_y':0.02}
+        pos_hint: {"center_y":0.02}
 
     MDLabel:
         halign: "center"
-        pos_hint: {'center_y':0.81}
-        text: 'Há detritos de alimentos, sobras de embalagens, entre outros?'
-        font_style: 'Button'
-        font_size: '15sp'
+        pos_hint: {"center_y":0.81}
+        text: "Há detritos de alimentos, sobras de embalagens, entre outros?"
+        font_style: "Button"
+        font_size: "15sp"
 
 
     MDLabel:
         halign: "center"
-        pos_hint: {'center_x': 0.27, 'center_y':0.66}
-        text: 'C'
+        pos_hint: {"center_x": 0.27, "center_y":0.66}
+        text: "C"
         
     MDLabel:
         halign: "center"
-        pos_hint: {'center_x': 0.53, 'center_y':0.66}
-        text: 'NC'
+        pos_hint: {"center_x": 0.53, "center_y":0.66}
+        text: "NC"
 
     MDLabel:
         halign: "center"
-        pos_hint: {'center_x': 0.79, 'center_y':0.66}
-        text: 'NA'
+        pos_hint: {"center_x": 0.79, "center_y":0.66}
+        text: "NA"
 
 
     FloatLayout:
 
-        orientation: 'vertical'
+        orientation: "vertical"
 
         MDCheckbox:
             on_press:
@@ -1683,11 +1670,11 @@ ScreenManager:
                 app.enable_items_inputs()
                 app.disable_nextButton()
             id: radio_item_c
-            group: 'group6'
+            group: "group6"
             size_hint: None, None
             size: dp(90), dp(90)
             active: False
-            pos_hint: {'center_x': 0.18, 'center_y': 0.66}
+            pos_hint: {"center_x": 0.18, "center_y": 0.66}
 
         MDCheckbox:
             on_press:
@@ -1695,10 +1682,10 @@ ScreenManager:
                 app.disable_nextButton()
             active: False
             id: radio_item_nc
-            group: 'group6'
+            group: "group6"
             size_hint: None, None
             size: dp(90), dp(90)
-            pos_hint: {'center_x': 0.43, 'center_y': 0.66}
+            pos_hint: {"center_x": 0.43, "center_y": 0.66}
 
         MDCheckbox:
             on_press:
@@ -1707,65 +1694,65 @@ ScreenManager:
                 app.disable_nextButton()
             active: False
             id: radio_item_na
-            group: 'group6'
+            group: "group6"
             size_hint: None, None
             size: dp(90), dp(90)
-            pos_hint: {'center_x': 0.69, 'center_y': 0.66}
+            pos_hint: {"center_x": 0.69, "center_y": 0.66}
 
 
     MDTextField:
         id: acao_item
         disabled: True
-        pos_hint: {'center_x':0.5,'center_y':0.55}
+        pos_hint: {"center_x":0.5,"center_y":0.55}
         size_hint: (0.7,0.1)
-        hint_text : 'Ação'
-        helper_text: 'Obrigatório para uma não conformidade'
-        helper_text_mode: 'on_error'
-        icon_right: 'alert'
+        hint_text : "Ação"
+        helper_text: "Obrigatório para uma não conformidade"
+        helper_text_mode: "on_error"
+        icon_right: "alert"
         icon_right_color: app.theme_cls.primary_color
         required : True
 
     MDTextField:
         disabled: True
         id: responsavel_item
-        pos_hint: {'center_x':0.5,'center_y':0.45}
+        pos_hint: {"center_x":0.5,"center_y":0.45}
         size_hint: (0.7,0.1)
-        hint_text : 'Responsável'
-        helper_text: 'Obrigatório para uma não conformidade'
-        helper_text_mode: 'on_error'
-        icon_right: 'alert'
+        hint_text : "Responsável"
+        helper_text: "Obrigatório para uma não conformidade"
+        helper_text_mode: "on_error"
+        icon_right: "alert"
         icon_right_color: app.theme_cls.primary_color
         required : True
 
     MDTextField:
         disabled: True
         id: prazo_item
-        pos_hint: {'center_x':0.5,'center_y':0.35}
+        pos_hint: {"center_x":0.5,"center_y":0.35}
         size_hint: (0.7,0.1)
-        hint_text : 'Prazo'
-        icon_right: 'calendar'
-        helper_text: 'Obrigatório para uma não conformidade'
-        helper_text_mode: 'on_error'
+        hint_text : "Prazo"
+        icon_right: "calendar"
+        helper_text: "Obrigatório para uma não conformidade"
+        helper_text_mode: "on_error"
         icon_right_color: app.theme_cls.primary_color
         required : True
 
     MDFillRoundFlatIconButton:
         id:check
-        text: 'CONFIRMAR'
-        icon: 'alert-circle-outline'
-        pos_hint: {'center_x':0.5,'center_y':0.25}
+        text: "CONFIRMAR"
+        icon: "alert-circle-outline"
+        pos_hint: {"center_x":0.5,"center_y":0.25}
         size: sp(140), sp(40)
         on_press: app.check_lv_items()
 
 
 #Item 7
-<ChecklistItem7>:
-    name:'checklistItem7'
+<ChecklistItem7@Screen>:
+    name:"checklistItem7"
 
     BoxLayout:
-        orientation: 'vertical'
+        orientation: "vertical"
         MDToolbar:
-            title: 'Item 07'
+            title: "Item 07"
             right_action_items: [["exit-run", lambda x: app.show_alert_checklist_exit_operation()]]
             elevation:5
 
@@ -1773,56 +1760,56 @@ ScreenManager:
 
 
     MDFloatingActionButton:
-        icon: 'arrow-left'
+        icon: "arrow-left"
         md_bg_color:app.theme_cls.primary_color
-        pos_hint: {'center_x':0.15,'center_y':0.1}
-        user_font_size : '13sp'
+        pos_hint: {"center_x":0.15,"center_y":0.1}
+        user_font_size : "13sp"
         on_press:
-            root.manager.current = 'checklistItem6'
-            root.manager.transition.direction = 'right'
+            root.manager.current = "checklistItem6"
+            root.manager.transition.direction = "right"
     MDFloatingActionButton:
         id:next_button
         disabled: True
-        icon: 'arrow-right'
+        icon: "arrow-right"
         md_bg_color:app.theme_cls.primary_color
-        pos_hint: {'center_x':0.85,'center_y':0.1}
-        user_font_size : '13sp'
+        pos_hint: {"center_x":0.85,"center_y":0.1}
+        user_font_size : "13sp"
         on_press:
-            root.manager.current = 'checklistItem8'
-            root.manager.transition.direction = 'left'
+            root.manager.current = "checklistItem8"
+            root.manager.transition.direction = "left"
 
     MDProgressBar:
         value:70.70
-        pos_hint: {'center_y':0.02}
+        pos_hint: {"center_y":0.02}
 
     MDLabel:
         halign: "center"
-        pos_hint: {'center_y':0.81}
-        text: 'Há telas (grade) de retenção nas áreas internas do refeitório cin objetivo de reter sobras de alimentos?'
-        font_style: 'Button'
-        font_size: '15sp'
+        pos_hint: {"center_y":0.81}
+        text: "Há telas (grade) de retenção nas áreas internas do refeitório cin objetivo de reter sobras de alimentos?"
+        font_style: "Button"
+        font_size: "15sp"
   
 
 
     MDLabel:
         halign: "center"
-        pos_hint: {'center_x': 0.27, 'center_y':0.66}
-        text: 'C'
+        pos_hint: {"center_x": 0.27, "center_y":0.66}
+        text: "C"
         
     MDLabel:
         halign: "center"
-        pos_hint: {'center_x': 0.53, 'center_y':0.66}
-        text: 'NC'
+        pos_hint: {"center_x": 0.53, "center_y":0.66}
+        text: "NC"
 
     MDLabel:
         halign: "center"
-        pos_hint: {'center_x': 0.79, 'center_y':0.66}
-        text: 'NA'
+        pos_hint: {"center_x": 0.79, "center_y":0.66}
+        text: "NA"
 
 
     FloatLayout:
 
-        orientation: 'vertical'
+        orientation: "vertical"
 
         MDCheckbox:
             on_press:
@@ -1830,11 +1817,11 @@ ScreenManager:
                 app.enable_items_inputs()
                 app.disable_nextButton()
             id: radio_item_c
-            group: 'group7'
+            group: "group7"
             size_hint: None, None
             size: dp(90), dp(90)
             active: False
-            pos_hint: {'center_x': 0.18, 'center_y': 0.66}
+            pos_hint: {"center_x": 0.18, "center_y": 0.66}
 
         MDCheckbox:
             on_press:
@@ -1842,10 +1829,10 @@ ScreenManager:
                 app.disable_nextButton()
             active: False
             id: radio_item_nc
-            group: 'group7'
+            group: "group7"
             size_hint: None, None
             size: dp(90), dp(90)
-            pos_hint: {'center_x': 0.43, 'center_y': 0.66}
+            pos_hint: {"center_x": 0.43, "center_y": 0.66}
 
         MDCheckbox:
             on_press:
@@ -1854,121 +1841,121 @@ ScreenManager:
                 app.disable_nextButton()
             active: False
             id: radio_item_na
-            group: 'group7'
+            group: "group7"
             size_hint: None, None
             size: dp(90), dp(90)
-            pos_hint: {'center_x': 0.69, 'center_y': 0.66}
+            pos_hint: {"center_x": 0.69, "center_y": 0.66}
 
 
     MDTextField:
         id: acao_item
         disabled: True
-        pos_hint: {'center_x':0.5,'center_y':0.55}
+        pos_hint: {"center_x":0.5,"center_y":0.55}
         size_hint: (0.7,0.1)
-        hint_text : 'Ação'
-        helper_text: 'Obrigatório para uma não conformidade'
-        helper_text_mode: 'on_error'
-        icon_right: 'alert'
+        hint_text : "Ação"
+        helper_text: "Obrigatório para uma não conformidade"
+        helper_text_mode: "on_error"
+        icon_right: "alert"
         icon_right_color: app.theme_cls.primary_color
         required : True
 
     MDTextField:
         disabled: True
         id: responsavel_item
-        pos_hint: {'center_x':0.5,'center_y':0.45}
+        pos_hint: {"center_x":0.5,"center_y":0.45}
         size_hint: (0.7,0.1)
-        hint_text : 'Responsável'
-        helper_text: 'Obrigatório para uma não conformidade'
-        helper_text_mode: 'on_error'
-        icon_right: 'alert'
+        hint_text : "Responsável"
+        helper_text: "Obrigatório para uma não conformidade"
+        helper_text_mode: "on_error"
+        icon_right: "alert"
         icon_right_color: app.theme_cls.primary_color
         required : True
 
     MDTextField:
         disabled: True
         id: prazo_item
-        pos_hint: {'center_x':0.5,'center_y':0.35}
+        pos_hint: {"center_x":0.5,"center_y":0.35}
         size_hint: (0.7,0.1)
-        hint_text : 'Prazo'
-        icon_right: 'calendar'
-        helper_text: 'Obrigatório para uma não conformidade'
-        helper_text_mode: 'on_error'
+        hint_text : "Prazo"
+        icon_right: "calendar"
+        helper_text: "Obrigatório para uma não conformidade"
+        helper_text_mode: "on_error"
         icon_right_color: app.theme_cls.primary_color
         required : True
 
     MDFillRoundFlatIconButton:
         id:check
-        text: 'CONFIRMAR'
-        icon: 'alert-circle-outline'
-        pos_hint: {'center_x':0.5,'center_y':0.25}
+        text: "CONFIRMAR"
+        icon: "alert-circle-outline"
+        pos_hint: {"center_x":0.5,"center_y":0.25}
         size: sp(140), sp(40)
         on_press: app.check_lv_items()
 
 
 #Item 8
-<ChecklistItem8>:
-    name:'checklistItem8'
+<ChecklistItem8@Screen>:
+    name:"checklistItem8"
 
     BoxLayout:
-        orientation: 'vertical'
+        orientation: "vertical"
         MDToolbar:
-            title: 'Item 08'
+            title: "Item 08"
             right_action_items: [["exit-run", lambda x: app.show_alert_checklist_exit_operation()]]
             elevation:5
 
         Widget:
 
     MDFloatingActionButton:
-        icon: 'arrow-left'
+        icon: "arrow-left"
         md_bg_color:app.theme_cls.primary_color
-        pos_hint: {'center_x':0.15,'center_y':0.1}
-        user_font_size : '13sp'
+        pos_hint: {"center_x":0.15,"center_y":0.1}
+        user_font_size : "13sp"
         on_press:
-            root.manager.current = 'checklistItem7'
-            root.manager.transition.direction = 'right'
+            root.manager.current = "checklistItem7"
+            root.manager.transition.direction = "right"
     MDFloatingActionButton:
         id:next_button
         disabled: True
-        icon: 'arrow-right'
+        icon: "arrow-right"
         md_bg_color:app.theme_cls.primary_color
-        pos_hint: {'center_x':0.85,'center_y':0.1}
-        user_font_size : '13sp'
+        pos_hint: {"center_x":0.85,"center_y":0.1}
+        user_font_size : "13sp"
         on_press:
-            root.manager.current = 'checklistItem9'
-            root.manager.transition.direction = 'left'
+            root.manager.current = "checklistItem9"
+            root.manager.transition.direction = "left"
 
     MDProgressBar:
         value:80.80
-        pos_hint: {'center_y':0.02}
+        pos_hint: {"center_y":0.02}
 
     MDLabel:
         halign: "center"
-        pos_hint: {'center_y':0.81}
-        text: 'As tampas das caixas estão encaixadas de acordo com a construção?'
-        font_style: 'Button'
-        font_size: '15sp'
+        pos_hint: {"center_y":0.81}
+        text: "As tampas das caixas estão encaixadas de acordo com a construção?"
+        font_style: "Button"
+        font_size: "15sp"
     
 
 
     MDLabel:
         halign: "center"
-        pos_hint: {'center_x': 0.27, 'center_y':0.66}
-        text: 'C'
+        pos_hint: {"center_x": 0.27, "center_y":0.66}
+        text: "C"
         
     MDLabel:
         halign: "center"
-        pos_hint: {'center_x': 0.53, 'center_y':0.66}
-        text: 'NC'
+        pos_hint: {"center_x": 0.53, "center_y":0.66}
+        text: "NC"
 
     MDLabel:
         halign: "center"
-        pos_hint: {'center_x': 0.79, 'center_y':0.66}
-        text: 'NA'
+        pos_hint: {"center_x": 0.79, "center_y":0.66}
+        text: "NA"
 
 
     FloatLayout:
 
-        orientation: 'vertical'
+        orientation: "vertical"
 
         MDCheckbox:
             on_press:
@@ -1976,11 +1963,11 @@ ScreenManager:
                 app.enable_items_inputs()
                 app.disable_nextButton()
             id: radio_item_c
-            group: 'group8'
+            group: "group8"
             size_hint: None, None
             size: dp(90), dp(90)
             active: False
-            pos_hint: {'center_x': 0.18, 'center_y': 0.66}
+            pos_hint: {"center_x": 0.18, "center_y": 0.66}
 
         MDCheckbox:
             on_press:
@@ -1988,10 +1975,10 @@ ScreenManager:
                 app.disable_nextButton()
             active: False
             id: radio_item_nc
-            group: 'group8'
+            group: "group8"
             size_hint: None, None
             size: dp(90), dp(90)
-            pos_hint: {'center_x': 0.43, 'center_y': 0.66}
+            pos_hint: {"center_x": 0.43, "center_y": 0.66}
 
         MDCheckbox:
             on_press:
@@ -2000,66 +1987,66 @@ ScreenManager:
                 app.disable_nextButton()
             active: False
             id: radio_item_na
-            group: 'group8'
+            group: "group8"
             size_hint: None, None
             size: dp(90), dp(90)
-            pos_hint: {'center_x': 0.69, 'center_y': 0.66}
+            pos_hint: {"center_x": 0.69, "center_y": 0.66}
 
 
     MDTextField:
         id: acao_item
         disabled: True
-        pos_hint: {'center_x':0.5,'center_y':0.55}
+        pos_hint: {"center_x":0.5,"center_y":0.55}
         size_hint: (0.7,0.1)
-        hint_text : 'Ação'
-        helper_text: 'Obrigatório para uma não conformidade'
-        helper_text_mode: 'on_error'
-        icon_right: 'alert'
+        hint_text : "Ação"
+        helper_text: "Obrigatório para uma não conformidade"
+        helper_text_mode: "on_error"
+        icon_right: "alert"
         icon_right_color: app.theme_cls.primary_color
         required : True
 
     MDTextField:
         disabled: True
         id: responsavel_item
-        pos_hint: {'center_x':0.5,'center_y':0.45}
+        pos_hint: {"center_x":0.5,"center_y":0.45}
         size_hint: (0.7,0.1)
-        hint_text : 'Responsável'
-        helper_text: 'Obrigatório para uma não conformidade'
-        helper_text_mode: 'on_error'
-        icon_right: 'alert'
+        hint_text : "Responsável"
+        helper_text: "Obrigatório para uma não conformidade"
+        helper_text_mode: "on_error"
+        icon_right: "alert"
         icon_right_color: app.theme_cls.primary_color
         required : True
 
     MDTextField:
         disabled: True
         id: prazo_item
-        pos_hint: {'center_x':0.5,'center_y':0.35}
+        pos_hint: {"center_x":0.5,"center_y":0.35}
         size_hint: (0.7,0.1)
-        hint_text : 'Prazo'
-        icon_right: 'calendar'
-        helper_text: 'Obrigatório para uma não conformidade'
-        helper_text_mode: 'on_error'
+        hint_text : "Prazo"
+        icon_right: "calendar"
+        helper_text: "Obrigatório para uma não conformidade"
+        helper_text_mode: "on_error"
         icon_right_color: app.theme_cls.primary_color
         required : True
 
     MDFillRoundFlatIconButton:
         id:check
-        text: 'CONFIRMAR'
-        icon: 'alert-circle-outline'
-        pos_hint: {'center_x':0.5,'center_y':0.25}
+        text: "CONFIRMAR"
+        icon: "alert-circle-outline"
+        pos_hint: {"center_x":0.5,"center_y":0.25}
         size: sp(140), sp(40)
         on_press: app.check_lv_items()
 
 
 
 #Item 9
-<ChecklistItem9>:
-    name:'checklistItem9'
+<ChecklistItem9@Screen>:
+    name:"checklistItem9"
 
     BoxLayout:
-        orientation: 'vertical'
+        orientation: "vertical"
         MDToolbar:
-            title: 'Item 09'
+            title: "Item 09"
             right_action_items: [["exit-run", lambda x: app.show_alert_checklist_exit_operation()]]
             elevation:5
 
@@ -2067,55 +2054,52 @@ ScreenManager:
 
 
     MDFloatingActionButton:
-        icon: 'arrow-left'
+        icon: "arrow-left"
         md_bg_color:app.theme_cls.primary_color
-        pos_hint: {'center_x':0.15,'center_y':0.1}
-        user_font_size : '13sp'
+        pos_hint: {"center_x":0.15,"center_y":0.1}
+        user_font_size : "13sp"
         on_press:
-            root.manager.current = 'checklistItem8'
-            root.manager.transition.direction = 'right'
+            root.manager.current = "checklistItem8"
+            root.manager.transition.direction = "right"
     MDFloatingActionButton:
         id:next_button
         disabled: False
-        icon: 'check'
+        icon: "check"
         md_bg_color:app.theme_cls.primary_color
-        pos_hint: {'center_x':0.85,'center_y':0.1}
-        user_font_size : '13sp'
+        pos_hint: {"center_x":0.85,"center_y":0.1}
+        user_font_size : "13sp"
         on_press:
-            root.manager.current = 'checklistItem9'
-            root.manager.transition.direction = 'left'
+            root.manager.current = "checklistItem9"
+            root.manager.transition.direction = "left"
             app.add_new_lv()
     MDProgressBar:
         value:100
-        pos_hint: {'center_y':0.02}
+        pos_hint: {"center_y":0.02}
 
     MDLabel:
         halign: "center"
-        pos_hint: {'center_y':0.81}
-        text: 'O efluente está sendo direcionado para a Estação de tratamento de Efluente - ETE?'
-        font_style: 'Button'
-        font_size: '15sp'
-      
+        pos_hint: {"center_y":0.81}
+        text: "O efluente está sendo direcionado para a Estação de tratamento de Efluente - ETE?"
+        font_style: "Button"
+        font_size: "15sp"
 
     MDLabel:
         halign: "center"
-        pos_hint: {'center_x': 0.27, 'center_y':0.66}
-        text: 'C'
-        
-    MDLabel:
-        halign: "center"
-        pos_hint: {'center_x': 0.53, 'center_y':0.66}
-        text: 'NC'
+        pos_hint: {"center_x": 0.27, "center_y":0.66}
+        text: "C"
 
     MDLabel:
         halign: "center"
-        pos_hint: {'center_x': 0.79, 'center_y':0.66}
-        text: 'NA'
+        pos_hint: {"center_x": 0.53, "center_y":0.66}
+        text: "NC"
 
+    MDLabel:
+        halign: "center"
+        pos_hint: {"center_x": 0.79, "center_y":0.66}
+        text: "NA"
 
     FloatLayout:
-
-        orientation: 'vertical'
+        orientation: "vertical"
 
         MDCheckbox:
             on_press:
@@ -2123,11 +2107,11 @@ ScreenManager:
                 app.enable_items_inputs()
                 app.disable_nextButton()
             id: radio_item_c
-            group: 'group9'
+            group: "group9"
             size_hint: None, None
             size: dp(90), dp(90)
             active: False
-            pos_hint: {'center_x': 0.18, 'center_y': 0.66}
+            pos_hint: {"center_x": 0.18, "center_y": 0.66}
 
         MDCheckbox:
             on_press:
@@ -2135,10 +2119,10 @@ ScreenManager:
                 app.disable_nextButton()
             active: False
             id: radio_item_nc
-            group: 'group9'
+            group: "group9"
             size_hint: None, None
             size: dp(90), dp(90)
-            pos_hint: {'center_x': 0.43, 'center_y': 0.66}
+            pos_hint: {"center_x": 0.43, "center_y": 0.66}
 
         MDCheckbox:
             on_press:
@@ -2147,52 +2131,51 @@ ScreenManager:
                 app.disable_nextButton()
             active: False
             id: radio_item_na
-            group: 'group9'
+            group: "group9"
             size_hint: None, None
             size: dp(90), dp(90)
-            pos_hint: {'center_x': 0.69, 'center_y': 0.66}
-
+            pos_hint: {"center_x": 0.69, "center_y": 0.66}
 
     MDTextField:
         id: acao_item
         disabled: True
-        pos_hint: {'center_x':0.5,'center_y':0.55}
+        pos_hint: {"center_x": 0.5, "center_y": 0.55}
         size_hint: (0.7,0.1)
-        hint_text : 'Ação'
-        helper_text: 'Obrigatório para uma não conformidade'
-        helper_text_mode: 'on_error'
-        icon_right: 'alert'
+        hint_text : "Ação"
+        helper_text: "Obrigatório para uma não conformidade"
+        helper_text_mode: "on_error"
+        icon_right: "alert"
         icon_right_color: app.theme_cls.primary_color
         required : True
 
     MDTextField:
         disabled: True
         id: responsavel_item
-        pos_hint: {'center_x':0.5,'center_y':0.45}
+        pos_hint: {"center_x": 0.5, "center_y": 0.45}
         size_hint: (0.7,0.1)
-        hint_text : 'Responsável'
-        helper_text: 'Obrigatório para uma não conformidade'
-        helper_text_mode: 'on_error'
-        icon_right: 'alert'
+        hint_text : "Responsável"
+        helper_text: "Obrigatório para uma não conformidade"
+        helper_text_mode: "on_error"
+        icon_right: "alert"
         icon_right_color: app.theme_cls.primary_color
         required : True
 
     MDTextField:
         disabled: True
         id: prazo_item
-        pos_hint: {'center_x':0.5,'center_y':0.35}
+        pos_hint: {"center_x": 0.5, "center_y": 0.35}
         size_hint: (0.7,0.1)
-        hint_text : 'Prazo'
-        icon_right: 'calendar'
-        helper_text: 'Obrigatório para uma não conformidade'
-        helper_text_mode: 'on_error'
+        hint_text : "Prazo"
+        icon_right: "calendar"
+        helper_text: "Obrigatório para uma não conformidade"
+        helper_text_mode: "on_error"
         icon_right_color: app.theme_cls.primary_color
         required : True
 
     MDFillRoundFlatIconButton:
         id:check
-        text: 'CONFIRMAR'
-        icon: 'alert-circle-outline'
-        pos_hint: {'center_x':0.5,'center_y':0.25}
+        text: "CONFIRMAR"
+        icon: "alert-circle-outline"
+        pos_hint: {"center_x": 0.5, "center_y": 0.25}
         size: sp(140), sp(40)
         on_press: app.check_lv_items()
