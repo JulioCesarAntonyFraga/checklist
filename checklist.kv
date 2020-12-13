@@ -4,6 +4,8 @@
 #:import partial functools.partial
 
 ScreenManager:
+    LoginScreen:
+    RegisterScreen:
     WelcomeScreen:
     UsernameScreen:
     DOB:
@@ -22,6 +24,83 @@ ScreenManager:
     ChecklistItem8:
     ChecklistItem9:
     Profile:
+
+
+<CheckBoxLabel@ButtonBehavior+MDLabel>:
+    text: ""
+
+
+<LoginScreen>:
+    name: "login"
+
+    BoxLayout:
+        orientation: "vertical"
+
+        MDTextField:
+            id: email_input
+            hint_text: "Email"
+            helper_text_mode: "on_error"
+
+        MDTextField:
+            id: password_input
+            hint_text: "Senha"
+            helper_text_mode: "on_error"
+
+        BoxLayout:
+
+            MDCheckbox:
+                id: remember_input
+                size_hint: None, None
+                size: "48dp", "48dp"
+                pos_hint: {"center_x": .5, "center_y": .5}
+                active: False
+
+            CheckBoxLabel:
+                text: "Lembrar-me"
+                on_press: root.ids.remember_input.active = not root.ids.remember_input.active
+
+        MDRaisedButton:
+            text: "Entrar"
+            on_press: root.login()
+
+        MDRaisedButton:
+            text: "Cadastre-se"
+            on_press: root.manager.current = "register"
+
+
+<RegisterScreen>:
+    name: "register"
+
+    BoxLayout:
+        orientation: "vertical"
+
+        MDTextField:
+            id: fisrt_name_input
+            hint_text: "Nome"
+
+        MDTextField:
+            id: last_name_input
+            hint_text: "Sobrenome"
+
+        MDTextField:
+            id: email_input
+            hint_text: "Email"
+
+        MDTextField:
+            id: password1_input
+            hint_text: "Senha"
+
+        MDTextField:
+            id: password2_input
+            hint_text: "Repita a senha"
+
+        MDRaisedButton:
+            text: "Cadastrar"
+            on_press: root.register()
+
+        MDRaisedButton:
+            text: "Entrar"
+            on_press: root.manager.current = "login"
 
 
 <ExpansionpanelContent@BoxLayout>:
@@ -85,7 +164,6 @@ ScreenManager:
         on_press:
             root.manager.current = "usernamescreen"
             root.manager.transition.direction = "left"
-
     MDProgressBar:
         value:30
         pos_hint:{"center_y" : 0.02}
@@ -723,7 +801,7 @@ ScreenManager:
         on_press:
             root.manager.current = "checklistName"
             root.manager.transition.direction = "left"
-<ChecklistName>:
+<ChecklistName@Screen>:
     name:"checklistName"
 
     BoxLayout:
@@ -791,7 +869,7 @@ ScreenManager:
 
 
 #Item 1
-<ChecklistItem1>:
+<ChecklistItem1@Screen>:
     name:"checklistItem1"
 
     BoxLayout:
@@ -937,7 +1015,7 @@ ScreenManager:
 
 
 #Item 2
-<ChecklistItem2>:
+<ChecklistItem2@Screen>:
     name:"checklistItem2"
 
     BoxLayout:
@@ -1083,7 +1161,7 @@ ScreenManager:
             
 
 #Item 3
-<ChecklistItem3>:
+<ChecklistItem3@Screen>:
     name:"checklistItem3"
 
     BoxLayout:
@@ -1228,7 +1306,7 @@ ScreenManager:
 
 
 #Item 4
-<ChecklistItem4>:
+<ChecklistItem4@Screen>:
     name:"checklistItem4"
 
     BoxLayout:
@@ -1375,7 +1453,7 @@ ScreenManager:
 
 
 #Item 5
-<ChecklistItem5>:
+<ChecklistItem5@Screen>:
     name:"checklistItem5"
 
     BoxLayout:
@@ -1521,7 +1599,7 @@ ScreenManager:
 
 
 #Item 6
-<ChecklistItem6>:
+<ChecklistItem6@Screen>:
     name:"checklistItem6"
 
     BoxLayout:
@@ -1668,7 +1746,7 @@ ScreenManager:
 
 
 #Item 7
-<ChecklistItem7>:
+<ChecklistItem7@Screen>:
     name:"checklistItem7"
 
     BoxLayout:
@@ -1815,7 +1893,7 @@ ScreenManager:
 
 
 #Item 8
-<ChecklistItem8>:
+<ChecklistItem8@Screen>:
     name:"checklistItem8"
 
     BoxLayout:
@@ -1962,7 +2040,7 @@ ScreenManager:
 
 
 #Item 9
-<ChecklistItem9>:
+<ChecklistItem9@Screen>:
     name:"checklistItem9"
 
     BoxLayout:

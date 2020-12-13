@@ -1,11 +1,17 @@
+import os
+import re
 from datetime import date
 from functools import partial
 
+from kivy.clock import Clock
 import pymongo
 from bson import ObjectId
-from kivy.lang import Builder
+from dotenv import load_dotenv
 from kivy.storage.jsonstore import JsonStore
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.screenmanager import Screen
+from kivy.config import Config
+from kivy.lang import Builder
 from kivymd.app import MDApp
 from kivymd.theming import ThemableBehavior
 from kivymd.uix.button import MDFlatButton
@@ -18,25 +24,156 @@ from kivymd.uix.list import (
 )
 from kivymd.uix.picker import MDDatePicker
 from kivymd.utils import asynckivy
+from gql import Client, gql
+from gql.transport.aiohttp import AIOHTTPTransport
+
+import decorators
+
+load_dotenv()
+
+Config.set("input", "mouse", "mouse,disable_multitouch")
 
 
-class Content(BoxLayout):
-    pass
+def sync_request(query, headers = None, **kwargs):
+    transport = AIOHTTPTransport(url=os.getenv("BACKEND_ENDPOINT"), headers=headers)
+
+    client = Client(transport=transport, fetch_schema_from_transport=True)
+
+    result = client.execute(query, variable_values=kwargs)
+
+    return result
 
 
-class CreateCheckList(ThreeLineIconListItem):
-    pass
+async def async_request(query, headers = None, **kwargs):
+    transport = AIOHTTPTransport(url=os.getenv("BACKEND_ENDPOINT"), headers=headers)
+
+    async with Client(transport=transport, fetch_schema_from_transport=True) as session:
+        result = await session.execute(query, variable_values=kwargs)
+
+        return result
 
 
 class CustomItem(TwoLineAvatarIconListItem):
     icon = StringProperty("")
 
 
-class ExpansionpanelContent(BoxLayout):
+class LoginScreen(Screen):
+    def on_enter(self):
+        self.storage = JsonStore("storage.json")
+
+        if self.storage.exists("user"):
+            user = self.storage.get("user")
+
+            if user["remember"]:
+                query = gql("""
+                    mutation VerifyToken($token: String!) {
+                        verifyToken(input: {
+                                token: $token
+                            }) {
+                            payload
+                        }
+                    }
+                """)
+
+                result = sync_request(query, token=user["authToken"])
+
+                if result["verifyToken"]["payload"] is not None:
+                    Clock.schedule_once(self.to_screen1)
+
+    def validate_inputs(self):
+        valid_inputs = True
+
+        email = self.ids.email_input.text
+        password = self.ids.password_input.text
+
+        email_regex = r"^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$"
+
+        if not email:
+            self.ids.email_input.focus = True
+            self.ids.email_input.helper_text = "Este campo é obrigatório"
+            self.ids.email_input.error = True
+            self.ids.email_input.focus = False
+
+            valid_inputs = False
+
+        elif not re.search(email_regex, email):
+            self.ids.email_input.focus = True
+            self.ids.email_input.helper_text = "Email inválido"
+            self.ids.email_input.error = True
+            self.ids.email_input.focus = False
+
+            valid_inputs = False
+
+        else:
+            self.ids.email_input.focus = True
+            self.ids.email_input.error = False
+            self.ids.email_input.focus = False
+
+        if not password:
+            self.ids.password_input.focus = True
+            self.ids.password_input.helper_text = "Este campo é obrigatório"
+            self.ids.password_input.error = True
+            self.ids.password_input.focus = False
+
+            valid_inputs = False
+
+        else:
+            self.ids.password_input.focus = True
+            self.ids.password_input.error = False
+            self.ids.password_input.focus = False
+
+        return valid_inputs
+
+    def login(self):
+        if self.validate_inputs():
+            query = gql("""
+                mutation Login($email: String!, $password: String!) {
+                    tokenAuth(
+                        input: {
+                            email: $email,
+                            password: $password
+                        }
+                    ) {
+                        success,
+                        errors,
+                        token,
+                        user {
+                            id,
+                            firstName,
+                            lastName
+                        }
+                    }
+                }
+            """)
+
+            email = self.ids.email_input.text
+
+            result = sync_request(
+                query, 
+                email=email, 
+                password=self.ids.password_input.text
+            )
+
+            user = result["tokenAuth"]["user"]
+            user_name = f"{user['firstName']} {user['lastName']}"
+
+            self.storage.put(
+                "user", 
+                id=user["id"], 
+                name=user_name,
+                email=email, 
+                authToken=result["tokenAuth"]["token"],
+                remember=self.ids.remember_input.active
+            )
+
+            self.manager.current = "screen1"
+
+    def to_screen1(self, event):
+        self.manager.current = "screen1"
+
+
+class RegisterScreen(Screen):
     pass
-
-
-interface = Builder.load_file("interface.kv")
 
 
 ############MAQUINARIO APP########################
@@ -51,6 +188,10 @@ class ChecklistApp(MDApp):
 
     teste = "teste"
 
+    def build(self):
+        self.strng = Builder.load_file("checklist.kv")
+        return self.strng
+
     def panel_open(self, *args):
         self.panel_is_open = True
 
@@ -63,100 +204,79 @@ class ChecklistApp(MDApp):
         for index, val in enumerate(self.panel.content.children[::-1]):
             val.secondary_text = str(index + 1)
 
-    def update(self):
-        async def update():
+    @decorators.asynckivy_start
+    async def update(self):
+        await asynckivy.sleep(1)
+
+        try:
+            self.store = JsonStore("userProfile.json")
+            nome = self.store.get("UserInfo")["name"]
+            email = self.store.get("UserInfo")["email"]
+
+            self.strng.get_screen("profile").ids.profile_name_input.text = nome
+            self.strng.get_screen("profile").ids.profile_email_input.text = email
+
+        except Exception:
+            pass
+
+    @decorators.asynckivy_start
+    async def set_refresh(self):
+        await asynckivy.sleep(1)
+
+        try:
+            self.store = JsonStore("userProfile.json")
+            nome = self.store.get("UserInfo")["name"]
+            email = self.store.get("UserInfo")["email"]
+
             await asynckivy.sleep(1)
-            try:
-                self.store = JsonStore("userProfile.json")
-                nome = self.store.get("UserInfo")["name"]
-                email = self.store.get("UserInfo")["email"]
+            self.strng.get_screen("profile").ids.name_perfil_toolbar.text = nome
+            self.strng.get_screen("profile").ids.email_perfil_toolbar.text = email
 
-                interface.get_screen("profile").ids.profile_name_input.text = nome
-                interface.get_screen("profile").ids.profile_email_input.text = email
+            self.strng.get_screen("screen1").ids.name_perfil_toolbar.text = nome
+            self.strng.get_screen("screen1").ids.email_perfil_toolbar.text = email
 
-            except Exception as erro:
-                print(erro)
+            self.strng.get_screen("screen2").ids.name_perfil_toolbar.text = nome
+            self.strng.get_screen("screen2").ids.email_perfil_toolbar.text = email
 
-        asynckivy.start(update())
+            self.strng.get_screen("screen3").ids.name_perfil_toolbar.text = nome
+            self.strng.get_screen("screen3").ids.email_perfil_toolbar.text = email
 
-    def set_refresh(self):
-        async def set_refresh():
-            await asynckivy.sleep(1)
-            try:
-                self.store = JsonStore("userProfile.json")
-                nome = self.store.get("UserInfo")["name"]
-                email = self.store.get("UserInfo")["email"]
+            self.strng.get_screen("screen5").ids.name_perfil_toolbar.text = nome
+            self.strng.get_screen("screen5").ids.email_perfil_toolbar.text = email
 
-                await asynckivy.sleep(1)
-                interface.get_screen("profile").ids.name_perfil_toolbar.text = nome
-                interface.get_screen("profile").ids.email_perfil_toolbar.text = email
+            self.strng.get_screen(
+                "checklistName"
+            ).ids.name_perfil_toolbar.text = nome
+            self.strng.get_screen(
+                "checklistName"
+            ).ids.email_perfil_toolbar.text = email
 
-                interface.get_screen("screen1").ids.name_perfil_toolbar.text = nome
-                interface.get_screen("screen1").ids.email_perfil_toolbar.text = email
+            self.strng.get_screen("profile").ids.profile_name_input.text = nome
+            self.strng.get_screen("profile").ids.profile_email_input.text = email
+            self.s
 
-                interface.get_screen("screen2").ids.name_perfil_toolbar.text = nome
-                interface.get_screen("screen2").ids.email_perfil_toolbar.text = email
-
-                interface.get_screen("screen3").ids.name_perfil_toolbar.text = nome
-                interface.get_screen("screen3").ids.email_perfil_toolbar.text = email
-
-                interface.get_screen("screen5").ids.name_perfil_toolbar.text = nome
-                interface.get_screen("screen5").ids.email_perfil_toolbar.text = email
-
-                interface.get_screen(
-                    "checklistName"
-                ).ids.name_perfil_toolbar.text = nome
-                interface.get_screen(
-                    "checklistName"
-                ).ids.email_perfil_toolbar.text = email
-
-                interface.get_screen("profile").ids.profile_name_input.text = nome
-                interface.get_screen("profile").ids.profile_email_input.text = email
-
-            except Exception as erro:
-                print(erro)
-
-        asynckivy.start(set_refresh())
+        except Exception:
+            pass
 
     def update_profile(self):
-        name = interface.get_screen("profile").ids.profile_name_input.text
-        email = interface.get_screen("profile").ids.profile_email_input.text
+        name = self.strng.get_screen("profile").ids.profile_name_input.text
+        email = self.strng.get_screen("profile").ids.profile_email_input.text
         self.store.put("UserInfo", name=name, email=email)
         self.set_refresh()
-
-    def build(self):
-        """Carregamento e construção ao iniciar o app."""
-        return interface
-
-    def on_start(self):
-        """Função ao iniciar o app ele vai carregar isso antes de mostrar tela."""
-        self.load_checklist()
-        self.set_refresh()
-        self.update()
-        self.store = JsonStore("userProfile.json")
-        try:
-            if self.store.get("UserInfo")["name"] != "":
-                print(self.store.get("UserInfo")["name"])
-                interface.get_screen("screen1").manager.current = "screen1"
-            else:
-                print(self.store.get("UserInfo")["name"])
-                interface.get_screen("welcomescreen").manager.current = "welcomescreen"
-        except:
-            interface.get_screen("welcomescreen").manager.current = "welcomescreen"
 
     def clear_items_inputs(self):
         for i in range(1, 9):
 
             if (
-                interface.get_screen(f"checklistItem{i}").ids.radio_item_c.active
-                or interface.get_screen(f"checklistItem{i}").ids.radio_item_na.active
+                self.strng.get_screen(f"checklistItem{i}").ids.radio_item_c.active
+                or self.strng.get_screen(f"checklistItem{i}").ids.radio_item_na.active
             ):
 
-                interface.get_screen(f"checklistItem{i}").ids.acao_item.text = ""
-                interface.get_screen(
+                self.strng.get_screen(f"checklistItem{i}").ids.acao_item.text = ""
+                self.strng.get_screen(
                     f"checklistItem{i}"
                 ).ids.responsavel_item.text = ""
-                interface.get_screen(f"checklistItem{i}").ids.prazo_item.text = ""
+                self.strng.get_screen(f"checklistItem{i}").ids.prazo_item.text = ""
 
     class ContentNavigationDrawer(BoxLayout):  #######PERFIL########
         pass
@@ -165,18 +285,19 @@ class ChecklistApp(MDApp):
         pass
 
     def check_lv_name_and_description(self):
-        print(interface.get_screen("checklistName").ids.name_text_field_lv.text)
-        print(interface.get_screen("checklistName").ids.descricao_text_field_lv.text)
+        print(self.strng.get_screen("checklistName").ids.name_text_field_lv.text)
+        print(self.strng.get_screen("checklistName").ids.descricao_text_field_lv.text)
         if (
-            interface.get_screen("checklistName").ids.name_text_field_lv.text != ""
-            and interface.get_screen("checklistName").ids.descricao_text_field_lv.text
+            self.strng.get_screen("checklistName").ids.name_text_field_lv.text != ""
+            and self.strng.get_screen("checklistName").ids.descricao_text_field_lv.text
             != ""
         ):
-            interface.get_screen("checklistName").ids.lv_name_button.disabled = False
+            self.strng.get_screen("checklistName").ids.lv_name_button.disabled = False
 
         else:
-            interface.get_screen("checklistName").ids.lv_name_button.disabled = True
+            self.strng.get_screen("checklistName").ids.lv_name_button.disabled = True
 
+    @decorators.asyncio_run
     def add_new_lv(self):
         conformes = 0
         nao_conformes = 0
@@ -197,21 +318,21 @@ class ChecklistApp(MDApp):
 
         for i in range(1, 9):
             if (
-                interface.get_screen(f"checklistItem{i}").ids.radio_item_c.active
+                self.strng.get_screen(f"checklistItem{i}").ids.radio_item_c.active
                 == True
             ):
                 results.append("Conforme")
                 conformes += 1
 
             if (
-                interface.get_screen(f"checklistItem{i}").ids.radio_item_nc.active
+                self.strng.get_screen(f"checklistItem{i}").ids.radio_item_nc.active
                 == True
             ):
                 results.append("Não conforme")
                 nao_conformes += 1
 
             if (
-                interface.get_screen(f"checklistItem{i}").ids.radio_item_na.active
+                self.strng.get_screen(f"checklistItem{i}").ids.radio_item_na.active
                 == True
             ):
                 results.append("Não aplicável")
@@ -232,10 +353,10 @@ class ChecklistApp(MDApp):
         for i in range(1, 9):
 
             lv = {
-                "nome_lv": interface.get_screen(
+                "nome_lv": self.strng.get_screen(
                     "checklistName"
                 ).ids.name_text_field_lv.text,
-                "descricao_lv": interface.get_screen(
+                "descricao_lv": self.strng.get_screen(
                     "checklistName"
                 ).ids.descricao_text_field_lv.text,
                 "nome_usuario": nome,
@@ -247,101 +368,101 @@ class ChecklistApp(MDApp):
                 "lv_status": status_lv,
                 "item1_nome": "Os locais adjacentes das caixas estão limpos e organizados?",
                 "item1_resultado": results[i - 1],
-                "item1_acao": interface.get_screen(
+                "item1_acao": self.strng.get_screen(
                     f"checklistItem{i}"
                 ).ids.acao_item.text,
-                "item1_prazo": interface.get_screen(
+                "item1_prazo": self.strng.get_screen(
                     f"checklistItem{i}"
                 ).ids.prazo_item.text,
-                "item1_responsavel": interface.get_screen(
+                "item1_responsavel": self.strng.get_screen(
                     f"checklistItem{i}"
                 ).ids.responsavel_item.text,
                 "item2_nome": "As caixas estão com acúmulo excessivo de gordura?",
                 "item2_resultado": results[i - 1],
-                "item2_acao": interface.get_screen(
+                "item2_acao": self.strng.get_screen(
                     f"checklistItem{i}"
                 ).ids.acao_item.text,
-                "item2_prazo": interface.get_screen(
+                "item2_prazo": self.strng.get_screen(
                     f"checklistItem{i}"
                 ).ids.prazo_item.text,
-                "item2_responsavel": interface.get_screen(
+                "item2_responsavel": self.strng.get_screen(
                     f"checklistItem{i}"
                 ).ids.responsavel_item.text,
                 "item3_nome": "As caixas de gordura estão obstruídas?",
                 "item3_resultado": results[i - 1],
-                "item3_acao": interface.get_screen(
+                "item3_acao": self.strng.get_screen(
                     f"checklistItem{i}"
                 ).ids.acao_item.text,
-                "item3_prazo": interface.get_screen(
+                "item3_prazo": self.strng.get_screen(
                     f"checklistItem{i}"
                 ).ids.prazo_item.text,
-                "item3_responsavel": interface.get_screen(
+                "item3_responsavel": self.strng.get_screen(
                     f"checklistItem{i}"
                 ).ids.responsavel_item.text,
                 "item4_nome": "Há evidências de transbordo?",
                 "item4_resultado": results[i - 1],
-                "item4_acao": interface.get_screen(
+                "item4_acao": self.strng.get_screen(
                     f"checklistItem{i}"
                 ).ids.acao_item.text,
-                "item4_prazo": interface.get_screen(
+                "item4_prazo": self.strng.get_screen(
                     f"checklistItem{i}"
                 ).ids.prazo_item.text,
-                "item4_responsavel": interface.get_screen(
+                "item4_responsavel": self.strng.get_screen(
                     f"checklistItem{i}"
                 ).ids.responsavel_item.text,
                 "item5_nome": "Há evidência de odores?",
                 "item5_resultado": results[i - 1],
-                "item5_acao": interface.get_screen(
+                "item5_acao": self.strng.get_screen(
                     f"checklistItem{i}"
                 ).ids.acao_item.text,
-                "item5_prazo": interface.get_screen(
+                "item5_prazo": self.strng.get_screen(
                     f"checklistItem{i}"
                 ).ids.prazo_item.text,
-                "item5_responsavel": interface.get_screen(
+                "item5_responsavel": self.strng.get_screen(
                     f"checklistItem{i}"
                 ).ids.responsavel_item.text,
                 "item6_nome": "Há detritos de alimentos, sobras de embalagens, entre outros?",
                 "item6_resultado": results[i - 1],
-                "item6_acao": interface.get_screen(
+                "item6_acao": self.strng.get_screen(
                     f"checklistItem{i}"
                 ).ids.acao_item.text,
-                "item6_prazo": interface.get_screen(
+                "item6_prazo": self.strng.get_screen(
                     f"checklistItem{i}"
                 ).ids.prazo_item.text,
-                "item6_responsavel": interface.get_screen(
+                "item6_responsavel": self.strng.get_screen(
                     f"checklistItem{i}"
                 ).ids.responsavel_item.text,
                 "item7_nome": "Há telas (grade) de retenção nas áreas internas do refeitório cin objetivo de reter sobras de alimentos?",
                 "item7_resultado": results[i - 1],
-                "item7_acao": interface.get_screen(
+                "item7_acao": self.strng.get_screen(
                     f"checklistItem{i}"
                 ).ids.acao_item.text,
-                "item7_prazo": interface.get_screen(
+                "item7_prazo": self.strng.get_screen(
                     f"checklistItem{i}"
                 ).ids.prazo_item.text,
-                "item7_responsavel": interface.get_screen(
+                "item7_responsavel": self.strng.get_screen(
                     f"checklistItem{i}"
                 ).ids.responsavel_item.text,
                 "item8_nome": "As tampas das caixas estão encaixadas de acordo com a construção?",
                 "item8_resultado": results[i - 1],
-                "item8_acao": interface.get_screen(
+                "item8_acao": self.strng.get_screen(
                     f"checklistItem{i}"
                 ).ids.acao_item.text,
-                "item8_prazo": interface.get_screen(
+                "item8_prazo": self.strng.get_screen(
                     f"checklistItem{i}"
                 ).ids.prazo_item.text,
-                "item8_responsavel": interface.get_screen(
+                "item8_responsavel": self.strng.get_screen(
                     f"checklistItem{i}"
                 ).ids.responsavel_item.text,
                 "item9_nome": "O efluente está sendo direcionado para a Estação de tratamento de Efluente - ETE?",
                 "item9_resultado": results[i - 1],
-                "item9_acao": interface.get_screen(
+                "item9_acao": self.strng.get_screen(
                     f"checklistItem{i}"
                 ).ids.acao_item.text,
-                "item9_prazo": interface.get_screen(
+                "item9_prazo": self.strng.get_screen(
                     f"checklistItem{i}"
                 ).ids.prazo_item.text,
-                "item9_responsavel": interface.get_screen(
+                "item9_responsavel": self.strng.get_screen(
                     f"checklistItem{i}"
                 ).ids.responsavel_item.text,
             }
@@ -444,18 +565,18 @@ class ChecklistApp(MDApp):
 
     ############MUDANDO A TELA PARA CHECKLIST INFORMAÇOES##########
     def change_screen(self, ThreeLineIconListItem):
-        interface.get_screen("screen3").manager.current = "screen3"
+        self.strng.current = "screen3"
 
     ###############MUDANDO A TELA PARA O MENU DAS CHECKLISTS###########
     def change_screen_to_checklists(self):
-        interface.get_screen("screen1").manager.current = "screen1"
+        self.strng.current = "screen1"
 
     def change_screen_to_checklistname(self):
-        interface.get_screen("checklistName").manager.current = "checklistName"
+        self.strng.current = "checklistName"
 
     ####################MUDANDO A TELA PARA A TELA INICIAR UM NOVA VERIFICAÇAO#############
     def start_checklist(self):
-        interface.get_screen("checklistName").manager.current = "checklistName"
+        self.strng.current = "checklistName"
 
     ##################FUNCAO PARA JANELHINHA DE DATA#########################
     def get_date(self, date):
@@ -472,7 +593,7 @@ class ChecklistApp(MDApp):
 
     #########PREENCHIMENTOD DO NOME NA TELA DE LOGIN OBRIGATORIO FUNCAO############
     def check_username(self):
-        self.username_text = interface.get_screen(
+        self.username_text = self.strng.get_screen(
             "usernamescreen"
         ).ids.username_text_fied.text
         username_check_false = True
@@ -492,11 +613,11 @@ class ChecklistApp(MDApp):
             )
             self.dialog.open()
         else:
-            interface.get_screen("usernamescreen").ids.disabled_button.disabled = False
+            self.strng.get_screen("usernamescreen").ids.disabled_button.disabled = False
 
     ####################PREENCHIMENTO DO EMAIL TELA DE LOGIN OBRIGATORIO###################
     def get_email(self):
-        self.email_text = interface.get_screen("dob").ids.email_text_fied.text
+        self.email_text = self.strng.get_screen("dob").ids.email_text_fied.text
         username_check_false = True
         try:
             int(self.username_text)
@@ -514,10 +635,10 @@ class ChecklistApp(MDApp):
             )
             self.dialog.open()
         else:
-            name = interface.get_screen("usernamescreen").ids.username_text_fied.text
-            email = interface.get_screen("dob").ids.email_text_fied.text
+            name = self.strng.get_screen("usernamescreen").ids.username_text_fied.text
+            email = self.strng.get_screen("dob").ids.email_text_fied.text
             self.store.put("UserInfo", name=name, email=email)
-            interface.get_screen("dob").ids.disabled_button2.disabled = False
+            self.strng.get_screen("dob").ids.disabled_button2.disabled = False
             self.set_refresh()
             self.update()
 
@@ -528,31 +649,31 @@ class ChecklistApp(MDApp):
 
             ##Item 1
             if (
-                interface.get_screen(f"checklistItem{i}").ids.radio_item_nc.active
+                self.strng.get_screen(f"checklistItem{i}").ids.radio_item_nc.active
                 == True
             ):
-                interface.get_screen(
+                self.strng.get_screen(
                     f"checklistItem{i}"
                 ).ids.acao_item.disabled = False
-                interface.get_screen(
+                self.strng.get_screen(
                     f"checklistItem{i}"
                 ).ids.responsavel_item.disabled = False
-                interface.get_screen(
+                self.strng.get_screen(
                     f"checklistItem{i}"
                 ).ids.prazo_item.disabled = False
 
             else:
-                interface.get_screen(f"checklistItem{i}").ids.acao_item.disabled = True
-                interface.get_screen(
+                self.strng.get_screen(f"checklistItem{i}").ids.acao_item.disabled = True
+                self.strng.get_screen(
                     f"checklistItem{i}"
                 ).ids.responsavel_item.disabled = True
-                interface.get_screen(
+                self.strng.get_screen(
                     f"checklistItem{i}"
                 ).ids.prazo_item.disabled = True
 
     def disable_nextButton(self):
         for i in range(1, 9):
-            interface.get_screen(f"checklistItem{i}").ids.next_button.disabled = True
+            self.strng.get_screen(f"checklistItem{i}").ids.next_button.disabled = True
 
     ####################FUNCAO PARA LIBERAR OS BOTAO CASO SEJA SELECIONADO AS OPCOES DA VERIFICAÇAO############
 
@@ -560,99 +681,115 @@ class ChecklistApp(MDApp):
 
         for i in range(1, 9):
             if (
-                interface.get_screen(f"checklistItem{i}").ids.radio_item_nc.active
+                self.strng.get_screen(f"checklistItem{i}").ids.radio_item_nc.active
                 == True
-                and interface.get_screen(
+                and self.strng.get_screen(
                     f"checklistItem{i}"
                 ).ids.acao_item.text.split()
                 != []
-                and interface.get_screen(
+                and self.strng.get_screen(
                     f"checklistItem{i}"
                 ).ids.responsavel_item.text.split()
                 != []
-                and interface.get_screen(
+                and self.strng.get_screen(
                     f"checklistItem{i}"
                 ).ids.prazo_item.text.split()
                 != []
-                or interface.get_screen(f"checklistItem{i}").ids.radio_item_c.active
+                or self.strng.get_screen(f"checklistItem{i}").ids.radio_item_c.active
                 == True
-                or interface.get_screen(f"checklistItem{i}").ids.radio_item_na.active
+                or self.strng.get_screen(f"checklistItem{i}").ids.radio_item_na.active
                 == True
             ):
 
-                interface.get_screen(
+                self.strng.get_screen(
                     f"checklistItem{i}"
                 ).ids.next_button.disabled = False
 
     ###################BLOQUEIO DOS BOTAO PARA EDITAR CHCKLIST#########################
     def enable_checklist_inputs(self):
-        if interface.get_screen("screen3").ids.profile_name_input.disabled == True:
+        if self.strng.get_screen("screen3").ids.profile_name_input.disabled == True:
 
-            interface.get_screen("screen3").ids.profile_name_input.disabled = False
+            self.strng.get_screen("screen3").ids.profile_name_input.disabled = False
 
-            interface.get_screen("screen3").ids.profile_data_input.disabled = False
+            self.strng.get_screen("screen3").ids.profile_data_input.disabled = False
 
-            interface.get_screen(
+            self.strng.get_screen(
                 "screen3"
             ).ids.profile_responsavel_input.disabled = False
 
-            interface.get_screen("screen3").ids.profile_acao_input.disabled = False
+            self.strng.get_screen("screen3").ids.profile_acao_input.disabled = False
 
-            interface.get_screen(
+            self.strng.get_screen(
                 "screen3"
             ).ids.profile_responsavel_realizar_input.disabled = False
 
-            interface.get_screen("screen3").ids.profile_prazo_input.disabled = False
+            self.strng.get_screen("screen3").ids.profile_prazo_input.disabled = False
 
-            interface.get_screen("screen3").ids.profile_status_input.disabled = False
+            self.strng.get_screen("screen3").ids.profile_status_input.disabled = False
 
-            interface.get_screen("screen3").ids.save_checklist_button.disabled = False
+            self.strng.get_screen("screen3").ids.save_checklist_button.disabled = False
 
-            interface.get_screen(
+            self.strng.get_screen(
                 "screen3"
             ).ids.delete_checklist_button.disabled = False
 
         else:
-            interface.get_screen("screen3").ids.profile_name_input.disabled = True
+            self.strng.get_screen("screen3").ids.profile_name_input.disabled = True
 
-            interface.get_screen("screen3").ids.profile_data_input.disabled = True
+            self.strng.get_screen("screen3").ids.profile_data_input.disabled = True
 
-            interface.get_screen(
+            self.strng.get_screen(
                 "screen3"
             ).ids.profile_responsavel_input.disabled = True
 
-            interface.get_screen("screen3").ids.profile_acao_input.disabled = True
+            self.strng.get_screen("screen3").ids.profile_acao_input.disabled = True
 
-            interface.get_screen(
+            self.strng.get_screen(
                 "screen3"
             ).ids.profile_responsavel_realizar_input.disabled = True
 
-            interface.get_screen("screen3").ids.profile_prazo_input.disabled = True
+            self.strng.get_screen("screen3").ids.profile_prazo_input.disabled = True
 
-            interface.get_screen("screen3").ids.profile_status_input.disabled = True
+            self.strng.get_screen("screen3").ids.profile_status_input.disabled = True
 
-            interface.get_screen("screen3").ids.save_checklist_button.disabled = True
+            self.strng.get_screen("screen3").ids.save_checklist_button.disabled = True
 
-            interface.get_screen("screen3").ids.delete_checklist_button.disabled = True
+            self.strng.get_screen("screen3").ids.delete_checklist_button.disabled = True
 
     #######################BLOQUEIO DOS BOTAO PARA EDITAR PERFIL################
     def enable_profile_inputs(self):
 
-        if interface.get_screen("profile").ids.profile_email_input.disabled == True:
+        if self.strng.get_screen("profile").ids.profile_email_input.disabled == True:
 
-            interface.get_screen("profile").ids.profile_email_input.disabled = False
+            self.strng.get_screen("profile").ids.profile_email_input.disabled = False
 
-            interface.get_screen("profile").ids.profile_name_input.disabled = False
+            self.strng.get_screen("profile").ids.profile_name_input.disabled = False
 
-            interface.get_screen("profile").ids.save_profile_button.disabled = False
+            self.strng.get_screen("profile").ids.save_profile_button.disabled = False
         else:
-            interface.get_screen("profile").ids.profile_email_input.disabled = True
+            self.strng.get_screen("profile").ids.profile_email_input.disabled = True
 
-            interface.get_screen("profile").ids.profile_name_input.disabled = True
+            self.strng.get_screen("profile").ids.profile_name_input.disabled = True
 
-            interface.get_screen("profile").ids.save_profile_button.disabled = True
+            self.strng.get_screen("profile").ids.save_profile_button.disabled = True
 
-    def load_checklist(self):
+    @decorators.asynckivy_start
+    async def load_checklists(self):
+        query = gql("""
+            query {
+                allVerificationLists(completed: false) {
+                    id,
+                    name,
+                    conclusionPercentage
+                }
+            }
+        """)
+
+        result = await async_request(query, {"Authentication": f"JWT {self.auth_token}"})
+
+        for question in result["allVerificationLists"]:
+            print(question)
+
         myclient = pymongo.MongoClient(
             "mongodb+srv://julio:senha@cluster0.pn3vb.mongodb.net/kivyapp?retryWrites=true&w=majority"
         )
@@ -661,7 +798,7 @@ class ChecklistApp(MDApp):
 
         for item in col_lv.find():
 
-            self.checklist_table = ThreeLineIconListItem(
+            checklist_table = ThreeLineIconListItem(
                 text=item["nome_lv"],
                 secondary_text=item["descricao_lv"],
                 tertiary_text=item["Data_emissao"],
@@ -723,9 +860,7 @@ class ChecklistApp(MDApp):
                 ),
             )
 
-            interface.get_screen("screen1").ids.checklist.add_widget(
-                self.checklist_table
-            )
+            self.strng.get_screen("screen1").ids.checklist.add_widget(checklist_table)
 
     def checklist_screen(
         self,
@@ -785,8 +920,8 @@ class ChecklistApp(MDApp):
         item9_responsavel,
     ):
 
-        interface.get_screen("screen3").manager.current = "screen3"
-        interface.get_screen("screen3").ids.screen3_toolbar.title = nome_lv
+        self.strng.current = "screen3"
+        self.strng.get_screen("screen3").ids.screen3_toolbar.title = nome_lv
 
         items = {
             "item1_nome": item1_nome,
@@ -842,7 +977,7 @@ class ChecklistApp(MDApp):
                 text=items[f"item{i}_nome"], secondary_text=items[f"item{i}_resultado"]
             )
 
-            interface.get_screen("screen3").ids.box.add_widget(self.list_item)
+            self.strng.get_screen("screen3").ids.box.add_widget(self.list_item)
 
 
 if __name__ == "__main__":
