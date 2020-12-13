@@ -42,7 +42,7 @@ ScreenManager:
             icon: "alert"
 
 
-<Content@BoxLayout>:
+<Content>:
     orientation: "vertical"
     padding: dp(10)
     spacing: dp(10)
@@ -215,7 +215,6 @@ ScreenManager:
 
     MDNavigationDrawer:
         id: nav_drawer
-        
 
         ContentNavigationDrawer:
             orientation: "vertical"
@@ -241,6 +240,7 @@ ScreenManager:
                 font_style: "Caption"
                 height: self.texture_size[1]
 
+           
 
             DrawerList:
                 id: md_list
@@ -285,11 +285,15 @@ ScreenManager:
 
                     OneLineIconListItem:
                         text: "Sair"
-                        on_release: app.show_alert_dialog()
+                        on_press: 
+                            nav_drawer.set_state('close')
+                            app.show_alert_dialog()
                     
                         IconLeftWidget:
                             icon: "exit-to-app"
-                            on_release: app.show_alert_dialog()
+                            on_press: 
+                                nav_drawer.set_state('close')
+                                app.show_alert_dialog()
                             
     
     
@@ -302,8 +306,9 @@ ScreenManager:
         orientation: "vertical"
         MDToolbar:
             id: screen3_toolbar
-            left_action_items: [["menu", lambda x: nav_drawer.toggle_nav_drawer()]]
-            right_action_items: [["trash-can-outline", lambda x: app.start_checklist()]]
+            title: 'CheckList' 
+            left_action_items: [["menu", lambda x: nav_drawer.set_state()]]
+            right_action_items: [["file-document-edit-outline", lambda x: app.printa2()],["check", lambda x: app.printa3()]]
             size_hint_y: 0.11
             elevation:5
 
@@ -313,12 +318,10 @@ ScreenManager:
         size_hint: (0.97, 0.89)
         pos_hint: {"center_x": .51, "y": 0.01}
         MDList:
-            id: box
-            
+            id: my_checklist
 
     MDNavigationDrawer:
         id: nav_drawer
-        
 
         ContentNavigationDrawer:
             orientation: "vertical"
@@ -344,6 +347,7 @@ ScreenManager:
                 font_style: "Caption"
                 height: self.texture_size[1]
 
+           
 
             DrawerList:
                 id: md_list
@@ -388,13 +392,15 @@ ScreenManager:
 
                     OneLineIconListItem:
                         text: "Sair"
-                        on_release: app.show_alert_dialog()
+                        on_press: 
+                            nav_drawer.set_state('close')
+                            app.show_alert_dialog()
                     
                         IconLeftWidget:
                             icon: "exit-to-app"
-                            on_release: app.show_alert_dialog()
-
-
+                            on_press: 
+                                nav_drawer.set_state('close')
+                                app.show_alert_dialog()
         
 
     
@@ -491,7 +497,9 @@ ScreenManager:
 
                     OneLineIconListItem:
                         text: "Sair"
-                        on_release: app.show_alert_dialog()
+                        on_press: 
+                            nav_drawer2.set_state('close')
+                            app.show_alert_dialog()
                     
                         IconLeftWidget:
                             icon: "exit-to-app"
@@ -510,6 +518,15 @@ ScreenManager:
             elevation:5
 
         Widget:
+
+    MDFillRoundFlatIconButton:
+        id:check
+        text: 'CONFIRMAR'
+        icon: 'alert-circle-outline'
+        pos_hint: {'center_x':0.5,'center_y':0.25}
+        size: sp(140), sp(40)
+        on_press: 
+            app.chek_profile_inputs()
 
     MDTextField:
         id: profile_email_input
@@ -572,6 +589,7 @@ ScreenManager:
                 font_style: "Caption"
                 height: self.texture_size[1]
 
+           
 
             DrawerList:
                 id: md_list
@@ -617,11 +635,15 @@ ScreenManager:
 
                     OneLineIconListItem:
                         text: "Sair"
-                        on_release: app.show_alert_dialog()
+                        on_press: 
+                            nav_drawer4.set_state('close')
+                            app.show_alert_dialog()
                     
                         IconLeftWidget:
                             icon: "exit-to-app"
-                            on_release: app.show_alert_dialog()
+                            on_press: 
+                                nav_drawer4.set_state('close')
+                                app.show_alert_dialog()
 
 
 <Screen5@Screen>:
@@ -643,7 +665,6 @@ ScreenManager:
 
 
     MDNavigationDrawer:
-        type: "standard"
         id: nav_drawer4
 
         ContentNavigationDrawer:
@@ -670,6 +691,7 @@ ScreenManager:
                 font_style: "Caption"
                 height: self.texture_size[1]
 
+           
 
             DrawerList:
                 id: md_list
@@ -713,7 +735,9 @@ ScreenManager:
 
                         IconLeftWidget:
                             icon: "exit-to-app"
-                            on_release: app.show_alert_dialog()
+                            on_press: 
+                                nav_drawer4.set_state('close')
+                                app.show_alert_dialog()
 
     MDFloatingActionButton:
         icon:"arrow-right"

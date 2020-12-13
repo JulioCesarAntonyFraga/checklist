@@ -16,6 +16,8 @@ from kivymd.app import MDApp
 from kivymd.theming import ThemableBehavior
 from kivymd.uix.button import MDFlatButton
 from kivymd.uix.dialog import MDDialog
+from kivymd.uix.expansionpanel import MDExpansionPanel, MDExpansionPanelThreeLine
+from kivymd.uix.textfield import MDTextField
 from kivymd.uix.list import (
     MDList,
     StringProperty,
@@ -51,6 +53,10 @@ async def async_request(query, headers = None, **kwargs):
         result = await session.execute(query, variable_values=kwargs)
 
         return result
+
+
+class Content(BoxLayout):
+    pass
 
 
 class CustomItem(TwoLineAvatarIconListItem):
@@ -263,6 +269,7 @@ class ChecklistApp(MDApp):
         email = self.strng.get_screen("profile").ids.profile_email_input.text
         self.store.put("UserInfo", name=name, email=email)
         self.set_refresh()
+        self.strng.get_screen('profile').ids.save_profile_button.disabled = True
 
     def clear_items_inputs(self):
         for i in range(1, 9):
@@ -350,8 +357,10 @@ class ChecklistApp(MDApp):
 
         lv = {}
 
-        for i in range(1, 9):
+        for i in range(1,10):
 
+            print(self.strng.get_screen(f'checklistItem{i}').ids.acao_item.text, self.strng.get_screen(f'checklistItem{i}').ids.prazo_item.text, self.strng.get_screen(f'checklistItem{i}').ids.responsavel_item.text)
+            
             lv = {
                 "nome_lv": self.strng.get_screen(
                     "checklistName"
@@ -468,6 +477,9 @@ class ChecklistApp(MDApp):
             }
 
         col_lv.insert_one(lv)
+        self.load_checklist()
+        self.strng.get_screen('screen1').manager.current = 'screen1'
+        print(results)
 
     ##################CONFIRMAÇAO DE SAIDA APP################
     dialog = None
@@ -547,11 +559,10 @@ class ChecklistApp(MDApp):
     #####################BLOCO DE AVISO ECLUIR CHECKLIST FECHANDO##############
     def close_username_dialogue_excluir(self, obj):
         self.dialog.dismiss()
-        self.remove_checklist()
         self.change_screen_to_checklists()
 
     #################REMOVE WIDGET CHECKLIST##################
-    def remove_checklist(self):
+    def remove_checklist(self, id):
         try:
             myclient = pymongo.MongoClient(
                 "mongodb+srv://julio:senha@cluster0.pn3vb.mongodb.net/kivyapp?retryWrites=true&w=majority"
@@ -978,6 +989,38 @@ class ChecklistApp(MDApp):
             )
 
             self.strng.get_screen("screen3").ids.box.add_widget(self.list_item)
+
+        for i in range(1,10):
+            self.list_item = MDExpansionPanel(
+            content = Content(),
+            on_open=self.panel_open,
+            on_close=self.panel_close,
+            icon=f"kivymd.png",
+            panel_cls=MDExpansionPanelThreeLine(
+                text=items[f'item{i}_nome'],
+                secondary_text=items[f'item{i}_resultado'],
+                tertiary_text=items[f'item{i}_prazo']
+                )
+            )
+
+            self.strng.get_screen('screen3').ids.my_checklist.add_widget(self.list_item)
+
+            if items[f'item{i}_resultado'] == 'Não conforme':
+                self.list_item.content.ids.list.add_widget(MDTextField(text=items[f'item{i}_acao'],
+                    size_hint= (0.98,0.1),
+                    hint_text = 'Ação para uma não conformidade!',
+                    icon_right= 'inbox',
+                    ))
+                self.list_item.content.ids.list.add_widget(MDTextField(text=items[f'item{i}_prazo'],
+                    size_hint= (0.98,0.1),
+                    hint_text = 'Prazo para uma não conformidade!',
+                    icon_right= 'inbox',
+                    ))
+                self.list_item.content.ids.list.add_widget(MDTextField(text=items[f'item{i}_responsavel'],
+                    size_hint= (0.98,0.1),
+                    hint_text = 'Responsável para uma não conformidade!',
+                    icon_right= 'inbox',
+                    ))
 
 
 if __name__ == "__main__":
