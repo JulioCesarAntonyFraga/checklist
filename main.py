@@ -659,6 +659,7 @@ class PawareApp(MDApp):
         self.strng.get_screen('screen3').manager.current = 'screen3'
         self.strng.get_screen('screen3').ids.screen3_toolbar.title = nome_lv
 
+        self.strng.get_screen('screen3').ids.my_checklist.clear_widgets()
         
         items = {
             "item1_nome": item1_nome,
@@ -717,15 +718,67 @@ class PawareApp(MDApp):
 
         }
 
-        for i in range(1,10):
-
-            self.list_item = ThreeLineIconListItem(
-                text=items[f'item{i}_nome'],
-                secondary_text=items[f'item{i}_resultado']
+        self.edit_lv = MDTextField(text=str(porcentagem_c),
+            size_hint= (0.98,0.1),
+            hint_text = 'Ação para uma não conformidade!',
+            icon_right= 'inbox',
+            helper_text= 'Ação para uma não conformidade!',
+            helper_text_mode= 'on_error'
+            
             )
 
-            self.strng.get_screen('screen3').ids.box.add_widget(self.list_item)
+        self.status_lv =MDTextField(text=lv_status,
+            size_hint= (0.98,0.1),
+            hint_text = 'Status da LV',
+            icon_right= 'inbox',
+            helper_text= 'Status da LV',
+            helper_text_mode= 'on_error'
+            )
+        self.data_lv =MDTextField(text=data_emissao,
+            size_hint= (0.98,0.1),
+            hint_text = 'Ação para uma não conformidade!',
+            icon_right= 'inbox',
+            helper_text= 'Ação para uma não conformidade!',
+            helper_text_mode= 'on_error'
+            )
 
+        self.strng.get_screen('screen3').ids.my_checklist.add_widget(self.edit_lv)
+        self.strng.get_screen('screen3').ids.my_checklist.add_widget(self.status_lv)
+        self.strng.get_screen('screen3').ids.my_checklist.add_widget(self.data_lv)
 
+        for i in range(1,10):
+
+            self.list_item = MDExpansionPanel(
+            content = Content(),
+            on_open=self.panel_open,
+            on_close=self.panel_close,
+            icon=f"kivymd.png",
+            panel_cls=MDExpansionPanelThreeLine(
+                text=items[f'item{i}_nome'],
+                secondary_text=items[f'item{i}_resultado'],
+                tertiary_text=items[f'item{i}_prazo']
+                )
+            )
+
+            self.strng.get_screen('screen3').ids.my_checklist.add_widget(self.list_item)
+
+            if items[f'item{i}_resultado'] == 'Não conforme':
+                self.list_item.content.ids.list.add_widget(MDTextField(text=items[f'item{i}_acao'],
+                    size_hint= (0.98,0.1),
+                    hint_text = 'Ação para uma não conformidade!',
+                    icon_right= 'inbox',
+                    ))
+                self.list_item.content.ids.list.add_widget(MDTextField(text=items[f'item{i}_prazo'],
+                    size_hint= (0.98,0.1),
+                    hint_text = 'Prazo para uma não conformidade!',
+                    icon_right= 'inbox',
+                    ))
+                self.list_item.content.ids.list.add_widget(MDTextField(text=items[f'item{i}_responsavel'],
+                    size_hint= (0.98,0.1),
+                    hint_text = 'Responsável para uma não conformidade!',
+                    icon_right= 'inbox',
+                    ))
+  
+        
         
 PawareApp().run()

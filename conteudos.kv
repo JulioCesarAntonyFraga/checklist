@@ -23,23 +23,6 @@ ScreenManager:
     Profile:
 
 
-<ExpansionpanelContent>:
-    size_hint: 1, None
-    height: self.minimum_height
-    orientation: "vertical"
-
-    adaptive_height: True
-
-    ThreeLineIconListItem:
-        id: panel_item_name
-
-        text: 'test'
-        secondary_text: "Mobile"
-        tertiary_text: "teste"
-
-        IconLeftWidget:
-            icon: 'alert'
-
 
 <Content>:
     orientation: "vertical"
@@ -48,21 +31,8 @@ ScreenManager:
     size_hint_y: None
     height: self.minimum_height
 
-            
-    OneLineAvatarIconListItem:
-        IconLeftWidget:
-            icon: "check"
-
-        IconLeftWidget:
-            icon: "file-pdf"
-
-        IconLeftWidget:
-            icon: "share-variant"
-
-        IconRightWidget:
-            icon: "delete"
-            on_press:
-                app.delete_item(self)
+    MDList:
+        id: list
 
 
     
@@ -297,14 +267,15 @@ ScreenManager:
 
 
 <Screen3>:
-    name:'screen3'
+    name : 'screen3'
 
     BoxLayout:
         orientation: 'vertical'
         MDToolbar:
             id: screen3_toolbar
-            left_action_items: [["menu", lambda x: nav_drawer.toggle_nav_drawer()]]
-            right_action_items: [["trash-can-outline", lambda x: app.start_checklist()]]
+            title: 'CheckList' 
+            left_action_items: [["account", lambda x: app.change_screen_to_profile()],["file-document-box-check-outline", lambda x: app.change_screen_to_my_checklist()]]
+            right_action_items: [["inbox-full", lambda x: app.change_screen_to_checklists()],["file-document-box-plus-outline", lambda x: app.start_checklist()],["delete", lambda x: app.printa1()],["file-document-edit-outline", lambda x: app.printa2()],["check", lambda x: app.printa3()]]
             size_hint_y: 0.11
             elevation:5
 
@@ -312,90 +283,10 @@ ScreenManager:
 
     ScrollView:
         size_hint: (0.97, 0.89)
-        pos_hint: {'center_x': .51, 'y': 0.01}
+        pos_hint: {'center_x': .51, 'y': 0.001}
+
         MDList:
-            id: box
-            
-
-    MDNavigationDrawer:
-        id: nav_drawer
-        
-
-        ContentNavigationDrawer:
-            orientation: 'vertical'
-            padding: "8dp"
-            spacing: "8dp"
-
-            Image:
-                id: avatar
-                size_hint: (1,1)
-                source: "mine.jpg"
-
-            MDLabel:
-                id: name_perfil_toolbar
-                text: app.name_perfil_toolbar
-                font_style: "Subtitle1"
-                size_hint_y: None
-                height: self.texture_size[1]
-
-            MDLabel:
-                id: email_perfil_toolbar
-                text: app.email_perfil_toolbar
-                size_hint_y: None
-                font_style: "Caption"
-                height: self.texture_size[1]
-
-
-            DrawerList:
-                id: md_list
-                
-                MDList:
-                    OneLineIconListItem:
-                        text: "CheckLists"
-                        on_release: root.manager.current = 'screen1'
-                    
-                        IconLeftWidget:
-                            icon: "inbox"
-                            on_release: root.manager.current = 'screen1'
-                    
-                            
-                    OneLineIconListItem:
-                        text: "Minhas CheckList"
-                        on_release: root.manager.current = 'screen2'
-                        
-                    
-                        IconLeftWidget:
-                            icon: "inbox"
-                            on_release: root.manager.current = 'screen2'
-
-                        
-                    OneLineIconListItem:
-                        text: "Nova CheckList"
-                        on_release: root.manager.current = 'screen5'
-                        
-                    
-                        IconLeftWidget:
-                            icon: "inbox-arrow-up"
-                            on_release: root.manager.current = 'screen5'
-                            
-                    
-                    OneLineIconListItem:
-                        text: "Meu Perfil"
-                        on_release: root.manager.current = 'profile'
-                    
-                        IconLeftWidget:
-                            icon: "account"
-                            on_release: root.manager.current = 'profile'
-
-                    OneLineIconListItem:
-                        text: "Sair"
-                        on_release: app.show_alert_dialog()
-                    
-                        IconLeftWidget:
-                            icon: "exit-to-app"
-                            on_release: app.show_alert_dialog()
-
-
+            id: my_checklist
         
 
     
