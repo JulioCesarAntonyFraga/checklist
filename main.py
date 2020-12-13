@@ -207,9 +207,6 @@ class PawareApp(MDApp):
                 self.strng.get_screen('screen5').ids.name_perfil_toolbar.text = nome
                 self.strng.get_screen('screen5').ids.email_perfil_toolbar.text = email
 
-                self.strng.get_screen('checklistName').ids.name_perfil_toolbar.text = nome
-                self.strng.get_screen('checklistName').ids.email_perfil_toolbar.text = email
-
                 self.strng.get_screen('profile').ids.profile_name_input.text = nome
                 self.strng.get_screen('profile').ids.profile_email_input.text = email
 
@@ -232,16 +229,12 @@ class PawareApp(MDApp):
     def build(self):
         self.strng = Builder.load_file('conteudos.kv')
         return self.strng
-        name = self.strng.get_screen('profile').ids.profile_name_input.text
-        email = self.strng.get_screen('profile').ids.profile_email_input.text
         
-
     def chek_profile_inputs(self):
         name = self.strng.get_screen('profile').ids.profile_name_input.text
         email = self.strng.get_screen('profile').ids.profile_email_input.text
 
         if name != '' and email != '':
-            print(email, name)
             self.strng.get_screen('profile').ids.save_profile_button.disabled = False
 
         else:
@@ -256,10 +249,8 @@ class PawareApp(MDApp):
         self.store = JsonStore("userProfile.json")
         try:
             if self.store.get('UserInfo')['name'] != "":
-                print(self.store.get('UserInfo')['name'])
                 self.strng.get_screen('screen1').manager.current = 'screen1'
             else:
-                print(self.store.get('UserInfo')['name'])
                 self.strng.get_screen('welcomescreen').manager.current = 'welcomescreen'
         except:
             self.strng.get_screen('welcomescreen').manager.current = 'welcomescreen'
@@ -282,8 +273,6 @@ class PawareApp(MDApp):
         pass
 
     def check_lv_name_and_description(self):
-        print(self.strng.get_screen('checklistName').ids.name_text_field_lv.text)
-        print(self.strng.get_screen('checklistName').ids.descricao_text_field_lv.text)
         if self.strng.get_screen('checklistName').ids.name_text_field_lv.text != '' and self.strng.get_screen(
                 'checklistName').ids.descricao_text_field_lv.text != '':
             self.strng.get_screen('checklistName').ids.lv_name_button.disabled = False
@@ -308,7 +297,7 @@ class PawareApp(MDApp):
 
         results = []
 
-        for i in range(1,9):
+        for i in range(1,10):
             if self.strng.get_screen(f'checklistItem{i}').ids.radio_item_c.active == True:
                 results.append('Conforme')
                 conformes += 1
@@ -336,8 +325,10 @@ class PawareApp(MDApp):
 
         lv={}
 
-        for i in range(1,9):
+        for i in range(1,10):
 
+            print(self.strng.get_screen(f'checklistItem{i}').ids.acao_item.text, self.strng.get_screen(f'checklistItem{i}').ids.prazo_item.text, self.strng.get_screen(f'checklistItem{i}').ids.responsavel_item.text)
+            
             lv = {
                 "nome_lv": self.strng.get_screen('checklistName').ids.name_text_field_lv.text,
                 "descricao_lv": self.strng.get_screen('checklistName').ids.descricao_text_field_lv.text,
@@ -350,64 +341,65 @@ class PawareApp(MDApp):
                 "lv_status": status_lv,
 
                 "item1_nome": "Os locais adjacentes das caixas estão limpos e organizados?",
-                "item1_resultado": results[i - 1],
-                "item1_acao": self.strng.get_screen(f'checklistItem{i}').ids.acao_item.text,
-                "item1_prazo": self.strng.get_screen(f'checklistItem{i}').ids.prazo_item.text,
-                "item1_responsavel": self.strng.get_screen(f'checklistItem{i}').ids.responsavel_item.text,
+                "item1_resultado": results[0],
+                "item1_acao": str(self.strng.get_screen(f'checklistItem{1}').ids.acao_item.text),
+                "item1_prazo": str(self.strng.get_screen(f'checklistItem{1}').ids.prazo_item.text),
+                "item1_responsavel": str(self.strng.get_screen(f'checklistItem{1}').ids.responsavel_item.text),
 
                 "item2_nome": "As caixas estão com acúmulo excessivo de gordura?",
-                "item2_resultado": results[i - 1],
-                "item2_acao": self.strng.get_screen(f'checklistItem{i}').ids.acao_item.text,
-                "item2_prazo": self.strng.get_screen(f'checklistItem{i}').ids.prazo_item.text,
-                "item2_responsavel": self.strng.get_screen(f'checklistItem{i}').ids.responsavel_item.text,
+                "item2_resultado": results[1],
+                "item2_acao": str(self.strng.get_screen(f'checklistItem{2}').ids.acao_item.text),
+                "item2_prazo": str(self.strng.get_screen(f'checklistItem{2}').ids.prazo_item.text),
+                "item2_responsavel": str(self.strng.get_screen(f'checklistItem{2}').ids.responsavel_item.text),
 
                 "item3_nome": "As caixas de gordura estão obstruídas?",
-                "item3_resultado": results[i - 1],
-                "item3_acao": self.strng.get_screen(f'checklistItem{i}').ids.acao_item.text,
-                "item3_prazo": self.strng.get_screen(f'checklistItem{i}').ids.prazo_item.text,
-                "item3_responsavel": self.strng.get_screen(f'checklistItem{i}').ids.responsavel_item.text,
+                "item3_resultado": results[2],
+                "item3_acao": str(self.strng.get_screen(f'checklistItem{3}').ids.acao_item.text),
+                "item3_prazo": str(self.strng.get_screen(f'checklistItem{3}').ids.prazo_item.text),
+                "item3_responsavel": str(self.strng.get_screen(f'checklistItem{3}').ids.responsavel_item.text),
 
                 "item4_nome": "Há evidências de transbordo?",
-                "item4_resultado": results[i - 1],
-                "item4_acao": self.strng.get_screen(f'checklistItem{i}').ids.acao_item.text,
-                "item4_prazo": self.strng.get_screen(f'checklistItem{i}').ids.prazo_item.text,
-                "item4_responsavel": self.strng.get_screen(f'checklistItem{i}').ids.responsavel_item.text,
+                "item4_resultado": results[3],
+                "item4_acao": str(self.strng.get_screen(f'checklistItem{4}').ids.acao_item.text),
+                "item4_prazo": str(self.strng.get_screen(f'checklistItem{4}').ids.prazo_item.text),
+                "item4_responsavel": str(self.strng.get_screen(f'checklistItem{4}').ids.responsavel_item.text),
 
                 "item5_nome": "Há evidência de odores?",
-                "item5_resultado": results[i - 1],
-                "item5_acao": self.strng.get_screen(f'checklistItem{i}').ids.acao_item.text,
-                "item5_prazo": self.strng.get_screen(f'checklistItem{i}').ids.prazo_item.text,
-                "item5_responsavel": self.strng.get_screen(f'checklistItem{i}').ids.responsavel_item.text,
+                "item5_resultado": results[4],
+                "item5_acao": str(self.strng.get_screen(f'checklistItem{5}').ids.acao_item.text),
+                "item5_prazo": str(self.strng.get_screen(f'checklistItem{5}').ids.prazo_item.text),
+                "item5_responsavel": str(self.strng.get_screen(f'checklistItem{5}').ids.responsavel_item.text),
 
                 "item6_nome": "Há detritos de alimentos, sobras de embalagens, entre outros?",
-                "item6_resultado": results[i - 1],
-                "item6_acao": self.strng.get_screen(f'checklistItem{i}').ids.acao_item.text,
-                "item6_prazo": self.strng.get_screen(f'checklistItem{i}').ids.prazo_item.text,
-                "item6_responsavel": self.strng.get_screen(f'checklistItem{i}').ids.responsavel_item.text,
+                "item6_resultado": results[5],
+                "item6_acao": str(self.strng.get_screen(f'checklistItem{6}').ids.acao_item.text),
+                "item6_prazo": str(self.strng.get_screen(f'checklistItem{6}').ids.prazo_item.text),
+                "item6_responsavel": str(self.strng.get_screen(f'checklistItem{6}').ids.responsavel_item.text),
 
                 "item7_nome": "Há telas (grade) de retenção nas áreas internas do refeitório cin objetivo de reter sobras de alimentos?",
-                "item7_resultado": results[i - 1],
-                "item7_acao": self.strng.get_screen(f'checklistItem{i}').ids.acao_item.text,
-                "item7_prazo": self.strng.get_screen(f'checklistItem{i}').ids.prazo_item.text,
-                "item7_responsavel": self.strng.get_screen(f'checklistItem{i}').ids.responsavel_item.text,
+                "item7_resultado": results[6],
+                "item7_acao": str(self.strng.get_screen(f'checklistItem{7}').ids.acao_item.text),
+                "item7_prazo": str(self.strng.get_screen(f'checklistItem{7}').ids.prazo_item.text),
+                "item7_responsavel": str(self.strng.get_screen(f'checklistItem{7}').ids.responsavel_item.text),
 
                 "item8_nome": "As tampas das caixas estão encaixadas de acordo com a construção?",
-                "item8_resultado": results[i - 1],
-                "item8_acao": self.strng.get_screen(f'checklistItem{i}').ids.acao_item.text,
-                "item8_prazo": self.strng.get_screen(f'checklistItem{i}').ids.prazo_item.text,
-                "item8_responsavel": self.strng.get_screen(f'checklistItem{i}').ids.responsavel_item.text,
+                "item8_resultado": results[7],
+                "item8_acao": str(self.strng.get_screen(f'checklistItem{8}').ids.acao_item.text),
+                "item8_prazo": str(self.strng.get_screen(f'checklistItem{8}').ids.prazo_item.text),
+                "item8_responsavel": str(self.strng.get_screen(f'checklistItem{9}').ids.responsavel_item.text),
 
                 "item9_nome": "O efluente está sendo direcionado para a Estação de tratamento de Efluente - ETE?",
-                "item9_resultado": results[i - 1],
-                "item9_acao": self.strng.get_screen(f'checklistItem{i}').ids.acao_item.text,
-                "item9_prazo": self.strng.get_screen(f'checklistItem{i}').ids.prazo_item.text,
-                "item9_responsavel": self.strng.get_screen(f'checklistItem{i}').ids.responsavel_item.text,
+                "item9_resultado": results[8],
+                "item9_acao": str(self.strng.get_screen(f'checklistItem{9}').ids.acao_item.text),
+                "item9_prazo": str(self.strng.get_screen(f'checklistItem{9}').ids.prazo_item.text),
+                "item9_responsavel": str(self.strng.get_screen(f'checklistItem{9}').ids.responsavel_item.text),
 
             }
 
         col_lv.insert_one(lv)
         self.load_checklist()
         self.strng.get_screen('screen1').manager.current = 'screen1'
+        print(results)
 
     ##################CONFIRMAÇAO DE SAIDA APP################
     dialog = None
@@ -478,7 +470,6 @@ class PawareApp(MDApp):
     #####################BLOCO DE AVISO ECLUIR CHECKLIST FECHANDO##############
     def close_username_dialogue_excluir(self, obj):
         self.dialog.dismiss()
-        self.remove_checklist()
         self.change_screen_to_checklists()
 
     #################REMOVE WIDGET CHECKLIST##################
@@ -569,7 +560,7 @@ class PawareApp(MDApp):
     ####################FUNCAO DE BLOQUEI DOS BOTAO CASO NAO SEJA SELECIONADO AS OPCOES DA VERIFICAÇAO############
     def enable_items_inputs(self):
         
-        for i in range(1,9):
+        for i in range(1,10):
 
             ##Item 1
             if self.strng.get_screen(f'checklistItem{i}').ids.radio_item_nc.active == True:
@@ -584,7 +575,7 @@ class PawareApp(MDApp):
 
 
     def disable_nextButton(self):
-        for i in range(1,9):
+        for i in range(1,10):
             self.strng.get_screen(f'checklistItem{i}').ids.next_button.disabled = True
 
 
@@ -592,7 +583,7 @@ class PawareApp(MDApp):
 
     def check_lv_items(self):
 
-        for i in range(1,9):
+        for i in range(1,10):
             if self.strng.get_screen(f'checklistItem{i}').ids.radio_item_nc.active == True and self.strng.get_screen(
                     f'checklistItem{i}').ids.acao_item.text.split() != [] and self.strng.get_screen(
                 f'checklistItem{i}').ids.responsavel_item.text.split() != [] and self.strng.get_screen(

@@ -167,7 +167,7 @@ ScreenManager:
         orientation: 'vertical'
         MDToolbar:
             title: 'CheckLists'
-            left_action_items: [["menu", lambda x: nav_drawer.toggle_nav_drawer()]]
+            left_action_items: [["menu", lambda x: nav_drawer.set_state()]]
             right_action_items: [["plus", lambda x: app.start_checklist()]]
             size_hint_y: 0.11
             elevation:5
@@ -186,7 +186,6 @@ ScreenManager:
 
     MDNavigationDrawer:
         id: nav_drawer
-        
 
         ContentNavigationDrawer:
             orientation: 'vertical'
@@ -212,6 +211,7 @@ ScreenManager:
                 font_style: "Caption"
                 height: self.texture_size[1]
 
+           
 
             DrawerList:
                 id: md_list
@@ -219,48 +219,67 @@ ScreenManager:
                 MDList:
                     OneLineIconListItem:
                         text: "CheckLists"
-                        on_release: root.manager.current = 'screen1'
+                        on_press: 
+                            nav_drawer.set_state('close')
+                            root.manager.current = 'screen1'
                     
                         IconLeftWidget:
                             icon: "inbox"
-                            on_release: root.manager.current = 'screen1'
+                            on_press: 
+                                nav_drawer.set_state('close')
+                                root.manager.current = 'screen1'
                     
                             
                     OneLineIconListItem:
                         text: "Minhas CheckList"
-                        on_release: root.manager.current = 'screen2'
-                        
+                        on_press: 
+                            nav_drawer.set_state('close')
+                            root.manager.current = 'screen2'
                     
                         IconLeftWidget:
                             icon: "inbox"
-                            on_release: root.manager.current = 'screen2'
+                            on_press: 
+                                nav_drawer.set_state('close')
+                                root.manager.current = 'screen2'
 
                         
                     OneLineIconListItem:
                         text: "Nova CheckList"
-                        on_release: root.manager.current = 'screen5'
+                        on_press: 
+                            nav_drawer.set_state('close')
+                            root.manager.current = 'screen5'
                         
                     
                         IconLeftWidget:
                             icon: "inbox-arrow-up"
-                            on_release: root.manager.current = 'screen5'
+                            on_press: 
+                                nav_drawer.set_state('close')
+                                root.manager.current = 'screen5'
                             
                     
                     OneLineIconListItem:
                         text: "Meu Perfil"
-                        on_release: root.manager.current = 'profile'
+                        on_press: 
+                            nav_drawer.set_state('close')
+                            root.manager.current = 'profile'
                     
                         IconLeftWidget:
                             icon: "account"
-                            on_release: root.manager.current = 'profile'
+                            on_press: 
+                                nav_drawer.set_state('close')
+                                root.manager.current = 'profile'
 
                     OneLineIconListItem:
                         text: "Sair"
-                        on_release: app.show_alert_dialog()
+                        on_press: 
+                            nav_drawer.set_state('close')
+                            app.show_alert_dialog()
                     
                         IconLeftWidget:
                             icon: "exit-to-app"
-                            on_release: app.show_alert_dialog()
+                            on_press: 
+                                nav_drawer.set_state('close')
+                                app.show_alert_dialog()
                             
     
     
@@ -274,8 +293,8 @@ ScreenManager:
         MDToolbar:
             id: screen3_toolbar
             title: 'CheckList' 
-            left_action_items: [["account", lambda x: app.change_screen_to_profile()],["file-document-box-check-outline", lambda x: app.change_screen_to_my_checklist()]]
-            right_action_items: [["inbox-full", lambda x: app.change_screen_to_checklists()],["file-document-box-plus-outline", lambda x: app.start_checklist()],["delete", lambda x: app.printa1()],["file-document-edit-outline", lambda x: app.printa2()],["check", lambda x: app.printa3()]]
+            left_action_items: [["menu", lambda x: nav_drawer.set_state()]]
+            right_action_items: [["file-document-edit-outline", lambda x: app.printa2()],["check", lambda x: app.printa3()]]
             size_hint_y: 0.11
             elevation:5
 
@@ -287,6 +306,103 @@ ScreenManager:
 
         MDList:
             id: my_checklist
+
+    MDNavigationDrawer:
+        id: nav_drawer
+
+        ContentNavigationDrawer:
+            orientation: 'vertical'
+            padding: "8dp"
+            spacing: "8dp"
+
+            Image:
+                id: avatar
+                size_hint: (1,1)
+                source: "mine.jpg"
+
+            MDLabel:
+                id: name_perfil_toolbar
+                text: app.name_perfil_toolbar
+                font_style: "Subtitle1"
+                size_hint_y: None
+                height: self.texture_size[1]
+
+            MDLabel:
+                id: email_perfil_toolbar
+                text: app.email_perfil_toolbar
+                size_hint_y: None
+                font_style: "Caption"
+                height: self.texture_size[1]
+
+           
+
+            DrawerList:
+                id: md_list
+                
+                MDList:
+                    OneLineIconListItem:
+                        text: "CheckLists"
+                        on_press: 
+                            nav_drawer.set_state('close')
+                            root.manager.current = 'screen1'
+                    
+                        IconLeftWidget:
+                            icon: "inbox"
+                            on_press: 
+                                nav_drawer.set_state('close')
+                                root.manager.current = 'screen1'
+                    
+                            
+                    OneLineIconListItem:
+                        text: "Minhas CheckList"
+                        on_press: 
+                            nav_drawer.set_state('close')
+                            root.manager.current = 'screen2'
+                    
+                        IconLeftWidget:
+                            icon: "inbox"
+                            on_press: 
+                                nav_drawer.set_state('close')
+                                root.manager.current = 'screen2'
+
+                        
+                    OneLineIconListItem:
+                        text: "Nova CheckList"
+                        on_press: 
+                            nav_drawer.set_state('close')
+                            root.manager.current = 'screen5'
+                        
+                    
+                        IconLeftWidget:
+                            icon: "inbox-arrow-up"
+                            on_press: 
+                                nav_drawer.set_state('close')
+                                root.manager.current = 'screen5'
+                            
+                    
+                    OneLineIconListItem:
+                        text: "Meu Perfil"
+                        on_press: 
+                            nav_drawer.set_state('close')
+                            root.manager.current = 'profile'
+                    
+                        IconLeftWidget:
+                            icon: "account"
+                            on_press: 
+                                nav_drawer.set_state('close')
+                                root.manager.current = 'profile'
+
+                    OneLineIconListItem:
+                        text: "Sair"
+                        on_press: 
+                            nav_drawer.set_state('close')
+                            app.show_alert_dialog()
+                    
+                        IconLeftWidget:
+                            icon: "exit-to-app"
+                            on_press: 
+                                nav_drawer.set_state('close')
+                                app.show_alert_dialog()
         
 
     
@@ -299,7 +415,7 @@ ScreenManager:
         orientation: 'vertical'
         MDToolbar:
             title: 'Minhas CheckList'
-            left_action_items: [["menu",  lambda x: nav_drawer2.toggle_nav_drawer()]]
+            left_action_items: [["menu",  lambda x: nav_drawer2.set_state()]]
             right_action_items: [["plus", lambda x: app.start_checklist()]]
             size_hint_y: 0.11
             elevation:5
@@ -347,47 +463,67 @@ ScreenManager:
                 MDList:
                     OneLineIconListItem:
                         text: "CheckLists"
-                        on_release: root.manager.current = 'screen1'
+                        on_press: 
+                            nav_drawer2.set_state('close')
+                            root.manager.current = 'screen1'
                     
                         IconLeftWidget:
                             icon: "inbox"
-                            on_release: root.manager.current = 'screen1'
+                            on_press: 
+                                nav_drawer2.set_state('close')
+                                root.manager.current = 'screen1'
                     
                             
                     OneLineIconListItem:
                         text: "Minhas CheckList"
-                        on_release: root.manager.current = 'screen2'
+                        on_press: 
+                            nav_drawer2.set_state('close')
+                            root.manager.current = 'screen2'
                     
                         IconLeftWidget:
                             icon: "inbox"
-                            on_release: root.manager.current = 'screen2'
+                            on_press: 
+                                nav_drawer2.set_state('close')
+                                root.manager.current = 'screen2'
 
                         
                     OneLineIconListItem:
                         text: "Nova CheckList"
-                        on_release: root.manager.current = 'screen5'
+                        on_press: 
+                            nav_drawer2.set_state('close')
+                            root.manager.current = 'screen5'
                         
                     
                         IconLeftWidget:
                             icon: "inbox-arrow-up"
-                            on_release: root.manager.current = 'screen5'
+                            on_press: 
+                                nav_drawer2.set_state('close')
+                                root.manager.current = 'screen5'
                             
                     
                     OneLineIconListItem:
                         text: "Meu Perfil"
-                        on_release: root.manager.current = 'profile'
+                        on_press: 
+                            nav_drawer2.set_state('close')
+                            root.manager.current = 'profile'
                     
                         IconLeftWidget:
                             icon: "account"
-                            on_release: root.manager.current = 'profile'
+                            on_press: 
+                                nav_drawer2.set_state('close')
+                                root.manager.current = 'profile'
 
                     OneLineIconListItem:
                         text: "Sair"
-                        on_release: app.show_alert_dialog()
+                        on_press: 
+                            nav_drawer2.set_state('close')
+                            app.show_alert_dialog()
                     
                         IconLeftWidget:
                             icon: "exit-to-app"
-                            on_release: app.show_alert_dialog()
+                            on_press: 
+                                nav_drawer2.set_state('close')
+                                app.show_alert_dialog()
    
     
 
@@ -400,7 +536,7 @@ ScreenManager:
         orientation: 'vertical'
         MDToolbar:
             title: 'Inicar Verificação'
-            left_action_items: [["menu",  lambda x: nav_drawer4.toggle_nav_drawer()]]
+            left_action_items: [["menu",  lambda x: nav_drawer4.set_state()]]
             right_action_items: [["account-edit", lambda x: app.enable_profile_inputs()]]
             elevation:5
 
@@ -476,6 +612,7 @@ ScreenManager:
                 font_style: "Caption"
                 height: self.texture_size[1]
 
+           
 
             DrawerList:
                 id: md_list
@@ -483,49 +620,67 @@ ScreenManager:
                 MDList:
                     OneLineIconListItem:
                         text: "CheckLists"
-                        on_press:
+                        on_press: 
+                            nav_drawer4.set_state('close')
                             root.manager.current = 'screen1'
-
                     
                         IconLeftWidget:
                             icon: "inbox"
-                            on_release: root.manager.current = 'screen1'
+                            on_press: 
+                                nav_drawer4.set_state('close')
+                                root.manager.current = 'screen1'
                     
                             
                     OneLineIconListItem:
                         text: "Minhas CheckList"
-                        on_release: root.manager.current = 'screen2'
+                        on_press: 
+                            nav_drawer4.set_state('close')
+                            root.manager.current = 'screen2'
                     
                         IconLeftWidget:
                             icon: "inbox"
-                            on_release: root.manager.current = 'screen2'
+                            on_press: 
+                                nav_drawer4.set_state('close')
+                                root.manager.current = 'screen2'
 
                         
                     OneLineIconListItem:
                         text: "Nova CheckList"
-                        on_release: root.manager.current = 'screen5'
+                        on_press: 
+                            nav_drawer4.set_state('close')
+                            root.manager.current = 'screen5'
                         
                     
                         IconLeftWidget:
                             icon: "inbox-arrow-up"
-                            on_release: root.manager.current = 'screen5'
+                            on_press: 
+                                nav_drawer4.set_state('close')
+                                root.manager.current = 'screen5'
                             
                     
                     OneLineIconListItem:
                         text: "Meu Perfil"
-                        on_release: root.manager.current = 'profile'
+                        on_press: 
+                            nav_drawer4.set_state('close')
+                            root.manager.current = 'profile'
                     
                         IconLeftWidget:
                             icon: "account"
-                            on_release: root.manager.current = 'profile'
+                            on_press: 
+                                nav_drawer4.set_state('close')
+                                root.manager.current = 'profile'
 
                     OneLineIconListItem:
                         text: "Sair"
-                        on_release: app.show_alert_dialog()
+                        on_press: 
+                            nav_drawer4.set_state('close')
+                            app.show_alert_dialog()
                     
                         IconLeftWidget:
                             icon: "exit-to-app"
-                            on_release: app.show_alert_dialog()
+                            on_press: 
+                                nav_drawer4.set_state('close')
+                                app.show_alert_dialog()
 
 
 
@@ -541,7 +696,7 @@ ScreenManager:
         orientation: 'vertical'
         MDToolbar:
             title: 'Inicar Verificação'
-            left_action_items: [["menu",  lambda x: nav_drawer4.toggle_nav_drawer()]]
+            left_action_items: [["menu",  lambda x: nav_drawer4.set_state()]]
             elevation:5
 
         Widget:
@@ -553,7 +708,6 @@ ScreenManager:
 
 
     MDNavigationDrawer:
-        type: "standard"
         id: nav_drawer4
 
         ContentNavigationDrawer:
@@ -580,6 +734,7 @@ ScreenManager:
                 font_style: "Caption"
                 height: self.texture_size[1]
 
+           
 
             DrawerList:
                 id: md_list
@@ -587,47 +742,67 @@ ScreenManager:
                 MDList:
                     OneLineIconListItem:
                         text: "CheckLists"
-                        on_release: root.manager.current = 'screen1'
+                        on_press: 
+                            nav_drawer4.set_state('close')
+                            root.manager.current = 'screen1'
                     
                         IconLeftWidget:
                             icon: "inbox"
-                            on_release: root.manager.current = 'screen1'
+                            on_press: 
+                                nav_drawer4.set_state('close')
+                                root.manager.current = 'screen1'
                     
                             
                     OneLineIconListItem:
                         text: "Minhas CheckList"
-                        on_release: root.manager.current = 'screen2'
+                        on_press: 
+                            nav_drawer4.set_state('close')
+                            root.manager.current = 'screen2'
                     
                         IconLeftWidget:
                             icon: "inbox"
-                            on_release: root.manager.current = 'screen2'
+                            on_press: 
+                                nav_drawer4.set_state('close')
+                                root.manager.current = 'screen2'
 
                         
                     OneLineIconListItem:
                         text: "Nova CheckList"
-                        on_release: root.manager.current = 'screen5'
+                        on_press: 
+                            nav_drawer4.set_state('close')
+                            root.manager.current = 'screen5'
                         
                     
                         IconLeftWidget:
                             icon: "inbox-arrow-up"
-                            on_release: root.manager.current = 'screen5'
+                            on_press: 
+                                nav_drawer4.set_state('close')
+                                root.manager.current = 'screen5'
                             
                     
                     OneLineIconListItem:
                         text: "Meu Perfil"
-                        on_release: root.manager.current = 'profile'
+                        on_press: 
+                            nav_drawer4.set_state('close')
+                            root.manager.current = 'profile'
                     
                         IconLeftWidget:
                             icon: "account"
-                            on_release: root.manager.current = 'profile'
+                            on_press: 
+                                nav_drawer4.set_state('close')
+                                root.manager.current = 'profile'
 
                     OneLineIconListItem:
                         text: "Sair"
-                        on_release: app.show_alert_dialog()
+                        on_press: 
+                            nav_drawer4.set_state('close')
+                            app.show_alert_dialog()
                     
                         IconLeftWidget:
                             icon: "exit-to-app"
-                            on_release: app.show_alert_dialog()
+                            on_press: 
+                                nav_drawer4.set_state('close')
+                                app.show_alert_dialog()
 
     MDFloatingActionButton:
         icon:'arrow-right'
@@ -637,6 +812,8 @@ ScreenManager:
         on_press:
             root.manager.current = 'checklistName'
             root.manager.transition.direction = 'left'
+
+
 <ChecklistName>:
     name:'checklistName'
 
