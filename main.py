@@ -183,6 +183,346 @@ class LoginScreen(Screen):
 class RegisterScreen(Screen):
     pass
 
+class Screen1(Screen):
+    @decorators.asynckivy_start
+    async def load_checklists(self):
+        query = gql("""
+            query {
+                allVerificationLists(completed: false) {
+                    id,
+                    name,
+                    conclusionPercentage
+                }
+            }
+        """)
+
+        result = await async_request(query, {"Authentication": f"JWT {self.auth_token}"})
+
+        for question in result["allVerificationLists"]:
+            print(question)
+
+        myclient = pymongo.MongoClient(
+            "mongodb+srv://julio:senha@cluster0.pn3vb.mongodb.net/kivyapp?retryWrites=true&w=majority"
+        )
+        db = myclient["kivyapp"]
+        col_lv = db["lvs"]
+
+        for item in col_lv.find():
+
+            checklist_table = ThreeLineIconListItem(
+                text=item["nome_lv"],
+                secondary_text=item["descricao_lv"],
+                tertiary_text=item["Data_emissao"],
+                on_press=partial(
+                    self.checklist_screen,
+                    id=str(item["_id"]),
+                    nome_lv=item["nome_lv"],
+                    descricao_lv=item["descricao_lv"],
+                    data_emissao=item["Data_emissao"],
+                    porcentagem_c=item["porcentagem_c"],
+                    quantidade_nc=item["quantidade_nc"],
+                    quantidade_na=item["quantidade_na"],
+                    lv_status=item["lv_status"],
+                    item1_nome=item["item1_nome"],
+                    item1_resultado=item["item1_resultado"],
+                    item1_acao=item["item1_acao"],
+                    item1_prazo=item["item1_prazo"],
+                    item1_responsavel=item["item1_responsavel"],
+                    item2_nome=item["item2_nome"],
+                    item2_resultado=item["item2_resultado"],
+                    item2_acao=item["item2_acao"],
+                    item2_prazo=item["item2_prazo"],
+                    item2_responsavel=item["item2_responsavel"],
+                    item3_nome=item["item3_nome"],
+                    item3_resultado=item["item4_resultado"],
+                    item3_acao=item["item3_acao"],
+                    item3_prazo=item["item3_prazo"],
+                    item3_responsavel=item["item3_responsavel"],
+                    item4_nome=item["item3_responsavel"],
+                    item4_resultado=item["item4_resultado"],
+                    item4_acao=item["item4_acao"],
+                    item4_prazo=item["item4_prazo"],
+                    item4_responsavel=item["item4_responsavel"],
+                    item5_nome=item["item5_nome"],
+                    item5_resultado=item["item5_resultado"],
+                    item5_acao=item["item5_acao"],
+                    item5_prazo=item["item5_prazo"],
+                    item5_responsavel=item["item5_responsavel"],
+                    item6_nome=item["item6_nome"],
+                    item6_resultado=item["item6_resultado"],
+                    item6_acao=item["item6_acao"],
+                    item6_prazo=item["item6_prazo"],
+                    item6_responsavel=item["item6_responsavel"],
+                    item7_nome=item["item7_nome"],
+                    item7_resultado=item["item7_resultado"],
+                    item7_acao=item["item7_acao"],
+                    item7_prazo=item["item7_prazo"],
+                    item7_responsavel=item["item7_responsavel"],
+                    item8_nome=item["item8_nome"],
+                    item8_resultado=item["item8_resultado"],
+                    item8_acao=item["item8_acao"],
+                    item8_prazo=item["item8_prazo"],
+                    item8_responsavel=item["item8_responsavel"],
+                    item9_nome=item["item9_nome"],
+                    item9_resultado=item["item9_resultado"],
+                    item9_acao=item["item9_acao"],
+                    item9_prazo=item["item9_prazo"],
+                    item9_responsavel=item["item9_responsavel"],
+                ),
+            )
+
+            self.strng.get_screen("screen1").ids.checklist.add_widget(checklist_table)
+
+class Screen3(Screen):
+    def remove_checklist(self, id):
+        try:
+            myclient = pymongo.MongoClient(
+                "mongodb+srv://julio:senha@cluster0.pn3vb.mongodb.net/kivyapp?retryWrites=true&w=majority"
+            )
+            db = myclient["kivyapp"]
+            col_lv = db["lvs"]
+
+            col_lv = col_lv.delete_one({"_id": ObjectId("id do bagulho")})
+        except Exception as erro:
+            print(erro)
+
+    def checklist_screen(
+        self,
+        event,
+        id,
+        nome_lv,
+        descricao_lv,
+        data_emissao,
+        porcentagem_c,
+        quantidade_nc,
+        quantidade_na,
+        lv_status,
+        item1_nome,
+        item1_resultado,
+        item1_acao,
+        item1_prazo,
+        item1_responsavel,
+        item2_nome,
+        item2_resultado,
+        item2_acao,
+        item2_prazo,
+        item2_responsavel,
+        item3_nome,
+        item3_resultado,
+        item3_acao,
+        item3_prazo,
+        item3_responsavel,
+        item4_nome,
+        item4_resultado,
+        item4_acao,
+        item4_prazo,
+        item4_responsavel,
+        item5_nome,
+        item5_resultado,
+        item5_acao,
+        item5_prazo,
+        item5_responsavel,
+        item6_nome,
+        item6_resultado,
+        item6_acao,
+        item6_prazo,
+        item6_responsavel,
+        item7_nome,
+        item7_resultado,
+        item7_acao,
+        item7_prazo,
+        item7_responsavel,
+        item8_nome,
+        item8_resultado,
+        item8_acao,
+        item8_prazo,
+        item8_responsavel,
+        item9_nome,
+        item9_resultado,
+        item9_acao,
+        item9_prazo,
+        item9_responsavel,
+    ):
+
+        self.strng.current = "screen3"
+        self.strng.get_screen("screen3").ids.screen3_toolbar.title = nome_lv
+
+        items = {
+            "item1_nome": item1_nome,
+            "item1_resultado": item1_resultado,
+            "item1_acao": item1_acao,
+            "item1_prazo": item1_prazo,
+            "item1_responsavel": item1_responsavel,
+            "item2_nome": item2_nome,
+            "item2_resultado": item2_resultado,
+            "item2_acao": item2_acao,
+            "item2_prazo": item2_prazo,
+            "item2_responsavel": item2_responsavel,
+            "item3_nome": item3_nome,
+            "item3_resultado": item3_resultado,
+            "item3_acao": item3_acao,
+            "item3_prazo": item3_prazo,
+            "item3_responsavel": item3_responsavel,
+            "item4_nome": item4_nome,
+            "item4_resultado": item4_resultado,
+            "item4_acao": item4_acao,
+            "item4_prazo": item4_prazo,
+            "item4_responsavel": item4_responsavel,
+            "item5_nome": item5_nome,
+            "item5_resultado": item5_resultado,
+            "item5_acao": item5_acao,
+            "item5_prazo": item5_prazo,
+            "item5_responsavel": item5_responsavel,
+            "item6_nome": item6_nome,
+            "item6_resultado": item6_resultado,
+            "item6_acao": item6_acao,
+            "item6_prazo": item6_prazo,
+            "item6_responsavel": item6_responsavel,
+            "item7_nome": item7_nome,
+            "item7_resultado": item7_resultado,
+            "item7_acao": item7_acao,
+            "item7_prazo": item7_prazo,
+            "item7_responsavel": item7_responsavel,
+            "item8_nome": item8_nome,
+            "item8_resultado": item8_resultado,
+            "item8_acao": item8_acao,
+            "item8_prazo": item8_prazo,
+            "item8_responsavel": item8_responsavel,
+            "item9_nome": item9_nome,
+            "item9_resultado": item9_resultado,
+            "item9_acao": item9_acao,
+            "item9_prazo": item9_prazo,
+            "item9_responsavel": item9_responsavel,
+        }
+
+        for i in range(1, 10):
+
+            self.list_item = ThreeLineIconListItem(
+                text=items[f"item{i}_nome"], secondary_text=items[f"item{i}_resultado"]
+            )
+
+            self.strng.get_screen("screen3").ids.box.add_widget(self.list_item)
+
+        for i in range(1,10):
+            self.list_item = MDExpansionPanel(
+            content = Content(),
+            on_open=self.panel_open,
+            on_close=self.panel_close,
+            icon=f"kivymd.png",
+            panel_cls=MDExpansionPanelThreeLine(
+                text=items[f'item{i}_nome'],
+                secondary_text=items[f'item{i}_resultado'],
+                tertiary_text=items[f'item{i}_prazo']
+                )
+            )
+
+            self.strng.get_screen('screen3').ids.my_checklist.add_widget(self.list_item)
+
+            if items[f'item{i}_resultado'] == 'Não conforme':
+                self.list_item.content.ids.list.add_widget(MDTextField(text=items[f'item{i}_acao'],
+                    size_hint= (0.98,0.1),
+                    hint_text = 'Ação para uma não conformidade!',
+                    icon_right= 'inbox',
+                    ))
+                self.list_item.content.ids.list.add_widget(MDTextField(text=items[f'item{i}_prazo'],
+                    size_hint= (0.98,0.1),
+                    hint_text = 'Prazo para uma não conformidade!',
+                    icon_right= 'inbox',
+                    ))
+                self.list_item.content.ids.list.add_widget(MDTextField(text=items[f'item{i}_responsavel'],
+                    size_hint= (0.98,0.1),
+                    hint_text = 'Responsável para uma não conformidade!',
+                    icon_right= 'inbox',
+                    ))
+
+    ###################BLOQUEIO DOS BOTAO PARA EDITAR CHCKLIST#########################
+    def enable_checklist_inputs(self):
+        if self.strng.get_screen("screen3").ids.profile_name_input.disabled == True:
+
+            self.strng.get_screen("screen3").ids.profile_name_input.disabled = False
+
+            self.strng.get_screen("screen3").ids.profile_data_input.disabled = False
+
+            self.strng.get_screen(
+                "screen3"
+            ).ids.profile_responsavel_input.disabled = False
+
+            self.strng.get_screen("screen3").ids.profile_acao_input.disabled = False
+
+            self.strng.get_screen(
+                "screen3"
+            ).ids.profile_responsavel_realizar_input.disabled = False
+
+            self.strng.get_screen("screen3").ids.profile_prazo_input.disabled = False
+
+            self.strng.get_screen("screen3").ids.profile_status_input.disabled = False
+
+            self.strng.get_screen("screen3").ids.save_checklist_button.disabled = False
+
+            self.strng.get_screen(
+                "screen3"
+            ).ids.delete_checklist_button.disabled = False
+
+        else:
+            self.strng.get_screen("screen3").ids.profile_name_input.disabled = True
+
+            self.strng.get_screen("screen3").ids.profile_data_input.disabled = True
+
+            self.strng.get_screen(
+                "screen3"
+            ).ids.profile_responsavel_input.disabled = True
+
+            self.strng.get_screen("screen3").ids.profile_acao_input.disabled = True
+
+            self.strng.get_screen(
+                "screen3"
+            ).ids.profile_responsavel_realizar_input.disabled = True
+
+            self.strng.get_screen("screen3").ids.profile_prazo_input.disabled = True
+
+            self.strng.get_screen("screen3").ids.profile_status_input.disabled = True
+
+            self.strng.get_screen("screen3").ids.save_checklist_button.disabled = True
+
+            self.strng.get_screen("screen3").ids.delete_checklist_button.disabled = True
+
+class Profile(Screen):
+    def enable_profile_inputs(self):
+
+        if self.strng.get_screen("profile").ids.profile_email_input.disabled == True:
+
+            self.strng.get_screen("profile").ids.profile_email_input.disabled = False
+
+            self.strng.get_screen("profile").ids.profile_name_input.disabled = False
+
+            self.strng.get_screen("profile").ids.save_profile_button.disabled = False
+        else:
+            self.strng.get_screen("profile").ids.profile_email_input.disabled = True
+
+            self.strng.get_screen("profile").ids.profile_name_input.disabled = True
+
+            self.strng.get_screen("profile").ids.save_profile_button.disabled = True
+
+    def update_profile(self):
+        name = self.strng.get_screen("profile").ids.profile_name_input.text
+        email = self.strng.get_screen("profile").ids.profile_email_input.text
+        self.store.put("UserInfo", name=name, email=email)
+        self.set_refresh()
+        self.strng.get_screen('profile').ids.save_profile_button.disabled = True
+
+class ChecklistName(Screen):
+    def check_lv_name_and_description(self):
+        print(self.strng.get_screen("checklistName").ids.name_text_field_lv.text)
+        print(self.strng.get_screen("checklistName").ids.descricao_text_field_lv.text)
+        if (
+            self.strng.get_screen("checklistName").ids.name_text_field_lv.text != ""
+            and self.strng.get_screen("checklistName").ids.descricao_text_field_lv.text
+            != ""
+        ):
+            self.strng.get_screen("checklistName").ids.lv_name_button.disabled = False
+
+        else:
+            self.strng.get_screen("checklistName").ids.lv_name_button.disabled = True
 
 ############MAQUINARIO APP########################
 class ChecklistApp(MDApp):
@@ -265,14 +605,8 @@ class ChecklistApp(MDApp):
 
         except Exception:
             pass
-
-    def update_profile(self):
-        name = self.strng.get_screen("profile").ids.profile_name_input.text
-        email = self.strng.get_screen("profile").ids.profile_email_input.text
-        self.store.put("UserInfo", name=name, email=email)
-        self.set_refresh()
-        self.strng.get_screen('profile').ids.save_profile_button.disabled = True
-
+    
+    #################FAZ OS INPUTS FICAREM EM BRANCO QUANDO C OU NA É ESCOLHIDO#################
     def clear_items_inputs(self):
         for i in range(1, 9):
 
@@ -293,18 +627,6 @@ class ChecklistApp(MDApp):
     class DrawerList(ThemableBehavior, MDList):  ######lISTAS DE AÇÕES DO PERFIL######
         pass
 
-    def check_lv_name_and_description(self):
-        print(self.strng.get_screen("checklistName").ids.name_text_field_lv.text)
-        print(self.strng.get_screen("checklistName").ids.descricao_text_field_lv.text)
-        if (
-            self.strng.get_screen("checklistName").ids.name_text_field_lv.text != ""
-            and self.strng.get_screen("checklistName").ids.descricao_text_field_lv.text
-            != ""
-        ):
-            self.strng.get_screen("checklistName").ids.lv_name_button.disabled = False
-
-        else:
-            self.strng.get_screen("checklistName").ids.lv_name_button.disabled = True
 
     @decorators.asyncio_run
     def add_new_lv(self):
@@ -563,19 +885,6 @@ class ChecklistApp(MDApp):
         self.dialog.dismiss()
         self.change_screen_to_checklists()
 
-    #################REMOVE WIDGET CHECKLIST##################
-    def remove_checklist(self, id):
-        try:
-            myclient = pymongo.MongoClient(
-                "mongodb+srv://julio:senha@cluster0.pn3vb.mongodb.net/kivyapp?retryWrites=true&w=majority"
-            )
-            db = myclient["kivyapp"]
-            col_lv = db["lvs"]
-
-            col_lv = col_lv.delete_one({"_id": ObjectId("id do bagulho")})
-        except Exception as erro:
-            print(erro)
-
     ############MUDANDO A TELA PARA CHECKLIST INFORMAÇOES##########
     def change_screen(self, ThreeLineIconListItem):
         self.strng.current = "screen3"
@@ -590,70 +899,6 @@ class ChecklistApp(MDApp):
     ####################MUDANDO A TELA PARA A TELA INICIAR UM NOVA VERIFICAÇAO#############
     def start_checklist(self):
         self.strng.current = "checklistName"
-
-    ##################FUNCAO PARA JANELHINHA DE DATA#########################
-    def get_date(self, date):
-        """
-        :type date: <class 'datetime.date'>
-        """
-
-    ##################FUNCAO PARA JANELHINHA DE DATA#########################
-    def show_date_picker(self):
-        date_dialog = MDDatePicker(callback=self.get_date)
-        date_dialog.open()
-
-    #########FUNCAO RECARREGAR OS DELETALHES DO PEFIL APOS MUDANÇA##############
-
-    #########PREENCHIMENTOD DO NOME NA TELA DE LOGIN OBRIGATORIO FUNCAO############
-    def check_username(self):
-        self.username_text = self.strng.get_screen(
-            "usernamescreen"
-        ).ids.username_text_fied.text
-        username_check_false = True
-        try:
-            int(self.username_text)
-        except:
-            username_check_false = False
-        if username_check_false or self.username_text.split() == []:
-            cancel_btn_username_dialogue = MDFlatButton(
-                text="OK", on_release=self.close_username_dialogue
-            )
-            self.dialog = MDDialog(
-                title="Nome inválido",
-                text="Por favor preencha um nome válido",
-                size_hint=(0.7, 0.2),
-                buttons=[cancel_btn_username_dialogue],
-            )
-            self.dialog.open()
-        else:
-            self.strng.get_screen("usernamescreen").ids.disabled_button.disabled = False
-
-    ####################PREENCHIMENTO DO EMAIL TELA DE LOGIN OBRIGATORIO###################
-    def get_email(self):
-        self.email_text = self.strng.get_screen("dob").ids.email_text_fied.text
-        username_check_false = True
-        try:
-            int(self.username_text)
-        except:
-            username_check_false = False
-        if username_check_false or self.email_text.split() == []:
-            cancel_btn_username_dialogue = MDFlatButton(
-                text="OK", on_release=self.close_username_dialogue
-            )
-            self.dialog = MDDialog(
-                title="Email inválido",
-                text="Por favor preencha um email válido",
-                size_hint=(0.7, 0.2),
-                buttons=[cancel_btn_username_dialogue],
-            )
-            self.dialog.open()
-        else:
-            name = self.strng.get_screen("usernamescreen").ids.username_text_fied.text
-            email = self.strng.get_screen("dob").ids.email_text_fied.text
-            self.store.put("UserInfo", name=name, email=email)
-            self.strng.get_screen("dob").ids.disabled_button2.disabled = False
-            self.set_refresh()
-            self.update()
 
     ####################FUNCAO DE BLOQUEI DOS BOTAO CASO NAO SEJA SELECIONADO AS OPCOES DA VERIFICAÇAO############
     def enable_items_inputs(self):
@@ -687,8 +932,7 @@ class ChecklistApp(MDApp):
         for i in range(1, 10):
             self.strng.get_screen(f"checklistItem{i}").ids.next_button.disabled = True
 
-    ####################FUNCAO PARA LIBERAR OS BOTAO CASO SEJA SELECIONADO AS OPCOES DA VERIFICAÇAO############
-
+    ####################FUNCAO PARA LIBERAR OS BOTÕES CASO SEJA SELECIONADO AS OPCOES DA VERIFICAÇAO############
     def check_lv_items(self):
 
         for i in range(1, 10):
@@ -717,311 +961,6 @@ class ChecklistApp(MDApp):
                     f"checklistItem{i}"
                 ).ids.next_button.disabled = False
 
-    ###################BLOQUEIO DOS BOTAO PARA EDITAR CHCKLIST#########################
-    def enable_checklist_inputs(self):
-        if self.strng.get_screen("screen3").ids.profile_name_input.disabled == True:
-
-            self.strng.get_screen("screen3").ids.profile_name_input.disabled = False
-
-            self.strng.get_screen("screen3").ids.profile_data_input.disabled = False
-
-            self.strng.get_screen(
-                "screen3"
-            ).ids.profile_responsavel_input.disabled = False
-
-            self.strng.get_screen("screen3").ids.profile_acao_input.disabled = False
-
-            self.strng.get_screen(
-                "screen3"
-            ).ids.profile_responsavel_realizar_input.disabled = False
-
-            self.strng.get_screen("screen3").ids.profile_prazo_input.disabled = False
-
-            self.strng.get_screen("screen3").ids.profile_status_input.disabled = False
-
-            self.strng.get_screen("screen3").ids.save_checklist_button.disabled = False
-
-            self.strng.get_screen(
-                "screen3"
-            ).ids.delete_checklist_button.disabled = False
-
-        else:
-            self.strng.get_screen("screen3").ids.profile_name_input.disabled = True
-
-            self.strng.get_screen("screen3").ids.profile_data_input.disabled = True
-
-            self.strng.get_screen(
-                "screen3"
-            ).ids.profile_responsavel_input.disabled = True
-
-            self.strng.get_screen("screen3").ids.profile_acao_input.disabled = True
-
-            self.strng.get_screen(
-                "screen3"
-            ).ids.profile_responsavel_realizar_input.disabled = True
-
-            self.strng.get_screen("screen3").ids.profile_prazo_input.disabled = True
-
-            self.strng.get_screen("screen3").ids.profile_status_input.disabled = True
-
-            self.strng.get_screen("screen3").ids.save_checklist_button.disabled = True
-
-            self.strng.get_screen("screen3").ids.delete_checklist_button.disabled = True
-
-    #######################BLOQUEIO DOS BOTAO PARA EDITAR PERFIL################
-    def enable_profile_inputs(self):
-
-        if self.strng.get_screen("profile").ids.profile_email_input.disabled == True:
-
-            self.strng.get_screen("profile").ids.profile_email_input.disabled = False
-
-            self.strng.get_screen("profile").ids.profile_name_input.disabled = False
-
-            self.strng.get_screen("profile").ids.save_profile_button.disabled = False
-        else:
-            self.strng.get_screen("profile").ids.profile_email_input.disabled = True
-
-            self.strng.get_screen("profile").ids.profile_name_input.disabled = True
-
-            self.strng.get_screen("profile").ids.save_profile_button.disabled = True
-
-    @decorators.asynckivy_start
-    async def load_checklists(self):
-        query = gql("""
-            query {
-                allVerificationLists(completed: false) {
-                    id,
-                    name,
-                    conclusionPercentage
-                }
-            }
-        """)
-
-        result = await async_request(query, {"Authentication": f"JWT {self.auth_token}"})
-
-        for question in result["allVerificationLists"]:
-            print(question)
-
-        myclient = pymongo.MongoClient(
-            "mongodb+srv://julio:senha@cluster0.pn3vb.mongodb.net/kivyapp?retryWrites=true&w=majority"
-        )
-        db = myclient["kivyapp"]
-        col_lv = db["lvs"]
-
-        for item in col_lv.find():
-
-            checklist_table = ThreeLineIconListItem(
-                text=item["nome_lv"],
-                secondary_text=item["descricao_lv"],
-                tertiary_text=item["Data_emissao"],
-                on_press=partial(
-                    self.checklist_screen,
-                    id=str(item["_id"]),
-                    nome_lv=item["nome_lv"],
-                    descricao_lv=item["descricao_lv"],
-                    data_emissao=item["Data_emissao"],
-                    porcentagem_c=item["porcentagem_c"],
-                    quantidade_nc=item["quantidade_nc"],
-                    quantidade_na=item["quantidade_na"],
-                    lv_status=item["lv_status"],
-                    item1_nome=item["item1_nome"],
-                    item1_resultado=item["item1_resultado"],
-                    item1_acao=item["item1_acao"],
-                    item1_prazo=item["item1_prazo"],
-                    item1_responsavel=item["item1_responsavel"],
-                    item2_nome=item["item2_nome"],
-                    item2_resultado=item["item2_resultado"],
-                    item2_acao=item["item2_acao"],
-                    item2_prazo=item["item2_prazo"],
-                    item2_responsavel=item["item2_responsavel"],
-                    item3_nome=item["item3_nome"],
-                    item3_resultado=item["item4_resultado"],
-                    item3_acao=item["item3_acao"],
-                    item3_prazo=item["item3_prazo"],
-                    item3_responsavel=item["item3_responsavel"],
-                    item4_nome=item["item3_responsavel"],
-                    item4_resultado=item["item4_resultado"],
-                    item4_acao=item["item4_acao"],
-                    item4_prazo=item["item4_prazo"],
-                    item4_responsavel=item["item4_responsavel"],
-                    item5_nome=item["item5_nome"],
-                    item5_resultado=item["item5_resultado"],
-                    item5_acao=item["item5_acao"],
-                    item5_prazo=item["item5_prazo"],
-                    item5_responsavel=item["item5_responsavel"],
-                    item6_nome=item["item6_nome"],
-                    item6_resultado=item["item6_resultado"],
-                    item6_acao=item["item6_acao"],
-                    item6_prazo=item["item6_prazo"],
-                    item6_responsavel=item["item6_responsavel"],
-                    item7_nome=item["item7_nome"],
-                    item7_resultado=item["item7_resultado"],
-                    item7_acao=item["item7_acao"],
-                    item7_prazo=item["item7_prazo"],
-                    item7_responsavel=item["item7_responsavel"],
-                    item8_nome=item["item8_nome"],
-                    item8_resultado=item["item8_resultado"],
-                    item8_acao=item["item8_acao"],
-                    item8_prazo=item["item8_prazo"],
-                    item8_responsavel=item["item8_responsavel"],
-                    item9_nome=item["item9_nome"],
-                    item9_resultado=item["item9_resultado"],
-                    item9_acao=item["item9_acao"],
-                    item9_prazo=item["item9_prazo"],
-                    item9_responsavel=item["item9_responsavel"],
-                ),
-            )
-
-            self.strng.get_screen("screen1").ids.checklist.add_widget(checklist_table)
-
-    def checklist_screen(
-        self,
-        event,
-        id,
-        nome_lv,
-        descricao_lv,
-        data_emissao,
-        porcentagem_c,
-        quantidade_nc,
-        quantidade_na,
-        lv_status,
-        item1_nome,
-        item1_resultado,
-        item1_acao,
-        item1_prazo,
-        item1_responsavel,
-        item2_nome,
-        item2_resultado,
-        item2_acao,
-        item2_prazo,
-        item2_responsavel,
-        item3_nome,
-        item3_resultado,
-        item3_acao,
-        item3_prazo,
-        item3_responsavel,
-        item4_nome,
-        item4_resultado,
-        item4_acao,
-        item4_prazo,
-        item4_responsavel,
-        item5_nome,
-        item5_resultado,
-        item5_acao,
-        item5_prazo,
-        item5_responsavel,
-        item6_nome,
-        item6_resultado,
-        item6_acao,
-        item6_prazo,
-        item6_responsavel,
-        item7_nome,
-        item7_resultado,
-        item7_acao,
-        item7_prazo,
-        item7_responsavel,
-        item8_nome,
-        item8_resultado,
-        item8_acao,
-        item8_prazo,
-        item8_responsavel,
-        item9_nome,
-        item9_resultado,
-        item9_acao,
-        item9_prazo,
-        item9_responsavel,
-    ):
-
-        self.strng.current = "screen3"
-        self.strng.get_screen("screen3").ids.screen3_toolbar.title = nome_lv
-
-        items = {
-            "item1_nome": item1_nome,
-            "item1_resultado": item1_resultado,
-            "item1_acao": item1_acao,
-            "item1_prazo": item1_prazo,
-            "item1_responsavel": item1_responsavel,
-            "item2_nome": item2_nome,
-            "item2_resultado": item2_resultado,
-            "item2_acao": item2_acao,
-            "item2_prazo": item2_prazo,
-            "item2_responsavel": item2_responsavel,
-            "item3_nome": item3_nome,
-            "item3_resultado": item3_resultado,
-            "item3_acao": item3_acao,
-            "item3_prazo": item3_prazo,
-            "item3_responsavel": item3_responsavel,
-            "item4_nome": item4_nome,
-            "item4_resultado": item4_resultado,
-            "item4_acao": item4_acao,
-            "item4_prazo": item4_prazo,
-            "item4_responsavel": item4_responsavel,
-            "item5_nome": item5_nome,
-            "item5_resultado": item5_resultado,
-            "item5_acao": item5_acao,
-            "item5_prazo": item5_prazo,
-            "item5_responsavel": item5_responsavel,
-            "item6_nome": item6_nome,
-            "item6_resultado": item6_resultado,
-            "item6_acao": item6_acao,
-            "item6_prazo": item6_prazo,
-            "item6_responsavel": item6_responsavel,
-            "item7_nome": item7_nome,
-            "item7_resultado": item7_resultado,
-            "item7_acao": item7_acao,
-            "item7_prazo": item7_prazo,
-            "item7_responsavel": item7_responsavel,
-            "item8_nome": item8_nome,
-            "item8_resultado": item8_resultado,
-            "item8_acao": item8_acao,
-            "item8_prazo": item8_prazo,
-            "item8_responsavel": item8_responsavel,
-            "item9_nome": item9_nome,
-            "item9_resultado": item9_resultado,
-            "item9_acao": item9_acao,
-            "item9_prazo": item9_prazo,
-            "item9_responsavel": item9_responsavel,
-        }
-
-        for i in range(1, 10):
-
-            self.list_item = ThreeLineIconListItem(
-                text=items[f"item{i}_nome"], secondary_text=items[f"item{i}_resultado"]
-            )
-
-            self.strng.get_screen("screen3").ids.box.add_widget(self.list_item)
-
-        for i in range(1,10):
-            self.list_item = MDExpansionPanel(
-            content = Content(),
-            on_open=self.panel_open,
-            on_close=self.panel_close,
-            icon=f"kivymd.png",
-            panel_cls=MDExpansionPanelThreeLine(
-                text=items[f'item{i}_nome'],
-                secondary_text=items[f'item{i}_resultado'],
-                tertiary_text=items[f'item{i}_prazo']
-                )
-            )
-
-            self.strng.get_screen('screen3').ids.my_checklist.add_widget(self.list_item)
-
-            if items[f'item{i}_resultado'] == 'Não conforme':
-                self.list_item.content.ids.list.add_widget(MDTextField(text=items[f'item{i}_acao'],
-                    size_hint= (0.98,0.1),
-                    hint_text = 'Ação para uma não conformidade!',
-                    icon_right= 'inbox',
-                    ))
-                self.list_item.content.ids.list.add_widget(MDTextField(text=items[f'item{i}_prazo'],
-                    size_hint= (0.98,0.1),
-                    hint_text = 'Prazo para uma não conformidade!',
-                    icon_right= 'inbox',
-                    ))
-                self.list_item.content.ids.list.add_widget(MDTextField(text=items[f'item{i}_responsavel'],
-                    size_hint= (0.98,0.1),
-                    hint_text = 'Responsável para uma não conformidade!',
-                    icon_right= 'inbox',
-                    ))
 
 
 if __name__ == "__main__":
