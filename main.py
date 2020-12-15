@@ -31,6 +31,8 @@ from gql.transport.aiohttp import AIOHTTPTransport
 
 import decorators
 
+
+
 load_dotenv()
 
 Config.set("input", "mouse", "mouse,disable_multitouch")
