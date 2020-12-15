@@ -37,7 +37,7 @@ ScreenManager:
     BoxLayout:
         orientation: "vertical"
         MDToolbar:
-            title: "Auto LV"
+            title: "Auto LV - Login"
             elevation:5
         Widget:
 
@@ -100,36 +100,92 @@ ScreenManager:
 <RegisterScreen>:
     name: "register"
 
+
     BoxLayout:
         orientation: "vertical"
+        MDToolbar:
+            title: "Auto LV - Cadastro"
+            elevation:5
+        Widget:
 
-        MDTextField:
-            id: fisrt_name_input
-            hint_text: "Nome"
 
-        MDTextField:
-            id: last_name_input
-            hint_text: "Sobrenome"
+    MDTextField:
+        halign: "center"
+        id:fisrt_name_input
+        pos_hint: {"center_x":0.5,"center_y":0.70}
+        size_hint: (0.7,0.1)
+        hint_text : "Nome"
+        helper_text: "Obrigatório"
+        helper_text_mode: "on_error"
+        icon_right: "account"
+        icon_right_color: app.theme_cls.primary_color
+        required : True
 
-        MDTextField:
-            id: email_input
-            hint_text: "Email"
+    MDTextField:
+        halign: "center"
+        id: last_name_input
+        pos_hint: {"center_x":0.5,"center_y":0.60}
+        size_hint: (0.7,0.1)
+        hint_text : "Sobrenome"
+        helper_text: "Obrigatório"
+        helper_text_mode: "on_error"
+        icon_right: "account"
+        icon_right_color: app.theme_cls.primary_color
+        required : True
 
-        MDTextField:
-            id: password1_input
-            hint_text: "Senha"
+    MDTextField:
+        id: email_input
+        halign: "center"
+        pos_hint: {"center_x":0.5,"center_y":0.50}
+        size_hint: (0.7,0.1)
+        hint_text : "Email"
+        helper_text: "Obrigatório"
+        helper_text_mode: "on_error"
+        icon_right: "email"
+        icon_right_color: app.theme_cls.primary_color
+        required : True
 
-        MDTextField:
-            id: password2_input
-            hint_text: "Repita a senha"
+    MDTextField:
+        id: password1_input
+        halign: "center"
+        pos_hint: {"center_x":0.5,"center_y":0.40}
+        size_hint: (0.7,0.1)
+        hint_text : "Senha"
+        helper_text: "Obrigatório"
+        helper_text_mode: "on_error"
+        icon_right: "key"
+        icon_right_color: app.theme_cls.primary_color
+        required : True
 
-        MDRaisedButton:
-            text: "Cadastrar"
-            on_press: root.register()
+    MDTextField:
+        halign: "center"
+        id: password2_input
+        pos_hint: {"center_x":0.5,"center_y":0.30}
+        size_hint: (0.7,0.1)
+        hint_text : "Repetir senha"
+        helper_text: "Obrigatório"
+        helper_text_mode: "on_error"
+        icon_right: "key"
+        icon_right_color: app.theme_cls.primary_color
+        required : True
 
-        MDRaisedButton:
-            text: "Entrar"
-            on_press: root.manager.current = "login"
+
+    MDRaisedButton:
+        halign: "center"
+        text: "Cadastrar"
+        pos_hint: {"center_x": .5, "center_y": .2}
+        on_press: root.register()
+
+    MDLabel:
+        halign: "center"
+        text:"ou"
+        pos_hint: {"center_x": .5, "center_y": .15}
+
+    MDRaisedButton:
+        halign: "center"
+        text: "Entrar"
+        pos_hint: {"center_x": .5, "center_y": .05}
+        on_press: root.manager.current = "login"
 
 
 <ExpansionpanelContent@BoxLayout>:
