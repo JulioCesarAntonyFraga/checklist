@@ -271,7 +271,7 @@ class Screen1(Screen):
                 ),
             )
 
-            self.strng.get_screen("screen1").ids.checklist.add_widget(checklist_table)
+            self.manager.get_screen("screen1").ids.checklist.add_widget(checklist_table)
 
 class Screen3(Screen):
     def remove_checklist(self, id):
@@ -344,8 +344,8 @@ class Screen3(Screen):
         item9_responsavel,
     ):
 
-        self.strng.current = "screen3"
-        self.strng.get_screen("screen3").ids.screen3_toolbar.title = nome_lv
+        self.manager.current = "screen3"
+        self.manager.get_screen("screen3").ids.screen3_toolbar.title = nome_lv
 
         items = {
             "item1_nome": item1_nome,
@@ -401,7 +401,7 @@ class Screen3(Screen):
                 text=items[f"item{i}_nome"], secondary_text=items[f"item{i}_resultado"]
             )
 
-            self.strng.get_screen("screen3").ids.box.add_widget(self.list_item)
+            self.manager.get_screen("screen3").ids.box.add_widget(self.list_item)
 
         for i in range(1,10):
             self.list_item = MDExpansionPanel(
@@ -416,7 +416,7 @@ class Screen3(Screen):
                 )
             )
 
-            self.strng.get_screen('screen3').ids.my_checklist.add_widget(self.list_item)
+            self.manager.get_screen('screen3').ids.my_checklist.add_widget(self.list_item)
 
             if items[f'item{i}_resultado'] == 'Não conforme':
                 self.list_item.content.ids.list.add_widget(MDTextField(text=items[f'item{i}_acao'],
@@ -489,40 +489,40 @@ class Screen3(Screen):
 class Profile(Screen):
     def enable_profile_inputs(self):
 
-        if self.strng.get_screen("profile").ids.profile_email_input.disabled == True:
+        if self.manager.get_screen("profile").ids.profile_email_input.disabled == True:
 
-            self.strng.get_screen("profile").ids.profile_email_input.disabled = False
+            self.manager.get_screen("profile").ids.profile_email_input.disabled = False
 
-            self.strng.get_screen("profile").ids.profile_name_input.disabled = False
+            self.manager.get_screen("profile").ids.profile_name_input.disabled = False
 
-            self.strng.get_screen("profile").ids.save_profile_button.disabled = False
+            self.manager.get_screen("profile").ids.save_profile_button.disabled = False
         else:
-            self.strng.get_screen("profile").ids.profile_email_input.disabled = True
+            self.manager.get_screen("profile").ids.profile_email_input.disabled = True
 
-            self.strng.get_screen("profile").ids.profile_name_input.disabled = True
+            self.manager.get_screen("profile").ids.profile_name_input.disabled = True
 
-            self.strng.get_screen("profile").ids.save_profile_button.disabled = True
+            self.manager.get_screen("profile").ids.save_profile_button.disabled = True
 
     def update_profile(self):
-        name = self.strng.get_screen("profile").ids.profile_name_input.text
-        email = self.strng.get_screen("profile").ids.profile_email_input.text
+        name = self.manager.get_screen("profile").ids.profile_name_input.text
+        email = self.manager.get_screen("profile").ids.profile_email_input.text
         self.store.put("UserInfo", name=name, email=email)
         self.set_refresh()
-        self.strng.get_screen('profile').ids.save_profile_button.disabled = True
+        self.manager.get_screen('profile').ids.save_profile_button.disabled = True
 
 class ChecklistName(Screen):
     def check_lv_name_and_description(self):
-        print(self.strng.get_screen("checklistName").ids.name_text_field_lv.text)
-        print(self.strng.get_screen("checklistName").ids.descricao_text_field_lv.text)
+        print(self.manager.get_screen("checklistName").ids.name_text_field_lv.text)
+        print(self.manager.get_screen("checklistName").ids.descricao_text_field_lv.text)
         if (
-            self.strng.get_screen("checklistName").ids.name_text_field_lv.text != ""
-            and self.strng.get_screen("checklistName").ids.descricao_text_field_lv.text
+            self.manager.get_screen("checklistName").ids.name_text_field_lv.text != ""
+            and self.manager.get_screen("checklistName").ids.descricao_text_field_lv.text
             != ""
         ):
-            self.strng.get_screen("checklistName").ids.lv_name_button.disabled = False
+            self.manager.get_screen("checklistName").ids.lv_name_button.disabled = False
 
         else:
-            self.strng.get_screen("checklistName").ids.lv_name_button.disabled = True
+            self.manager.get_screen("checklistName").ids.lv_name_button.disabled = True
 
 ############MAQUINARIO APP########################
 class ChecklistApp(MDApp):
