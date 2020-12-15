@@ -662,7 +662,7 @@ ScreenManager:
         MDToolbar:
             title: "Inicar Verificação"
             left_action_items: [["menu",  lambda x: nav_drawer4.toggle_nav_drawer()]]
-            right_action_items: [["account-edit", lambda x: app.enable_profile_inputs()]]
+            right_action_items: [["account-edit", lambda x: root.enable_profile_inputs()]]
             elevation:5
 
         Widget:
@@ -696,8 +696,8 @@ ScreenManager:
         pos_hint: {"center_x":0.50,"center_y":0.26}
         user_font_size : "15sp"
         on_press:
-            app.enable_profile_inputs()
-            app.update_profile()
+            root.enable_profile_inputs()
+            root.update_profile()
             Snackbar(text="Salvo com sucesso!").show()
 
 
@@ -2150,6 +2150,7 @@ ScreenManager:
             root.manager.current = "checklistItem9"
             root.manager.transition.direction = "left"
             app.add_new_lv()
+            Snackbar(text="Adicionado com sucesso!").show()
     MDProgressBar:
         value:100
         pos_hint: {"center_y":0.02}
