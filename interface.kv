@@ -4,11 +4,10 @@
 #:import partial functools.partial
 
 ScreenManager:
+    LoginScreen:
+    RegisterScreen:
+    MainScreen:
     WelcomeScreen:
-    UsernameScreen:
-    DOB:
-    Screen1:
-    Screen2:
     Screen3:
     Screen5:
     ChecklistName:
@@ -22,6 +21,214 @@ ScreenManager:
     ChecklistItem8:
     ChecklistItem9:
     Profile:
+
+
+<Tab@MDTabsBase+FloatLayout>:
+
+
+<CheckBoxLabel@ButtonBehavior+MDLabel>:
+
+
+<LoginScreen>:
+    name: "login"
+
+    BoxLayout:
+        orientation: "vertical"
+
+        MDToolbar:
+            title: "Entrar"
+            elevation: 5
+
+        Widget:
+
+    MDTextField:
+        id: email_input
+        pos_hint: {"center_x": 0.5, "center_y": 0.70}
+        size_hint: (0.7, 0.1)
+        hint_text: "Email"
+        helper_text: "Este campo é obrigatório"
+        helper_text_mode: "on_error"
+        icon_right: "email"
+        icon_right_color: app.theme_cls.primary_color
+        required: True
+
+    MDTextField:
+        id: password_input
+        pos_hint: {"center_x":0.5,"center_y":0.60}
+        size_hint: (0.7,0.1)
+        hint_text: "Senha"
+        helper_text: "Este campo é obrigatório"
+        helper_text_mode: "on_error"
+        icon_right: "key"
+        icon_right_color: app.theme_cls.primary_color
+        password: True
+        required: True
+
+    MDCheckbox:
+        id: remember_input
+        size_hint: None, None
+        size: "48dp", "48dp"
+        pos_hint: {"center_x": .16, "center_y": .49}
+        active: True
+
+    CheckBoxLabel:
+        halign: "left"
+        text: "Lembrar-me"
+        size: "48dp", "48dp"
+        pos_hint: {"center_x": .7, "center_y": .49}
+        on_press: root.ids.remember_input.active = not root.ids.remember_input.active
+
+    MDRaisedButton:
+        halign: "center"
+        text: "Entrar"
+        pos_hint: {"center_x": .79, "center_y": .49}
+        on_press: root.login()
+
+    MDLabel:
+        halign: "center"
+        text:"ou"
+        pos_hint: {"center_x": .5, "center_y": .39}
+
+    MDRaisedButton:
+        text: "Cadastre-se"
+        pos_hint: {"center_x": .5, "center_y": .28}
+        on_press: root.manager.current = "register"
+
+
+<RegisterScreen>:
+    name: "register"
+
+    BoxLayout:
+        orientation: "vertical"
+
+        MDToolbar:
+            title: "Cadastrar"
+            elevation:5
+
+        Widget:
+
+    MDTextField:
+        id: first_name_input
+        pos_hint: {"center_x":0.5,"center_y":0.70}
+        size_hint: (0.7,0.1)
+        hint_text: "Nome"
+        helper_text: "Este campo é obrigatório"
+        helper_text_mode: "on_error"
+        icon_right: "account"
+        icon_right_color: app.theme_cls.primary_color
+        required: True
+
+    MDTextField:
+        id: last_name_input
+        pos_hint: {"center_x":0.5,"center_y":0.60}
+        size_hint: (0.7,0.1)
+        hint_text: "Sobrenome"
+        helper_text: "Este campo é obrigatório"
+        helper_text_mode: "on_error"
+        icon_right: "account"
+        icon_right_color: app.theme_cls.primary_color
+        required: True
+
+    MDTextField:
+        id: email_input
+        pos_hint: {"center_x":0.5,"center_y":0.50}
+        size_hint: (0.7,0.1)
+        hint_text: "Email"
+        helper_text: "Este campo é obrigatório"
+        helper_text_mode: "on_error"
+        icon_right: "email"
+        icon_right_color: app.theme_cls.primary_color
+        required: True
+
+    MDTextField:
+        id: password1_input
+        pos_hint: {"center_x":0.5,"center_y":0.40}
+        size_hint: (0.7,0.1)
+        hint_text: "Senha"
+        helper_text: "Este campo é obrigatório"
+        helper_text_mode: "on_error"
+        icon_right: "key"
+        icon_right_color: app.theme_cls.primary_color
+        password: True
+        required: True
+
+    MDTextField:
+        id: password2_input
+        pos_hint: {"center_x":0.5,"center_y":0.30}
+        size_hint: (0.7,0.1)
+        hint_text: "Repetir senha"
+        helper_text: "Este campo é obrigatório"
+        helper_text_mode: "on_error"
+        icon_right: "key"
+        icon_right_color: app.theme_cls.primary_color
+        password: True
+        required: True
+
+    MDRaisedButton:
+        halign: "center"
+        text: "Cadastrar"
+        pos_hint: {"center_x": .5, "center_y": .2}
+        on_press: root.register()
+
+    MDLabel:
+        halign: "center"
+        text:"ou"
+        pos_hint: {"center_x": .5, "center_y": .15}
+
+    MDRaisedButton:
+        halign: "center"
+        text: "Entrar"
+        pos_hint: {"center_x": .5, "center_y": .05}
+        on_press: root.manager.current = "login"
+
+
+<MainScreen>:
+    name: "main"
+
+    MDBottomNavigation:
+
+        MDBottomNavigationItem:
+            name: "verification_lists"
+            text: "Listas de verificação"
+            icon: "format-list-checkbox"
+
+            BoxLayout:
+                orientation: "vertical"
+
+                MDToolbar:
+                    title: "Listas de verificação"
+
+                FloatLayout:
+
+                    MDFloatingActionButton:
+                        icon: "plus"
+                        md_bg_color: app.theme_cls.primary_color
+                        pos_hint: {"center_x": .875, "center_y": .1}
+
+                    MDTabs:
+
+                        Tab:
+                            text: "Todas"
+
+                            ScrollView:
+                                size_hint: [0.97, 0.89]
+                                pos_hint: {"center_x": .90, "center_y": .1}
+
+                                MDList:
+                                    id: checklists
+
+                        Tab:
+                            text: "Criadas por mim"
+
+                            MDList:
+                                id: my_checklists
+
+        MDBottomNavigationItem:
+            name: "profile"
+            text: "Perfil"
+            icon: "account"
+
+            BoxLayout:
 
 
 <ExpansionpanelContent@BoxLayout>:
@@ -90,225 +297,26 @@ ScreenManager:
         value:30
         pos_hint:{"center_y" : 0.02}
 
-<UsernameScreen@Screen>:
-    name:"usernamescreen"
-
-    BoxLayout:
-        orientation: "vertical"
-        MDToolbar:
-            title: "Paware Softwares "
-            right_action_items: [["exit-run", lambda x: app.show_alert_dialog()]]
-            elevation:5
-
-        Widget:
-
-    MDFloatingActionButton:
-        icon: "arrow-left"
-        md_bg_color:app.theme_cls.primary_color
-        pos_hint: {"center_x":0.15,"center_y":0.1}
-        user_font_size : "13sp"
-        on_press:
-            root.manager.current = "welcomescreen"
-            root.manager.transition.direction = "right"
-    MDFloatingActionButton:
-        id:disabled_button
-        disabled: True
-        icon: "arrow-right"
-        md_bg_color:app.theme_cls.primary_color
-        pos_hint: {"center_x":0.85,"center_y":0.1}
-        user_font_size : "13sp"
-        on_press:
-            root.manager.current = "dob"
-            root.manager.transition.direction = "left"
-    MDProgressBar:
-        value:60
-        pos_hint: {"center_y":0.02}
-    MDTextField:
-        id:username_text_fied
-        pos_hint: {"center_x":0.5,"center_y":0.6}
-        size_hint: (0.7,0.1)
-        hint_text : "Seu nome"
-        helper_text: "Obrigatório"
-        helper_text_mode: "on_error"
-        icon_right: "account"
-        icon_right_color: app.theme_cls.primary_color
-        required : True
-    MDFloatingActionButton:
-        icon:"account-plus"
-        md_bg_color:app.theme_cls.primary_color
-        pos_hint: {"center_x":0.5,"center_y":0.35}
-        user_font_size: "15sp"
-        on_press: app.check_username()
-<DOB@Screen>:
-    name:"dob"
-
-    BoxLayout:
-        orientation: "vertical"
-        MDToolbar:
-            title: "Paware Softwares"
-            right_action_items: [["exit-run", lambda x: app.show_alert_dialog()]]
-            elevation:5
-
-        Widget:
-
-    MDFloatingActionButton:
-        icon: "arrow-left"
-        md_bg_color:app.theme_cls.primary_color
-        pos_hint: {"center_x":0.15,"center_y":0.1}
-        user_font_size : "13sp"
-        on_press:
-            root.manager.current = "usernamescreen"
-            root.manager.transition.direction = "right"
-    MDFloatingActionButton:
-        id:disabled_button2
-        disabled: True
-        icon: "arrow-right"
-        md_bg_color:app.theme_cls.primary_color
-        pos_hint: {"center_x":0.85,"center_y":0.1}
-        user_font_size : "13sp"
-        on_press:
-            root.manager.current = "screen1"
-            root.manager.transition.direction = "left"
-    MDProgressBar:
-        value:60
-        pos_hint: {"center_y":0.02}
-    MDTextField:
-        id:email_text_fied
-        pos_hint: {"center_x":0.5,"center_y":0.6}
-        size_hint: (0.7,0.1)
-        hint_text : "Seu Email"
-        helper_text: "Obrigatório"
-        helper_text_mode: "on_error"
-        icon_right: "account"
-        icon_right_color: app.theme_cls.primary_color
-        required : True
-    MDFloatingActionButton:
-        icon:"account-plus"
-        md_bg_color:app.theme_cls.primary_color
-        pos_hint: {"center_x":0.5,"center_y":0.35}
-        user_font_size: "15sp"
-        on_press: app.get_email()
-    
-<Screen1@Screen>:
-    name:"screen1"
-
-    BoxLayout:
-        orientation: "vertical"
-        MDToolbar:
-            title: "CheckLists"
-            left_action_items: [["menu", lambda x: nav_drawer.toggle_nav_drawer()]]
-            right_action_items: [["plus", lambda x: app.start_checklist()]]
-            size_hint_y: 0.11
-            elevation:5
-
-        Widget:
+<Screen1>:
 
     ScrollView:
         size_hint: (0.97, 0.89)
         pos_hint: {"center_x": .51, "y": 0.01}
+
         MDList:
             id: checklist
-            
 
 
-        
-
-    MDNavigationDrawer:
-        id: nav_drawer
-
-        ContentNavigationDrawer:
-            orientation: "vertical"
-            padding: "8dp"
-            spacing: "8dp"
-
-            Image:
-                id: avatar
-                size_hint: (1,1)
-                source: "mine.jpg"
-
-            MDLabel:
-                id: name_perfil_toolbar
-                text: app.name_perfil_toolbar
-                font_style: "Subtitle1"
-                size_hint_y: None
-                height: self.texture_size[1]
-
-            MDLabel:
-                id: email_perfil_toolbar
-                text: app.email_perfil_toolbar
-                size_hint_y: None
-                font_style: "Caption"
-                height: self.texture_size[1]
-
-           
-
-            DrawerList:
-                id: md_list
-                
-                MDList:
-                    OneLineIconListItem:
-                        text: "CheckLists"
-                        on_release: root.manager.current = "screen1"
-                    
-                        IconLeftWidget:
-                            icon: "inbox"
-                            on_release: root.manager.current = "screen1"
-                    
-                            
-                    OneLineIconListItem:
-                        text: "Minhas CheckList"
-                        on_release: root.manager.current = "screen2"
-                        
-                    
-                        IconLeftWidget:
-                            icon: "inbox"
-                            on_release: root.manager.current = "screen2"
-
-                        
-                    OneLineIconListItem:
-                        text: "Nova CheckList"
-                        on_release: root.manager.current = "screen5"
-                        
-                    
-                        IconLeftWidget:
-                            icon: "inbox-arrow-up"
-                            on_release: root.manager.current = "screen5"
-                            
-                    
-                    OneLineIconListItem:
-                        text: "Meu Perfil"
-                        on_release: root.manager.current = "profile"
-                    
-                        IconLeftWidget:
-                            icon: "account"
-                            on_release: root.manager.current = "profile"
-
-                    OneLineIconListItem:
-                        text: "Sair"
-                        on_press: 
-                            nav_drawer.set_state('close')
-                            app.show_alert_dialog()
-                    
-                        IconLeftWidget:
-                            icon: "exit-to-app"
-                            on_press: 
-                                nav_drawer.set_state('close')
-                                app.show_alert_dialog()
-                            
-    
-    
-
-
-<Screen3@Screen>:
+<Screen3>:
     name:"screen3"
 
     BoxLayout:
         orientation: "vertical"
+
         MDToolbar:
             id: screen3_toolbar
-            title: 'CheckList' 
-            left_action_items: [["menu", lambda x: nav_drawer.set_state()]]
-            right_action_items: [["file-document-edit-outline", lambda x: app.printa2()],["check", lambda x: app.printa3()]]
+            left_action_items: [["menu", lambda x: nav_drawer.toggle_nav_drawer()]]
+            right_action_items: [["trash-can-outline", lambda x: app.start_checklist()]]
             size_hint_y: 0.11
             elevation:5
 
@@ -317,8 +325,9 @@ ScreenManager:
     ScrollView:
         size_hint: (0.97, 0.89)
         pos_hint: {"center_x": .51, "y": 0.01}
+
         MDList:
-            id: my_checklist
+            id: box
 
     MDNavigationDrawer:
         id: nav_drawer
@@ -347,351 +356,6 @@ ScreenManager:
                 font_style: "Caption"
                 height: self.texture_size[1]
 
-           
-
-            DrawerList:
-                id: md_list
-                
-                MDList:
-                    OneLineIconListItem:
-                        text: "CheckLists"
-                        on_release: root.manager.current = "screen1"
-                    
-                        IconLeftWidget:
-                            icon: "inbox"
-                            on_release: root.manager.current = "screen1"
-                    
-                            
-                    OneLineIconListItem:
-                        text: "Minhas CheckList"
-                        on_release: root.manager.current = "screen2"
-                        
-                    
-                        IconLeftWidget:
-                            icon: "inbox"
-                            on_release: root.manager.current = "screen2"
-
-                        
-                    OneLineIconListItem:
-                        text: "Nova CheckList"
-                        on_release: root.manager.current = "screen5"
-                        
-                    
-                        IconLeftWidget:
-                            icon: "inbox-arrow-up"
-                            on_release: root.manager.current = "screen5"
-                            
-                    
-                    OneLineIconListItem:
-                        text: "Meu Perfil"
-                        on_release: root.manager.current = "profile"
-                    
-                        IconLeftWidget:
-                            icon: "account"
-                            on_release: root.manager.current = "profile"
-
-                    OneLineIconListItem:
-                        text: "Sair"
-                        on_press: 
-                            nav_drawer.set_state('close')
-                            app.show_alert_dialog()
-                    
-                        IconLeftWidget:
-                            icon: "exit-to-app"
-                            on_press: 
-                                nav_drawer.set_state('close')
-                                app.show_alert_dialog()
-        
-
-    
-                            
-
-<Screen2@Screen>:
-    name:"screen2"
-
-    BoxLayout:
-        orientation: "vertical"
-        MDToolbar:
-            title: "Minhas CheckList"
-            left_action_items: [["menu",  lambda x: nav_drawer2.toggle_nav_drawer()]]
-            right_action_items: [["plus", lambda x: app.start_checklist()]]
-            size_hint_y: 0.11
-            elevation:5
-
-        Widget:
-
-    
-
-    MDList:
-        id: my_checklists
-            
-
-    MDNavigationDrawer:
-        id: nav_drawer2
-
-        ContentNavigationDrawer:
-            orientation: "vertical"
-            padding: "8dp"
-            spacing: "8dp"
-
-            Image:
-                id: avatar
-                size_hint: (1,1)
-                source: "mine.jpg"
-
-            MDLabel:
-                id: name_perfil_toolbar
-                text: app.name_perfil_toolbar
-                font_style: "Subtitle1"
-                size_hint_y: None
-                height: self.texture_size[1]
-
-            MDLabel:
-                id: email_perfil_toolbar
-                text: app.email_perfil_toolbar
-                size_hint_y: None
-                font_style: "Caption"
-                height: self.texture_size[1]
-
-           
-
-            DrawerList:
-                id: md_list
-                
-                MDList:
-                    OneLineIconListItem:
-                        text: "CheckLists"
-                        on_release: root.manager.current = "screen1"
-                    
-                        IconLeftWidget:
-                            icon: "inbox"
-                            on_release: root.manager.current = "screen1"
-                    
-                            
-                    OneLineIconListItem:
-                        text: "Minhas CheckList"
-                        on_release: root.manager.current = "screen2"
-                    
-                        IconLeftWidget:
-                            icon: "inbox"
-                            on_release: root.manager.current = "screen2"
-
-                        
-                    OneLineIconListItem:
-                        text: "Nova CheckList"
-                        on_release: root.manager.current = "screen5"
-                        
-                    
-                        IconLeftWidget:
-                            icon: "inbox-arrow-up"
-                            on_release: root.manager.current = "screen5"
-                            
-                    
-                    OneLineIconListItem:
-                        text: "Meu Perfil"
-                        on_release: root.manager.current = "profile"
-                    
-                        IconLeftWidget:
-                            icon: "account"
-                            on_release: root.manager.current = "profile"
-
-                    OneLineIconListItem:
-                        text: "Sair"
-                        on_press: 
-                            nav_drawer2.set_state('close')
-                            app.show_alert_dialog()
-                    
-                        IconLeftWidget:
-                            icon: "exit-to-app"
-                            on_release: app.show_alert_dialog()
-
-
-<Profile@Screen>:
-    name : "profile"
-
-    BoxLayout:
-        orientation: "vertical"
-        MDToolbar:
-            title: "Inicar Verificação"
-            left_action_items: [["menu",  lambda x: nav_drawer4.toggle_nav_drawer()]]
-            right_action_items: [["account-edit", lambda x: app.enable_profile_inputs()]]
-            elevation:5
-
-        Widget:
-
-    MDFillRoundFlatIconButton:
-        id:check
-        text: 'CONFIRMAR'
-        icon: 'alert-circle-outline'
-        pos_hint: {'center_x':0.5,'center_y':0.25}
-        size: sp(140), sp(40)
-        on_press: 
-            app.chek_profile_inputs()
-
-    MDTextField:
-        id: profile_email_input
-        text: app.email_perfil_toolbar
-        pos_hint: {"center_x":0.5,"center_y":0.4}
-        size_hint: (0.7,0.1)
-        hint_text : "Email"
-        icon_right: "account"
-        icon_right_color: app.theme_cls.primary_color
-        disabled: "true"
-
-    MDTextField:
-        id: profile_name_input
-        text: app.name_perfil_toolbar
-        pos_hint: {"center_x":0.5,"center_y":0.5}
-        size_hint: (0.7,0.1)
-        hint_text : "Nome"
-        icon_right: "account"
-        icon_right_color: app.theme_cls.primary_color
-        disabled: "true"
-
-
-    MDFloatingActionButton:
-        id:save_profile_button
-        disabled: "true"
-        icon: "check"
-        md_bg_color:app.theme_cls.primary_color
-        pos_hint: {"center_x":0.50,"center_y":0.26}
-        user_font_size : "15sp"
-        on_press:
-            app.enable_profile_inputs()
-            app.update_profile()
-            Snackbar(text="Salvo com sucesso!").show()
-
-
-    MDNavigationDrawer:
-        id: nav_drawer4
-
-        ContentNavigationDrawer:
-            orientation: "vertical"
-            padding: "8dp"
-            spacing: "8dp"
-
-            Image:
-                id: avatar
-                size_hint: (1,1)
-                source: "mine.jpg"
-
-            MDLabel:
-                id: name_perfil_toolbar
-                text: app.name_perfil_toolbar
-                font_style: "Subtitle1"
-                size_hint_y: None
-                height: self.texture_size[1]
-
-            MDLabel:
-                id: email_perfil_toolbar
-                text: app.email_perfil_toolbar
-                size_hint_y: None
-                font_style: "Caption"
-                height: self.texture_size[1]
-
-           
-
-            DrawerList:
-                id: md_list
-                
-                MDList:
-                    OneLineIconListItem:
-                        text: "CheckLists"
-                        on_press:
-                            root.manager.current = "screen1"
-
-                    
-                        IconLeftWidget:
-                            icon: "inbox"
-                            on_release: root.manager.current = "screen1"
-                    
-                            
-                    OneLineIconListItem:
-                        text: "Minhas CheckList"
-                        on_release: root.manager.current = "screen2"
-                    
-                        IconLeftWidget:
-                            icon: "inbox"
-                            on_release: root.manager.current = "screen2"
-
-                        
-                    OneLineIconListItem:
-                        text: "Nova CheckList"
-                        on_release: root.manager.current = "screen5"
-                        
-                    
-                        IconLeftWidget:
-                            icon: "inbox-arrow-up"
-                            on_release: root.manager.current = "screen5"
-                            
-                    
-                    OneLineIconListItem:
-                        text: "Meu Perfil"
-                        on_release: root.manager.current = "profile"
-                    
-                        IconLeftWidget:
-                            icon: "account"
-                            on_release: root.manager.current = "profile"
-
-                    OneLineIconListItem:
-                        text: "Sair"
-                        on_press: 
-                            nav_drawer4.set_state('close')
-                            app.show_alert_dialog()
-                    
-                        IconLeftWidget:
-                            icon: "exit-to-app"
-                            on_press: 
-                                nav_drawer4.set_state('close')
-                                app.show_alert_dialog()
-
-
-<Screen5@Screen>:
-    name : "screen5"
-
-    BoxLayout:
-        orientation: "vertical"
-        MDToolbar:
-            title: "Inicar Verificação"
-            left_action_items: [["menu",  lambda x: nav_drawer4.toggle_nav_drawer()]]
-            elevation:5
-
-        Widget:
-
-    Image:
-        source: "ilustration1.png"
-        size: self.texture_size
-        pos_hint: {"center_x":0.5,"center_y":0.5}
-
-
-    MDNavigationDrawer:
-        id: nav_drawer4
-
-        ContentNavigationDrawer:
-            orientation: "vertical"
-            padding: "8dp"
-            spacing: "8dp"
-
-            Image:
-                id: avatar
-                size_hint: (1,1)
-                source: "mine.jpg"
-
-            MDLabel:
-                id: name_perfil_toolbar
-                text: app.name_perfil_toolbar
-                font_style: "Subtitle1"
-                size_hint_y: None
-                height: self.texture_size[1]
-
-            MDLabel:
-                id: email_perfil_toolbar
-                text: app.email_perfil_toolbar
-                size_hint_y: None
-                font_style: "Caption"
-                height: self.texture_size[1]
-
-           
 
             DrawerList:
                 id: md_list
@@ -735,9 +399,227 @@ ScreenManager:
 
                         IconLeftWidget:
                             icon: "exit-to-app"
-                            on_press: 
-                                nav_drawer4.set_state('close')
-                                app.show_alert_dialog()
+                            on_release: app.show_alert_dialog()
+
+
+<Screen2@BoxLayout>:
+
+    MDList:
+        id: my_checklists
+
+
+<Profile>:
+    name : "profile"
+
+    BoxLayout:
+        orientation: "vertical"
+        MDToolbar:
+            title: "Inicar Verificação"
+            left_action_items: [["menu",  lambda x: nav_drawer4.toggle_nav_drawer()]]
+            right_action_items: [["account-edit", lambda x: root.enable_profile_inputs()]]
+            elevation:5
+
+        Widget:
+
+    MDTextField:
+        id: profile_email_input
+        text: app.email_perfil_toolbar
+        pos_hint: {"center_x":0.5,"center_y":0.4}
+        size_hint: (0.7,0.1)
+        hint_text : "Email"
+        icon_right: "account"
+        icon_right_color: app.theme_cls.primary_color
+        disabled: "true"
+
+    MDTextField:
+        id: profile_name_input
+        text: app.name_perfil_toolbar
+        pos_hint: {"center_x":0.5,"center_y":0.5}
+        size_hint: (0.7,0.1)
+        hint_text : "Nome"
+        icon_right: "account"
+        icon_right_color: app.theme_cls.primary_color
+        disabled: "true"
+
+
+    MDFloatingActionButton:
+        id:save_profile_button
+        disabled: "true"
+        icon: "check"
+        md_bg_color:app.theme_cls.primary_color
+        pos_hint: {"center_x":0.50,"center_y":0.26}
+        user_font_size : "15sp"
+        on_press:
+            root.enable_profile_inputs()
+            root.update_profile()
+            Snackbar(text="Salvo com sucesso!").show()
+
+
+    MDNavigationDrawer:
+        id: nav_drawer4
+
+        ContentNavigationDrawer:
+            orientation: "vertical"
+            padding: "8dp"
+            spacing: "8dp"
+
+            Image:
+                id: avatar
+                size_hint: (1,1)
+                source: "mine.jpg"
+
+            MDLabel:
+                id: name_perfil_toolbar
+                text: app.name_perfil_toolbar
+                font_style: "Subtitle1"
+                size_hint_y: None
+                height: self.texture_size[1]
+
+            MDLabel:
+                id: email_perfil_toolbar
+                text: app.email_perfil_toolbar
+                size_hint_y: None
+                font_style: "Caption"
+                height: self.texture_size[1]
+
+
+            DrawerList:
+                id: md_list
+
+                MDList:
+                    OneLineIconListItem:
+                        text: "CheckLists"
+                        on_press:
+                            root.manager.current = "screen1"
+
+                        IconLeftWidget:
+                            icon: "inbox"
+                            on_release: root.manager.current = "screen1"
+
+                    OneLineIconListItem:
+                        text: "Minhas CheckList"
+                        on_release: root.manager.current = "screen2"
+
+                        IconLeftWidget:
+                            icon: "inbox"
+                            on_release: root.manager.current = "screen2"
+
+
+                    OneLineIconListItem:
+                        text: "Nova CheckList"
+                        on_release: root.manager.current = "screen5"
+
+                        IconLeftWidget:
+                            icon: "inbox-arrow-up"
+                            on_release: root.manager.current = "screen5"
+
+                    OneLineIconListItem:
+                        text: "Meu Perfil"
+                        on_release: root.manager.current = "profile"
+
+                        IconLeftWidget:
+                            icon: "account"
+                            on_release: root.manager.current = "profile"
+
+                    OneLineIconListItem:
+                        text: "Sair"
+                        on_release: app.show_alert_dialog()
+
+                        IconLeftWidget:
+                            icon: "exit-to-app"
+                            on_release: app.show_alert_dialog()
+
+
+<Screen5@Screen>:
+    name : "screen5"
+
+    BoxLayout:
+        orientation: "vertical"
+        MDToolbar:
+            title: "Inicar Verificação"
+            left_action_items: [["menu",  lambda x: nav_drawer4.toggle_nav_drawer()]]
+            elevation:5
+
+        Widget:
+
+    Image:
+        source: "ilustration1.png"
+        size: self.texture_size
+        pos_hint: {"center_x":0.5,"center_y":0.5}
+
+
+    MDNavigationDrawer:
+        type: "standard"
+        id: nav_drawer4
+
+        ContentNavigationDrawer:
+            orientation: "vertical"
+            padding: "8dp"
+            spacing: "8dp"
+
+            Image:
+                id: avatar
+                size_hint: (1,1)
+                source: "mine.jpg"
+
+            MDLabel:
+                id: name_perfil_toolbar
+                text: app.name_perfil_toolbar
+                font_style: "Subtitle1"
+                size_hint_y: None
+                height: self.texture_size[1]
+
+            MDLabel:
+                id: email_perfil_toolbar
+                text: app.email_perfil_toolbar
+                size_hint_y: None
+                font_style: "Caption"
+                height: self.texture_size[1]
+
+
+            DrawerList:
+                id: md_list
+
+                MDList:
+                    OneLineIconListItem:
+                        text: "CheckLists"
+                        on_release: root.manager.current = "screen1"
+
+                        IconLeftWidget:
+                            icon: "inbox"
+                            on_release: root.manager.current = "screen1"
+
+                    OneLineIconListItem:
+                        text: "Minhas CheckList"
+                        on_release: root.manager.current = "screen2"
+
+                        IconLeftWidget:
+                            icon: "inbox"
+                            on_release: root.manager.current = "screen2"
+
+                    OneLineIconListItem:
+                        text: "Nova CheckList"
+                        on_release: root.manager.current = "screen5"
+
+                        IconLeftWidget:
+                            icon: "inbox-arrow-up"
+                            on_release: root.manager.current = "screen5"
+
+                    OneLineIconListItem:
+                        text: "Meu Perfil"
+                        on_release: root.manager.current = "profile"
+
+                        IconLeftWidget:
+                            icon: "account"
+                            on_release: root.manager.current = "profile"
+
+                    OneLineIconListItem:
+                        text: "Sair"
+                        on_release: app.show_alert_dialog()
+
+                        IconLeftWidget:
+                            icon: "exit-to-app"
+                            on_release: app.show_alert_dialog()
 
     MDFloatingActionButton:
         icon:"arrow-right"
@@ -747,6 +629,8 @@ ScreenManager:
         on_press:
             root.manager.current = "checklistName"
             root.manager.transition.direction = "left"
+
+
 <ChecklistName>:
     name:"checklistName"
 
@@ -765,7 +649,7 @@ ScreenManager:
         icon: "alert-circle-outline"
         pos_hint: {"center_x":0.5,"center_y":0.4}
         size: sp(140), sp(40)
-        on_press: app.check_lv_name_and_description()
+        on_press: root.check_lv_name_and_description()
 
     MDFloatingActionButton:
         icon: "arrow-left"
@@ -788,8 +672,6 @@ ScreenManager:
     MDProgressBar:
         value:10.10
         pos_hint: {"center_y":0.02}
-
-
 
     MDTextField:
         id:name_text_field_lv
@@ -815,7 +697,7 @@ ScreenManager:
 
 
 #Item 1
-<ChecklistItem1>:
+<ChecklistItem1@Screen>:
     name:"checklistItem1"
 
     BoxLayout:
@@ -961,7 +843,7 @@ ScreenManager:
 
 
 #Item 2
-<ChecklistItem2>:
+<ChecklistItem2@Screen>:
     name:"checklistItem2"
 
     BoxLayout:
@@ -1107,7 +989,7 @@ ScreenManager:
             
 
 #Item 3
-<ChecklistItem3>:
+<ChecklistItem3@Screen>:
     name:"checklistItem3"
 
     BoxLayout:
@@ -1252,7 +1134,7 @@ ScreenManager:
 
 
 #Item 4
-<ChecklistItem4>:
+<ChecklistItem4@Screen>:
     name:"checklistItem4"
 
     BoxLayout:
@@ -1399,7 +1281,7 @@ ScreenManager:
 
 
 #Item 5
-<ChecklistItem5>:
+<ChecklistItem5@Screen>:
     name:"checklistItem5"
 
     BoxLayout:
@@ -1545,7 +1427,7 @@ ScreenManager:
 
 
 #Item 6
-<ChecklistItem6>:
+<ChecklistItem6@Screen>:
     name:"checklistItem6"
 
     BoxLayout:
@@ -1594,7 +1476,7 @@ ScreenManager:
         halign: "center"
         pos_hint: {"center_x": 0.27, "center_y":0.66}
         text: "C"
-        
+
     MDLabel:
         halign: "center"
         pos_hint: {"center_x": 0.53, "center_y":0.66}
@@ -1607,7 +1489,6 @@ ScreenManager:
 
 
     FloatLayout:
-
         orientation: "vertical"
 
         MDCheckbox:
@@ -1692,7 +1573,7 @@ ScreenManager:
 
 
 #Item 7
-<ChecklistItem7>:
+<ChecklistItem7@Screen>:
     name:"checklistItem7"
 
     BoxLayout:
@@ -1839,7 +1720,7 @@ ScreenManager:
 
 
 #Item 8
-<ChecklistItem8>:
+<ChecklistItem8@Screen>:
     name:"checklistItem8"
 
     BoxLayout:
@@ -1986,7 +1867,7 @@ ScreenManager:
 
 
 #Item 9
-<ChecklistItem9>:
+<ChecklistItem9@Screen>:
     name:"checklistItem9"
 
     BoxLayout:
@@ -2018,6 +1899,7 @@ ScreenManager:
             root.manager.current = "checklistItem9"
             root.manager.transition.direction = "left"
             app.add_new_lv()
+            Snackbar(text="Adicionado com sucesso!").show()
     MDProgressBar:
         value:100
         pos_hint: {"center_y":0.02}

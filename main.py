@@ -1,37 +1,37 @@
 import os
-import re
 from datetime import date
 from functools import partial
 
-from kivy.clock import Clock
 import pymongo
 from bson import ObjectId
 from dotenv import load_dotenv
+from gql import Client, gql
+from gql.transport.aiohttp import AIOHTTPTransport
+from kivy.clock import Clock
+from kivy.config import Config
+from kivy.lang import Builder
 from kivy.storage.jsonstore import JsonStore
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.screenmanager import Screen
-from kivy.config import Config
-from kivy.lang import Builder
 from kivymd.app import MDApp
 from kivymd.theming import ThemableBehavior
 from kivymd.uix.button import MDFlatButton
 from kivymd.uix.dialog import MDDialog
-from kivymd.uix.expansionpanel import MDExpansionPanel, MDExpansionPanelThreeLine
-from kivymd.uix.textfield import MDTextField
-from kivymd.uix.list import (
-    MDList,
-    StringProperty,
-    ThreeLineIconListItem,
-    TwoLineAvatarIconListItem,
+from kivymd.uix.label import MDLabel
+from kivymd.uix.expansionpanel import (
+    MDExpansionPanel,
+    MDExpansionPanelThreeLine
 )
-from kivymd.uix.picker import MDDatePicker
+from kivymd.uix.list import (
+    MDList, 
+    StringProperty, 
+    ThreeLineIconListItem,
+    TwoLineAvatarIconListItem
+)
+from kivymd.uix.textfield import MDTextField
 from kivymd.utils import asynckivy
-from gql import Client, gql
-from gql.transport.aiohttp import AIOHTTPTransport
 
 import decorators
-
-
 
 load_dotenv()
 
@@ -55,6 +55,25 @@ async def async_request(query, headers = None, **kwargs):
         result = await session.execute(query, variable_values=kwargs)
 
         return result
+
+
+def validate_input(field, condition, message):
+    if condition:
+        field.focus = True
+        field.helper_text = message
+        field.error = True
+        field.focus = False
+
+        return (field, False)
+
+    field.focus = True
+    field.error = False
+    field.focus = False
+
+    if field.required:
+        field.helper_text = "Este campo é obrigatório"
+
+    return (field, True)
 
 
 class Content(BoxLayout):
@@ -86,54 +105,23 @@ class LoginScreen(Screen):
                 result = sync_request(query, token=user["authToken"])
 
                 if result["verifyToken"]["payload"] is not None:
-                    Clock.schedule_once(self.to_screen1)
-
-    def validate_inputs(self):
-        valid_inputs = True
-
-        email = self.ids.email_input.text
-        password = self.ids.password_input.text
-
-        email_regex = r"^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$"
-
-        if not email:
-            self.ids.email_input.focus = True
-            self.ids.email_input.helper_text = "Este campo é obrigatório"
-            self.ids.email_input.error = True
-            self.ids.email_input.focus = False
-
-            valid_inputs = False
-
-        elif not re.search(email_regex, email):
-            self.ids.email_input.focus = True
-            self.ids.email_input.helper_text = "Email inválido"
-            self.ids.email_input.error = True
-            self.ids.email_input.focus = False
-
-            valid_inputs = False
-
-        else:
-            self.ids.email_input.focus = True
-            self.ids.email_input.error = False
-            self.ids.email_input.focus = False
-
-        if not password:
-            self.ids.password_input.focus = True
-            self.ids.password_input.helper_text = "Este campo é obrigatório"
-            self.ids.password_input.error = True
-            self.ids.password_input.focus = False
-
-            valid_inputs = False
-
-        else:
-            self.ids.password_input.focus = True
-            self.ids.password_input.error = False
-            self.ids.password_input.focus = False
-
-        return valid_inputs
+                    Clock.schedule_once(self.to_main_screen)
 
     def login(self):
-        if self.validate_inputs():
+        self.ids.email_input, email_valid = validate_input(
+            self.ids.email_input, 
+            not self.ids.email_input, 
+            "Este campo é obrigatório"
+        )
+
+        self.ids.email_input, password_valid = validate_input(
+            self.ids.email_input, 
+            not self.ids.email_input, 
+            "Este campo é obrigatório"
+        )
+
+        if email_valid and password_valid:
+
             query = gql("""
                 mutation Login($email: String!, $password: String!) {
                     tokenAuth(
@@ -162,28 +150,169 @@ class LoginScreen(Screen):
                 password=self.ids.password_input.text
             )
 
-            user = result["tokenAuth"]["user"]
-            user_name = f"{user['firstName']} {user['lastName']}"
+            if result["tokenAuth"]["success"]:
+                user = result["tokenAuth"]["user"]
+                user_name = f"{user['firstName']} {user['lastName']}"
 
-            self.storage.put(
-                "user", 
-                id=user["id"], 
-                name=user_name,
-                email=email, 
-                authToken=result["tokenAuth"]["token"],
-                remember=self.ids.remember_input.active
-            )
+                self.storage.put(
+                    "user", 
+                    id=user["id"], 
+                    name=user_name,
+                    email=email, 
+                    authToken=result["tokenAuth"]["token"],
+                    remember=self.ids.remember_input.active
+                )
 
-            self.manager.current = "screen1"
+                self.manager.current = "main"
+            else:
+                errors = result["tokenAuth"]["errors"]
 
-    def to_screen1(self, event):
-        self.manager.current = "screen1"
+                for error_field in errors.keys():
+                    if error_field == "nonFieldErrors":
+                        self.add_widget(
+                            MDLabel(
+                                text=errors[error_field]["message"], 
+                                theme_text_color="Error", 
+                                font_style="H6"
+                            )
+                        )
+                    else:
+                        self.ids[f"{error_field}_input"], input_valid = validate_input(
+                            self.ids[f"{error_field}_input"],
+                            True,
+                            errors[error_field][0]["message"],
+                        )
+
+    def to_main_screen(self, event):
+        self.manager.current = "main"
 
 
 class RegisterScreen(Screen):
-    pass
+    def register(self):
+        query = gql("""
+            mutation Register($email: String!, $firstName: String!, $lastName: String!, $password1: String!, $password2: String!) {
+                register(
+                    input: {
+                    email: $email,
+                    firstName: $firstName,
+                    lastName: $lastName,
+                    password1: $password1,
+                    password2: $password2,
+                    }
+                ) {
+                    success,
+                    errors,
+                }
+            }
+        """)
 
-class Screen1(Screen):
+        self.ids.email_input, email_valid = validate_input(
+            self.ids.email_input, 
+            not self.ids.email_input, 
+            "Este campo é obrigatório"
+        )
+
+        self.ids.first_name_input, first_name_valid = validate_input(
+            self.ids.first_name_input, 
+            not self.ids.first_name_input, 
+            "Este campo é obrigatório"
+        )
+
+        self.ids.last_name_input, last_name_valid = validate_input(
+            self.ids.last_name_input, 
+            not self.ids.last_name_input, 
+            "Este campo é obrigatório"
+        )
+
+        self.ids.password1_input, password1_valid = validate_input(
+            self.ids.password1_input, 
+            not self.ids.password1_input, 
+            "Este campo é obrigatório"
+        )
+
+        self.ids.password2_input, password2_valid = validate_input(
+            self.ids.password2_input, 
+            not self.ids.password2_input, 
+            "Este campo é obrigatório"
+        )
+
+        email = self.ids.email_input.text
+        first_name = self.ids.first_name_input.text
+        last_name = self.ids.last_name_input.text
+        password1 = self.ids.password1_input.text
+        password2 = self.ids.password2_input.text
+
+        if email_valid and first_name_valid and last_name_valid and password1_valid and password2_valid:
+
+            result = sync_request(
+                query, 
+                email=email,
+                firstName=first_name,
+                lastName=last_name,
+                password1=password1,
+                password2=password2,
+            )
+
+            if result["register"]["success"]:
+                query = gql("""
+                    mutation Login($email: String!, $password: String!) {
+                        tokenAuth(
+                            input: {
+                                email: $email,
+                                password: $password
+                            }
+                        ) {
+                            success,
+                            errors,
+                            token,
+                            user {
+                                id,
+                                firstName,
+                                lastName
+                            }
+                        }
+                    }
+                """)
+
+                result = sync_request(
+                    query, 
+                    email=email, 
+                    password=password1
+                )
+
+                user = result["tokenAuth"]["user"]
+                user_name = f"{user['firstName']} {user['lastName']}"
+
+                self.storage.put(
+                    "user", 
+                    id=user["id"], 
+                    name=user_name,
+                    email=email, 
+                    authToken=result["tokenAuth"]["token"],
+                    remember=True
+                )
+
+            else:
+                errors = result["register"]["errors"]
+
+                for error_field in errors.keys():
+                    if error_field == "nonFieldErrors":
+                        self.add_widget(
+                            MDLabel(
+                                text=errors[0]["message"], 
+                                theme_text_color="Error", 
+                                font_style="H6"
+                            )
+                        )
+                    else:
+                        self.ids[f"{error_field}_input"], input_valid = validate_input(
+                            self.ids[f"{error_field}_input"],
+                            True,
+                            errors[error_field][0]["message"],
+                        )
+
+
+class MainScreen(Screen):
     @decorators.asynckivy_start
     async def load_checklists(self):
         query = gql("""
@@ -537,7 +666,7 @@ class ChecklistApp(MDApp):
     teste = "teste"
 
     def build(self):
-        self.strng = Builder.load_file("checklist.kv")
+        self.strng = Builder.load_file("interface.kv")
         return self.strng
 
     def panel_open(self, *args):

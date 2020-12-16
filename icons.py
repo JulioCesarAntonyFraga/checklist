@@ -1,5 +1,5 @@
-from kivymd.app import MDApp
 from kivy.lang import Builder
+from kivymd.app import MDApp
 
 
 class Test(MDApp):
@@ -46,11 +46,9 @@ Test().run()
 from kivy.lang import Builder
 from kivy.properties import StringProperty
 from kivy.uix.screenmanager import Screen
-
-from kivymd.icon_definitions import md_icons
 from kivymd.app import MDApp
+from kivymd.icon_definitions import md_icons
 from kivymd.uix.list import OneLineIconListItem
-
 
 Builder.load_string(
     '''
