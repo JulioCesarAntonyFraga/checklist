@@ -71,12 +71,11 @@ ScreenManager:
         pos_hint: {"center_x": .16, "center_y": .49}
         active: True
 
-    CheckBoxLabel:
+    MDLabel:
         halign: "left"
         text: "Lembrar-me"
         size: "48dp", "48dp"
         pos_hint: {"center_x": .7, "center_y": .49}
-        on_press: root.ids.remember_input.active = not root.ids.remember_input.active
 
     MDRaisedButton:
         halign: "center"
@@ -188,7 +187,6 @@ ScreenManager:
     MDBottomNavigation:
 
         MDBottomNavigationItem:
-            name: "verification_lists"
             text: "Listas de verificação"
             icon: "format-list-checkbox"
 
@@ -204,6 +202,7 @@ ScreenManager:
                         icon: "plus"
                         md_bg_color: app.theme_cls.primary_color
                         pos_hint: {"center_x": .875, "center_y": .1}
+                        size_hint: (0.7,0.1)
 
                     MDTabs:
 
@@ -224,9 +223,9 @@ ScreenManager:
                                 id: my_checklists
 
         MDBottomNavigationItem:
-            name: "profile"
             text: "Perfil"
             icon: "account"
+            on_tab_press: root.manager.current = "profile"
 
             BoxLayout:
 
@@ -411,123 +410,61 @@ ScreenManager:
 <Profile>:
     name : "profile"
 
-    BoxLayout:
-        orientation: "vertical"
-        MDToolbar:
-            title: "Inicar Verificação"
-            left_action_items: [["menu",  lambda x: nav_drawer4.toggle_nav_drawer()]]
-            right_action_items: [["account-edit", lambda x: root.enable_profile_inputs()]]
-            elevation:5
 
-        Widget:
+    MDBottomNavigation:
 
-    MDTextField:
-        id: profile_email_input
-        text: app.email_perfil_toolbar
-        pos_hint: {"center_x":0.5,"center_y":0.4}
-        size_hint: (0.7,0.1)
-        hint_text : "Email"
-        icon_right: "account"
-        icon_right_color: app.theme_cls.primary_color
-        disabled: "true"
+        MDBottomNavigationItem:
+            text: "Listas de verificação"
+            icon: "format-list-checkbox"
+            on_tab_press: root.manager.current = "main"
 
-    MDTextField:
-        id: profile_name_input
-        text: app.name_perfil_toolbar
-        pos_hint: {"center_x":0.5,"center_y":0.5}
-        size_hint: (0.7,0.1)
-        hint_text : "Nome"
-        icon_right: "account"
-        icon_right_color: app.theme_cls.primary_color
-        disabled: "true"
+            BoxLayout:
+                orientation: "vertical"
 
+                MDToolbar:
+                    title: "Perfil"
+                    right_action_items: [["account-edit",  lambda x: nav_drawer4.toggle_nav_drawer()]]
+                    elevation:5
 
-    MDFloatingActionButton:
-        id:save_profile_button
-        disabled: "true"
-        icon: "check"
-        md_bg_color:app.theme_cls.primary_color
-        pos_hint: {"center_x":0.50,"center_y":0.26}
-        user_font_size : "15sp"
-        on_press:
-            root.enable_profile_inputs()
-            root.update_profile()
-            Snackbar(text="Salvo com sucesso!").show()
+                MDTextField:
+                    id: profile_email_input
+                    text: app.email_perfil_toolbar
+                    pos_hint: {"center_x":0.5,"center_y":0.4}
+                    size_hint: (0.7,0.1)
+                    hint_text : "Email"
+                    icon_right: "account"
+                    icon_right_color: app.theme_cls.primary_color
+                    disabled: "true"
+
+                MDTextField:
+                    id: profile_name_input
+                    text: app.name_perfil_toolbar
+                    pos_hint: {"center_x":0.5,"center_y":0.5}
+                    size_hint: (0.7,0.1)
+                    hint_text : "Nome"
+                    icon_right: "account"
+                    icon_right_color: app.theme_cls.primary_color
+                    disabled: "true"
 
 
-    MDNavigationDrawer:
-        id: nav_drawer4
-
-        ContentNavigationDrawer:
-            orientation: "vertical"
-            padding: "8dp"
-            spacing: "8dp"
-
-            Image:
-                id: avatar
-                size_hint: (1,1)
-                source: "mine.jpg"
-
-            MDLabel:
-                id: name_perfil_toolbar
-                text: app.name_perfil_toolbar
-                font_style: "Subtitle1"
-                size_hint_y: None
-                height: self.texture_size[1]
-
-            MDLabel:
-                id: email_perfil_toolbar
-                text: app.email_perfil_toolbar
-                size_hint_y: None
-                font_style: "Caption"
-                height: self.texture_size[1]
+                MDFloatingActionButton:
+                    id:save_profile_button
+                    disabled: "true"
+                    icon: "check"
+                    md_bg_color:app.theme_cls.primary_color
+                    pos_hint: {"center_x":0.50,"center_y":0.26}
+                    user_font_size : "15sp"
+                    on_press:
+                        root.enable_profile_inputs()
+                        root.update_profile()
+                        Snackbar(text="Salvo com sucesso!").show()
 
 
-            DrawerList:
-                id: md_list
-
-                MDList:
-                    OneLineIconListItem:
-                        text: "CheckLists"
-                        on_press:
-                            root.manager.current = "screen1"
-
-                        IconLeftWidget:
-                            icon: "inbox"
-                            on_release: root.manager.current = "screen1"
-
-                    OneLineIconListItem:
-                        text: "Minhas CheckList"
-                        on_release: root.manager.current = "screen2"
-
-                        IconLeftWidget:
-                            icon: "inbox"
-                            on_release: root.manager.current = "screen2"
-
-
-                    OneLineIconListItem:
-                        text: "Nova CheckList"
-                        on_release: root.manager.current = "screen5"
-
-                        IconLeftWidget:
-                            icon: "inbox-arrow-up"
-                            on_release: root.manager.current = "screen5"
-
-                    OneLineIconListItem:
-                        text: "Meu Perfil"
-                        on_release: root.manager.current = "profile"
-
-                        IconLeftWidget:
-                            icon: "account"
-                            on_release: root.manager.current = "profile"
-
-                    OneLineIconListItem:
-                        text: "Sair"
-                        on_release: app.show_alert_dialog()
-
-                        IconLeftWidget:
-                            icon: "exit-to-app"
-                            on_release: app.show_alert_dialog()
+        MDBottomNavigationItem:
+            text: "Perfil"
+            icon: "account"
+            
+            BoxLayout:
 
 
 <Screen5@Screen>:
